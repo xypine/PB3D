@@ -5,17 +5,20 @@
  */
 package codenameprojection;
 
+import JFUtils.Input;
+import JFUtils.InputActivated;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jfUtils.dVector;
-import jfUtils.dVector3;
+import JFUtils.dVector;
+import JFUtils.dVector3;
 
 /**
  *
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
+    public static double minUtilsVer = 2.022;
 
     /**
      * @param args the command line arguments
@@ -23,7 +26,9 @@ public class CodeNameProjection {
     
     
     public static void main(String[] args) {
-    
+        if(JFUtils.versionCheck.version < minUtilsVer){
+            throw new UnsupportedClassVersionError("cnprojection needs a jfutils version greater than " + minUtilsVer);
+        }
 
     
         new driver();
@@ -46,22 +51,62 @@ class driver{
 
     public driver(){
         //dVector3 point = new dVector3(0, 0, 0);
+        InputActivated refI = new InputActivated();
         Screen s = new Screen();
+        Input inp = new Input(refI);
+        inp.verbodose = true;
+        s.addKeyListener(inp);
+        s.addMouseListener(inp);
         LinkedList<dVector3> points = new LinkedList<>();
+        LinkedList<dVector3[]> lines = new LinkedList<>();
         final dVector3 point1 = new dVector3(0, 0, 0);
         final dVector3 point22 = new dVector3(0, 1, -10);
+        final dVector3 point23 = new dVector3(0, -1, -10);
+        final dVector3 point33 = new dVector3(1, 0, 5);
+        final dVector3 point34 = new dVector3(-1, 0, 5);
+        final dVector3 point44 = new dVector3(1, 0, -10);
+        final dVector3 point45 = new dVector3(-1, 0, -10);
+        final dVector3[] line1 = new dVector3[]{point33, point23};
         points.add(point1);
         points.add(point22);
+        points.add(point23);
+        points.add(point33);
+        points.add(point34);
+        points.add(point44);
+        points.add(point45);
+        lines.add(line1);
         
         int sleep = 200;
         while(true){
             //Init
             LinkedList<dVector> set = new LinkedList<>();
             LinkedList<dVector> sizes = new LinkedList<>();
+            LinkedList<dVector[]> lines_set = new LinkedList<>();
+            LinkedList<dVector[]> lines_sizes = new LinkedList<>();
+            
+            xScreenCenter = s.r.w / 2;
+            yScreenCenter = s.r.h / 2;
+            
+            //Check input
+            double factor = -0.5D;
+            if(inp.keys[68] == true){
+                screenPosition.x += factor;
+            }
+            if(inp.keys[65] == true){
+                screenPosition.x -= factor;
+            }
+            if(inp.keys[87] == true){
+                screenPosition.y += factor;
+            }
+            if(inp.keys[83] == true){
+                screenPosition.y -= factor;
+            }
+            else{
+            }
             
             //Calc
             for(dVector3 i : points){
-                System.out.println("Original[" +i.hashCode() + "] :" + i);
+                //System.out.println("Original[" +i.hashCode() + "] :" + i);
                 dVector3 point2 = new dVector3(0, 0, 0);
                 projectPoint(i, point2);
                 dVector point2D = new dVector(point2.x, point2.y);
@@ -69,14 +114,24 @@ class driver{
                 if(size < 0){
                     size = 0;
                 }
-                System.out.println("Projected: " + point2);
+                //System.out.println("Projected: " + point2);
                 sizes.add(new dVector(size, size));
                 set.add(point2D);
-                i.x = i.x + 0.1D;
-                i.z--;
+            }
+            for(dVector3[] l : lines){
+                //Every point must exist in both lists
+                try {
+                    dVector new_start = set.get(points.indexOf(l[0]));
+                    dVector new_end = set.get(points.indexOf(l[1]));
+                    lines_set.add( new dVector[]{new_start, new_end} );
+                    lines_sizes.add(new dVector[]{ sizes.get(points.indexOf(l[0])) , sizes.get(points.indexOf(l[1]))} );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             //Rendering
             s.r.updatePoints(set, sizes);
+            //s.r.updateLines(lines_set, lines_sizes);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             try {

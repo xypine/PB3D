@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package codenameprojection;
 
@@ -12,8 +8,9 @@ import java.awt.Graphics;
 import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import jfUtils.Range;
-import jfUtils.dVector;
+import JFUtils.Range;
+import JFUtils.InputActivated;
+import JFUtils.dVector;
 
 /**
  *
@@ -43,7 +40,7 @@ class renderer extends JPanel{
     private LinkedList<dVector> points = new LinkedList<>();
     private LinkedList<dVector> points_sizes = new LinkedList<>();
     private LinkedList<dVector[]> lines = new LinkedList<>();
-    private LinkedList<dVector> lines_sizes = new LinkedList<>();
+    private LinkedList<dVector[]> lines_sizes = new LinkedList<>();
     public int w;
     public int h;
     @Override
@@ -66,20 +63,27 @@ class renderer extends JPanel{
             int yOff = s.intY() / 2;
             g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
         }
-        for(int i : new Range(lines.size())){
-            dVector pos1 = lines.get(i)[0];
-            dVector pos2 = lines.get(i)[1];
-            dVector s = lines_sizes.get(i);
-            int xOff = s.intX() / 2;
-            int yOff = s.intY() / 2;
-            g.drawLine(pos1.intX() - xOff, pos2.intX() - xOff, pos1.intY() - yOff, pos2.intY() - yOff);
+        try {
+            for (int i : new Range(lines.size())) {
+                dVector pos1 = lines.get(i)[0];
+                dVector pos2 = lines.get(i)[1];
+                dVector s = lines_sizes.get(i)[0];
+                dVector s2 = lines_sizes.get(i)[1];
+                int xOff = s.intX() / 2;
+                int yOff = s.intY() / 2;
+                int xOff_end = s2.intX() / 2;
+                int yOff_end = s2.intY() / 2;
+                g.drawLine(pos1.intX() - xOff, pos2.intX() - xOff_end, pos1.intY() - yOff, pos2.intY() - yOff_end);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public void updatePoints(LinkedList<dVector> newSet, LinkedList<dVector> newSizes){
         this.points = newSet;
         this.points_sizes = newSizes;
     }
-    public void updateLines(LinkedList<dVector[]> newSet, LinkedList<dVector> newSizes){
+    public void updateLines(LinkedList<dVector[]> newSet, LinkedList<dVector[]> newSizes){
         this.lines = newSet;
         this.lines_sizes = newSizes;
     }
