@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import JFUtils.Range;
 import JFUtils.InputActivated;
 import JFUtils.dVector;
+import java.util.HashMap;
 
 /**
  *
@@ -39,8 +40,7 @@ public class Screen extends JFrame{
 class renderer extends JPanel{
     private LinkedList<dVector> points = new LinkedList<>();
     private LinkedList<dVector> points_sizes = new LinkedList<>();
-    private LinkedList<dVector[]> lines = new LinkedList<>();
-    private LinkedList<dVector[]> lines_sizes = new LinkedList<>();
+    private LinkedList<Integer[]> lines = new LinkedList<>();
     public int w;
     public int h;
     @Override
@@ -55,6 +55,19 @@ class renderer extends JPanel{
         g.setColor(Color.black);
         g.fillRect(0, 0, w, h);
         
+        try {
+            g.setColor(Color.red);
+            HashMap<Integer, dVector> a = getIDMap();
+            for (int i : new Range(lines.size())) {
+                int x1 = a.get(lines.get(i)[0]).intX();
+                int x2 = a.get(lines.get(i)[1]).intX();;
+                int y1 = a.get(lines.get(i)[0]).intY();;
+                int y2 = a.get(lines.get(i)[1]).intY();;
+                g.drawLine(x1, y1, x2, y2);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         g.setColor(Color.green);
         for(int i : new Range(points.size())){
             dVector pos = points.get(i);
@@ -63,28 +76,20 @@ class renderer extends JPanel{
             int yOff = s.intY() / 2;
             g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
         }
-        try {
-            for (int i : new Range(lines.size())) {
-                dVector pos1 = lines.get(i)[0];
-                dVector pos2 = lines.get(i)[1];
-                dVector s = lines_sizes.get(i)[0];
-                dVector s2 = lines_sizes.get(i)[1];
-                int xOff = s.intX() / 2;
-                int yOff = s.intY() / 2;
-                int xOff_end = s2.intX() / 2;
-                int yOff_end = s2.intY() / 2;
-                g.drawLine(pos1.intX() - xOff, pos2.intX() - xOff_end, pos1.intY() - yOff, pos2.intY() - yOff_end);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        
     }
     public void updatePoints(LinkedList<dVector> newSet, LinkedList<dVector> newSizes){
         this.points = newSet;
         this.points_sizes = newSizes;
     }
-    public void updateLines(LinkedList<dVector[]> newSet, LinkedList<dVector[]> newSizes){
+    public void updateLines(LinkedList<Integer[]> newSet){
         this.lines = newSet;
-        this.lines_sizes = newSizes;
+    }
+    private HashMap getIDMap(){
+        HashMap<Integer, dVector> out = new HashMap<Integer, dVector>();
+        for(dVector i : points){
+            out.put(i.identifier, i);
+        }
+        return out;
     }
 }

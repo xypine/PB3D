@@ -58,7 +58,7 @@ class driver{
         s.addKeyListener(inp);
         s.addMouseListener(inp);
         LinkedList<dVector3> points = new LinkedList<>();
-        LinkedList<dVector3[]> lines = new LinkedList<>();
+        LinkedList<Integer[]> lines = new LinkedList<>();
         final dVector3 point1 = new dVector3(0, 0, 0);
         final dVector3 point22 = new dVector3(0, 1, -10);
         final dVector3 point23 = new dVector3(0, -1, -10);
@@ -66,7 +66,14 @@ class driver{
         final dVector3 point34 = new dVector3(-1, 0, 5);
         final dVector3 point44 = new dVector3(1, 0, -10);
         final dVector3 point45 = new dVector3(-1, 0, -10);
-        final dVector3[] line1 = new dVector3[]{point33, point23};
+        final Integer[] line2 = new Integer[]{point33.identifier, point22.identifier};
+        final Integer[] line3 = new Integer[]{point33.identifier, point44.identifier};
+        final Integer[] line1 = new Integer[]{point33.identifier, point23.identifier};
+        final Integer[] line22 = new Integer[]{point34.identifier, point22.identifier};
+        final Integer[] line32 = new Integer[]{point34.identifier, point45.identifier};
+        final Integer[] line12 = new Integer[]{point34.identifier, point23.identifier};
+        final Integer[] line13 = new Integer[]{point1.identifier, point23.identifier};
+        final Integer[] line23 = new Integer[]{point1.identifier, point22.identifier};
         points.add(point1);
         points.add(point22);
         points.add(point23);
@@ -75,6 +82,13 @@ class driver{
         points.add(point44);
         points.add(point45);
         lines.add(line1);
+        lines.add(line2);
+        lines.add(line3);
+        lines.add(line12);
+        lines.add(line22);
+        lines.add(line32);
+        lines.add(line13);
+        lines.add(line23);
         
         int sleep = 200;
         while(true){
@@ -88,7 +102,7 @@ class driver{
             yScreenCenter = s.r.h / 2;
             
             //Check input
-            double factor = -0.5D;
+            double factor = -0.025D*5;
             if(inp.keys[68] == true){
                 screenPosition.x += factor;
             }
@@ -101,6 +115,12 @@ class driver{
             if(inp.keys[83] == true){
                 screenPosition.y -= factor;
             }
+            if(inp.keys[81] == true){
+                screenPosition.z -= factor*5;
+            }
+            if(inp.keys[69] == true){
+                screenPosition.z += factor*5;
+            }
             else{
             }
             
@@ -110,6 +130,7 @@ class driver{
                 dVector3 point2 = new dVector3(0, 0, 0);
                 projectPoint(i, point2);
                 dVector point2D = new dVector(point2.x, point2.y);
+                point2D.identifier = i.identifier;
                 int size = (int) (1 + i.z);
                 if(size < 0){
                     size = 0;
@@ -118,20 +139,20 @@ class driver{
                 sizes.add(new dVector(size, size));
                 set.add(point2D);
             }
-            for(dVector3[] l : lines){
-                //Every point must exist in both lists
-                try {
-                    dVector new_start = set.get(points.indexOf(l[0]));
-                    dVector new_end = set.get(points.indexOf(l[1]));
-                    lines_set.add( new dVector[]{new_start, new_end} );
-                    lines_sizes.add(new dVector[]{ sizes.get(points.indexOf(l[0])) , sizes.get(points.indexOf(l[1]))} );
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            /*for(Integer[] l : lines){
+            //Every point must exist in both lists
+            try {
+            dVector new_start = set.get(points.indexOf(l[0]));
+            dVector new_end = set.get(points.indexOf(l[1]));
+            lines_set.add( new dVector[]{new_start, new_end} );
+            lines_sizes.add(new dVector[]{ sizes.get(points.indexOf(l[0])) , sizes.get(points.indexOf(l[1]))} );
+            } catch (Exception e) {
+            e.printStackTrace();
             }
+            }*/
             //Rendering
             s.r.updatePoints(set, sizes);
-            //s.r.updateLines(lines_set, lines_sizes);
+            s.r.updateLines(lines);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             try {
