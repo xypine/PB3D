@@ -12,13 +12,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import JFUtils.dVector;
 import JFUtils.dVector3;
+import JFUtils.fVector3;
 
 /**
  *
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.022;
+    public static double minUtilsVer = 2.2;
 
     /**
      * @param args the command line arguments
@@ -26,8 +27,8 @@ public class CodeNameProjection {
     
     
     public static void main(String[] args) {
-        if(JFUtils.versionCheck.version < minUtilsVer){
-            throw new UnsupportedClassVersionError("cnprojection needs a jfutils version greater than " + minUtilsVer);
+        if(JFUtils.versionCheck.version != minUtilsVer){
+            throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer);
         }
 
     
@@ -38,8 +39,8 @@ public class CodeNameProjection {
 class driver{
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
-    private dVector3 screenPosition = new dVector3( 0, 0, 20 );
-    private dVector3 viewAngle = new dVector3( 0, 90, 180 );
+    private dVector3 screenPosition = new dVector3( 0, 0, 7 );
+    private dVector3 viewAngle = new dVector3( 0, 90, 90 );
     
     private static final double DEG_TO_RAD = 0.017453292;
     private double modelScale = 10;
@@ -48,7 +49,42 @@ class driver{
     double ST = Math.sin( DEG_TO_RAD * viewAngle.x );
     double CP = Math.cos( DEG_TO_RAD * viewAngle.y );
     double SP = Math.sin( DEG_TO_RAD * viewAngle.y );
-
+    
+    public void addCube(dVector3 center, double size){
+        double s = size;
+        dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
+        dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
+        dVector3 dru = new dVector3(center.x -s, center.y +s, center.z -s);
+        dVector3 drd = new dVector3(center.x -s, center.y -s, center.z -s);
+        dVector3 ulu = new dVector3(center.x +s, center.y +s, center.z +s);
+        dVector3 uld = new dVector3(center.x +s, center.y -s, center.z +s);
+        dVector3 uru = new dVector3(center.x -s, center.y +s, center.z +s);
+        dVector3 urd = new dVector3(center.x -s, center.y -s, center.z +s);
+        points.add(dlu);
+        points.add(dld);
+        points.add(dru);
+        points.add(drd);
+        points.add(ulu);
+        points.add(uld);
+        points.add(uru);
+        points.add(urd);
+        lines.add(new Integer[]{dlu.identifier, dld.identifier});
+        lines.add(new Integer[]{dlu.identifier, dru.identifier});
+        lines.add(new Integer[]{dld.identifier, drd.identifier});
+        lines.add(new Integer[]{dru.identifier, drd.identifier});
+        
+        lines.add(new Integer[]{ulu.identifier, uld.identifier});
+        lines.add(new Integer[]{ulu.identifier, uru.identifier});
+        lines.add(new Integer[]{uld.identifier, urd.identifier});
+        lines.add(new Integer[]{uru.identifier, urd.identifier});
+        
+        lines.add(new Integer[]{dlu.identifier, ulu.identifier});
+        lines.add(new Integer[]{dld.identifier, uld.identifier});
+        lines.add(new Integer[]{dru.identifier, uru.identifier});
+        lines.add(new Integer[]{drd.identifier, urd.identifier});
+    }
+    LinkedList<dVector3> points;
+    LinkedList<Integer[]> lines;
     public driver(){
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
@@ -57,40 +93,13 @@ class driver{
         inp.verbodose = true;
         s.addKeyListener(inp);
         s.addMouseListener(inp);
-        LinkedList<dVector3> points = new LinkedList<>();
-        LinkedList<Integer[]> lines = new LinkedList<>();
-        final dVector3 point1 = new dVector3(0, 0, 0);
-        final dVector3 point22 = new dVector3(0, 1, -10);
-        final dVector3 point23 = new dVector3(0, -1, -10);
-        final dVector3 point33 = new dVector3(1, 0, 5);
-        final dVector3 point34 = new dVector3(-1, 0, 5);
-        final dVector3 point44 = new dVector3(1, 0, -10);
-        final dVector3 point45 = new dVector3(-1, 0, -10);
-        final Integer[] line2 = new Integer[]{point33.identifier, point22.identifier};
-        final Integer[] line3 = new Integer[]{point33.identifier, point44.identifier};
-        final Integer[] line1 = new Integer[]{point33.identifier, point23.identifier};
-        final Integer[] line22 = new Integer[]{point34.identifier, point22.identifier};
-        final Integer[] line32 = new Integer[]{point34.identifier, point45.identifier};
-        final Integer[] line12 = new Integer[]{point34.identifier, point23.identifier};
-        final Integer[] line13 = new Integer[]{point1.identifier, point23.identifier};
-        final Integer[] line23 = new Integer[]{point1.identifier, point22.identifier};
-        points.add(point1);
-        points.add(point22);
-        points.add(point23);
-        points.add(point33);
-        points.add(point34);
-        points.add(point44);
-        points.add(point45);
-        lines.add(line1);
-        lines.add(line2);
-        lines.add(line3);
-        lines.add(line12);
-        lines.add(line22);
-        lines.add(line32);
-        lines.add(line13);
-        lines.add(line23);
+        points = new LinkedList<>();
+        lines = new LinkedList<>();
+        addCube(new dVector3(0, 0, 0), 1);
         
-        int sleep = 200;
+        float angleK = 0;
+        double angleM = 0;
+        int sleep = 1;
         while(true){
             //Init
             LinkedList<dVector> set = new LinkedList<>();
@@ -102,7 +111,7 @@ class driver{
             yScreenCenter = s.r.h / 2;
             
             //Check input
-            double factor = -0.025D*5;
+            double factor = -0.025D*0.05;
             if(inp.keys[68] == true){
                 screenPosition.x += factor;
             }
@@ -121,17 +130,37 @@ class driver{
             if(inp.keys[69] == true){
                 screenPosition.z += factor*5;
             }
+            //l
+            if(inp.keys[76] == true){
+                viewAngle.z += factor*15;
+            }
+            //j
+            if(inp.keys[74] == true){
+                viewAngle.z -= factor*15;
+            }
+            //i
+            if(inp.keys[73] == true){
+                angleM = angleM + 0.001D;
+            }
+            //k
+            if(inp.keys[75] == true){
+                angleM = angleM - 0.001D;
+            }
             else{
             }
             
             //Calc
             for(dVector3 i : points){
                 //System.out.println("Original[" +i.hashCode() + "] :" + i);
-                dVector3 point2 = new dVector3(0, 0, 0);
-                projectPoint(i, point2);
-                dVector point2D = new dVector(point2.x, point2.y);
+                
+                fVector3 rotated = matmul(RX(angleK), i.toFVector3());
+                rotated = matmul(RZ(0), rotated);
+                rotated = matmul(RY(-0.06F), rotated);
+                dVector3 projected = new dVector3(0, 0, 0);
+                projectPoint(rotated.toDVector3(), projected);
+                dVector point2D = new dVector(projected.x, projected.y);
                 point2D.identifier = i.identifier;
-                int size = (int) (1 + i.z);
+                int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
                 if(size < 0){
                     size = 0;
                 }
@@ -155,6 +184,9 @@ class driver{
             s.r.updateLines(lines);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
+            
+            angleM = angleM * 0.95D;
+            angleK = (float) (angleK + angleM);
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException ex) {
@@ -178,6 +210,86 @@ class driver{
      output.x = xScreenCenter + modelScale * temp * x;
      output.y = yScreenCenter - modelScale * temp * y;
      output.z = 0;
+    }
+    public static float[][] RX (float o){
+        float d = (float) o;
+        float c = (float) Math.cos(d);
+        float s = (float) Math.sin(d);
+        float ns = -(float) Math.sin(d);
+        return new float[][]{
+            new float[]{1, 0, 0},
+            new float[]{0, c, ns},
+            new float[]{1, s, c}
+        };
+    }
+    public static float[][] RY (float o){
+        float d = (float) o;
+        float c = (float) Math.cos(d);
+        float s = (float) Math.sin(d);
+        float ns = -(float) Math.sin(d);
+        return new float[][]{
+            new float[]{c, 0, ns},
+            new float[]{0, 1, 0},
+            new float[]{s, 0, c}
+        };
+    }
+    public static float[][] RZ (float o){
+        float d = (float) o;
+        float c = (float) Math.cos(d);
+        float s = (float) Math.sin(d);
+        float ns = -(float) Math.sin(d);
+        return new float[][]{
+            new float[]{c, ns, 0},
+            new float[]{s, c, 0},
+            new float[]{0, 0, 1}
+        };
+    }
+    
+    //The following is copied (edited to suit JFTools) from Daniel Shiffmans code, at: https://github.com/CodingTrain/website/blob/master/CodingChallenges/CC_112_3D_Rendering/Processing/CC_112_3D_Rendering/matrix.pde#L50
+    //Why? becouse i do not know how multiplication matricies work! :P
+    float[][] vecToMatrix(fVector3 v) {
+        float[][] m = new float[3][1];
+        m[0][0] = (float) v.x;
+        m[1][0] = (float) v.y;
+        m[2][0] = (float) v.z;
+        return m;
+      }
+
+    fVector3 matrixToVec(float[][] m) {
+        fVector3 v = new fVector3(0,0,0);
+        v.x = m[0][0];
+        v.y = m[1][0];
+        if (m.length > 2) {
+          v.z = m[2][0];
+        }
+        return v;
+      }
+    fVector3 matmul(float[][] a, fVector3 b) {
+        float[][] m = vecToMatrix(b);
+        return matrixToVec(matmul(a,m));
+    }
+    float[][] matmul(float[][] a, float[][] b) {
+        int colsA = a[0].length;
+        int rowsA = a.length;
+        int colsB = b[0].length;
+        int rowsB = b.length;
+
+        if (colsA != rowsB) {
+          throw new Error("Columns of A must match rows of B");
+        }
+
+        float result[][] = new float[rowsA][colsB];
+
+        for (int i = 0; i < rowsA; i++) {
+          for (int j = 0; j < colsB; j++) {
+            float sum = 0;
+            for (int k = 0; k < colsA; k++) {
+              sum += a[i][k] * b[k][j];
+            }
+            result[i][j] = sum;
+          }
+        }
+        return result;
     }
 }
 /*class driver{
