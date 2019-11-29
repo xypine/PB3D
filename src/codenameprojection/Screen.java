@@ -66,15 +66,18 @@ class renderer extends JPanel{
                 g.drawLine(x1, y1, x2, y2);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         g.setColor(Color.green);
         for(int i : new Range(points.size())){
-            dVector pos = points.get(i);
-            dVector s = points_sizes.get(i);
-            int xOff = s.intX() / 2;
-            int yOff = s.intY() / 2;
-            g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+            try {
+                dVector pos = points.get(i);
+                dVector s = points_sizes.get(i);
+                int xOff = s.intX() / 2;
+                int yOff = s.intY() / 2;
+                g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+            } catch (Exception e) {
+            }
         }
         
     }
