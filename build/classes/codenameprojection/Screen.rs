@@ -1,2 +1,0 @@
-codenameprojection.renderer
-codenameprojection.Screen

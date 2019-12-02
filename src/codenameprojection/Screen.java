@@ -12,6 +12,7 @@ import JFUtils.Range;
 import JFUtils.InputActivated;
 import JFUtils.dVector;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  *
@@ -66,15 +67,25 @@ class renderer extends JPanel{
                 g.drawLine(x1, y1, x2, y2);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
-        g.setColor(Color.green);
-        for(int i : new Range(points.size())){
-            dVector pos = points.get(i);
-            dVector s = points_sizes.get(i);
-            int xOff = s.intX() / 2;
-            int yOff = s.intY() / 2;
-            g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+        try {
+            g.setColor(Color.green);
+            int value = (int) (new Random().nextInt(255) / 2) * 4;
+            
+            
+            for (int i : new Range(points.size())) {
+                int value2 = new Random().nextInt(255) / 2;
+                int value3 = new Random().nextInt(255) / 2;
+                //g.setColor(new Color(value2, value, value3));
+                
+                dVector pos = points.get(i);
+                dVector s = points_sizes.get(i);
+                int xOff = s.intX() / 2;
+                int yOff = s.intY() / 2;
+                g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+            }
+        } catch (Exception e) {
         }
         
     }

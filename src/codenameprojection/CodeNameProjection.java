@@ -7,6 +7,7 @@ package codenameprojection;
 
 import JFUtils.Input;
 import JFUtils.InputActivated;
+import JFUtils.Range;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +20,7 @@ import JFUtils.fVector3;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.21;
+    public static double minUtilsVer = 2.3;
 
     /**
      * @param args the command line arguments
@@ -37,6 +38,8 @@ public class CodeNameProjection {
     
 }
 class driver{
+    boolean rotation = false;
+    
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
     private dVector3 screenPosition = new dVector3( 0, 0, 7 );
@@ -54,7 +57,7 @@ class driver{
     
     
     
-    public void addCube(dVector3 center, double size){
+    public void addCube(dVector3 center, double size, boolean Addlines){
         double s = size;
         dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
         dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
@@ -72,20 +75,25 @@ class driver{
         points.add(uld);
         points.add(uru);
         points.add(urd);
-        lines.add(new Integer[]{dlu.identifier, dld.identifier});
-        lines.add(new Integer[]{dlu.identifier, dru.identifier});
-        lines.add(new Integer[]{dld.identifier, drd.identifier});
-        lines.add(new Integer[]{dru.identifier, drd.identifier});
-        
-        lines.add(new Integer[]{ulu.identifier, uld.identifier});
-        lines.add(new Integer[]{ulu.identifier, uru.identifier});
-        lines.add(new Integer[]{uld.identifier, urd.identifier});
-        lines.add(new Integer[]{uru.identifier, urd.identifier});
-        
-        lines.add(new Integer[]{dlu.identifier, ulu.identifier});
-        lines.add(new Integer[]{dld.identifier, uld.identifier});
-        lines.add(new Integer[]{dru.identifier, uru.identifier});
-        lines.add(new Integer[]{drd.identifier, urd.identifier});
+        if (Addlines) {
+            lines.add(new Integer[]{dlu.identifier, dld.identifier});
+            lines.add(new Integer[]{dlu.identifier, dru.identifier});
+            lines.add(new Integer[]{dld.identifier, drd.identifier});
+            lines.add(new Integer[]{dru.identifier, drd.identifier});
+            
+            lines.add(new Integer[]{ulu.identifier, uld.identifier});
+            lines.add(new Integer[]{ulu.identifier, uru.identifier});
+            lines.add(new Integer[]{uld.identifier, urd.identifier});
+            lines.add(new Integer[]{uru.identifier, urd.identifier});
+            
+            lines.add(new Integer[]{dlu.identifier, ulu.identifier});
+            lines.add(new Integer[]{dld.identifier, uld.identifier});
+            lines.add(new Integer[]{dru.identifier, uru.identifier});
+            lines.add(new Integer[]{drd.identifier, urd.identifier});
+        }
+    }
+    public void addCube(dVector3 center, double size){
+        addCube(center, size, true);
     }
     LinkedList<dVector3> points;
     LinkedList<Integer[]> lines;
@@ -94,18 +102,27 @@ class driver{
         InputActivated refI = new InputActivated();
         Screen s = new Screen();
         Input inp = new Input(refI);
-        inp.verbodose = true;
+        inp.verbodose = false;
         s.addKeyListener(inp);
         s.addMouseListener(inp);
         points = new LinkedList<>();
         lines = new LinkedList<>();
-        addCube(new dVector3(0, 0, 0), 1);
+        //addCube(new dVector3(0, 0, 0), 0.5);
+        int r = 8;
+        for (int i : new Range(r)) {
+            for (int j : new Range(r)) {
+                for (int z : new Range(r)) {
+                    addCube(new dVector3(i, j, z), 0.5, false);
+                }
+            }
+        }
         
-        double angleK = 0;
-        double angleM = 0;
+        
+        double angleY = 0;
+        double angleYM = 0;
         double angleX = 0;
         double angleXM = 0;
-        int sleep = 1;
+        int sleep = 0;
         while(true){
             //Init
             LinkedList<dVector> set = new LinkedList<>();
@@ -146,35 +163,62 @@ class driver{
             }
             //j
             if(inp.keys[74] == true){
-                angleXM = angleXM + 0.0001D;
+                angleXM = angleXM - 0.0004D * 0.1;
             }
             //l
             if(inp.keys[76] == true){
-                angleXM = angleXM - 0.0001D;
+                angleXM = angleXM + 0.0004D * 0.1;
             }
             //i
             if(inp.keys[73] == true){
-                angleM = angleM + 0.0001D;
+                angleYM = angleYM + 0.0004D * 0.1;
             }
             //k
             if(inp.keys[75] == true){
-                angleM = angleM - 0.0001D;
+                angleYM = angleYM - 0.0004D * 0.1;
             }
             if(inp.keys[86] == true){
                 inp.verbodose = !inp.verbodose;
             }
+            //R
+            if(inp.keys[82] == true){
+                rotation = !rotation;
+            }
+            //1
+            if(inp.keys[49] == true){
+                rotation = false;
+            }
+            //2
+            if(inp.keys[50] == true){
+                rotation = true;
+            }
             else{
             }
             
-            screenPosition = screenPosition_org;
-            screenPosition = matmul(RX((float) angleM), screenPosition_org.toFVector3()).toDVector3();
+            screenPosition = screenPosition_org.clone();
+            if(rotation){
+                screenPosition.z = screenPosition.z - screenPosition.x;
+                screenPosition = matmul(RX((float) angleY), screenPosition_org.toFVector3()).toDVector3();
+                screenPosition = matmul(RY((float) angleX), screenPosition.toFVector3()).toDVector3();
+            }
             //screenPosition.z = screenPosition_org.z;
             //Calc
             for(dVector3 i : points){
+                if(i.z > screenPosition.z){
+                    //continue;
+                }
                 //System.out.println("Original[" +i.hashCode() + "] :" + i);
+                fVector3 rotated = i.toFVector3();
                 
-                fVector3 rotated = matmul(RX((float) angleK ), i.toFVector3());
-                rotated = matmul(RY((float) angleX ), rotated);
+                if(rotation){
+                    
+                }
+                
+                if(rotation){
+                    rotated = matmul(RX((float) -angleY ), rotated);
+                    rotated.z = rotated.z - rotated.x;
+                    rotated = matmul(RY((float) -angleX ), rotated);
+                }
                 /*rotated = matmul(RX((float) 0 ), rotated);
                 rotated = matmul(RX((float) 0 ), rotated);
                 rotated = matmul(RX((float) 0 ), rotated);*/
@@ -225,8 +269,8 @@ class driver{
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             
-            angleM = angleM * 0.95D;
-            angleK = (float) (angleK + angleM);
+            angleYM = angleYM * 0.95D;
+            angleY = (float) (angleY + angleYM);
             angleXM = angleXM * 0.95D;
             angleX = (float) (angleX + angleXM);
             try {
