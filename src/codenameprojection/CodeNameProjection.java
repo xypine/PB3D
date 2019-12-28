@@ -129,6 +129,7 @@ class driver{
         try {
             //addCube(new dVector3(0, 0, 0), 0.5);
             points = new modelParser().parse();
+            lines = new modelParser().parseLines(points);
         } catch (IOException ex) {
             int r = 8;
             int r2 = 8;

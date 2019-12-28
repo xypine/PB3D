@@ -69,25 +69,26 @@ class renderer extends JPanel{
         } catch (Exception e) {
             //e.printStackTrace();
         }
-        try {
             g.setColor(Color.green);
             int value = (int) (new Random().nextInt(255) / 2) * 4;
             
             
             for (int i : new Range(points.size())) {
-                int value2 = new Random().nextInt(255) / 2;
-                int value3 = new Random().nextInt(255) / 2;
-                //g.setColor(new Color(value2, value, value3));
-                
-                dVector pos = points.get(i);
-                dVector s = points_sizes.get(i);
-                int xOff = s.intX() / 2;
-                int yOff = s.intY() / 2;
-                g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                try {
+                    int value2 = new Random().nextInt(255) / 2;
+                    int value3 = new Random().nextInt(255) / 2;
+                    //g.setColor(new Color(value2, value, value3));
+                    
+                    dVector pos = points.get(i);
+                    dVector s = points_sizes.get(i);
+                    int xOff = s.intX() / 2;
+                    int yOff = s.intY() / 2;
+                    g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                } catch (Exception e) {
+                }
             }
-        } catch (Exception e) {
-        }
-        
+        g.setColor(Color.white);
+        g.drawString("" + points.size() + " Points, " + lines.size() + " Lines drawn", w/10, h/10);
     }
     public void updatePoints(LinkedList<dVector> newSet, LinkedList<dVector> newSizes){
         this.points = newSet;
