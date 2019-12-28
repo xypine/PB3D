@@ -44,6 +44,7 @@ class renderer extends JPanel{
     private LinkedList<Integer[]> lines = new LinkedList<>();
     public int w;
     public int h;
+    public int drawnLines;
     @Override
     public void paintComponent(Graphics g) {
         Dimension currentSize = getParent().getSize();
@@ -58,6 +59,7 @@ class renderer extends JPanel{
         
             g.setColor(Color.red);
             HashMap<Integer, dVector> a = getIDMap();
+            drawnLines = 0;
             for (int i : new Range(lines.size())) {
                 try {
                     int x1 = a.get(lines.get(i)[0]).intX();
@@ -65,6 +67,7 @@ class renderer extends JPanel{
                     int y1 = a.get(lines.get(i)[0]).intY();;
                     int y2 = a.get(lines.get(i)[1]).intY();;
                     g.drawLine(x1, y1, x2, y2);
+                    drawnLines++;
                 } catch (Exception e) {
                 }
             }
@@ -87,7 +90,7 @@ class renderer extends JPanel{
                 }
             }
         g.setColor(Color.white);
-        g.drawString("" + points.size() + " Points, " + lines.size() + " Lines drawn", w/10, h/10);
+        g.drawString("" + points.size() + " Points, " + drawnLines + " Lines drawn", w/10, h/10);
     }
     public void updatePoints(LinkedList<dVector> newSet, LinkedList<dVector> newSizes){
         this.points = newSet;
