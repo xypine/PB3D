@@ -56,19 +56,18 @@ class renderer extends JPanel{
         g.setColor(Color.black);
         g.fillRect(0, 0, w, h);
         
-        try {
             g.setColor(Color.red);
             HashMap<Integer, dVector> a = getIDMap();
             for (int i : new Range(lines.size())) {
-                int x1 = a.get(lines.get(i)[0]).intX();
-                int x2 = a.get(lines.get(i)[1]).intX();;
-                int y1 = a.get(lines.get(i)[0]).intY();;
-                int y2 = a.get(lines.get(i)[1]).intY();;
-                g.drawLine(x1, y1, x2, y2);
+                try {
+                    int x1 = a.get(lines.get(i)[0]).intX();
+                    int x2 = a.get(lines.get(i)[1]).intX();;
+                    int y1 = a.get(lines.get(i)[0]).intY();;
+                    int y2 = a.get(lines.get(i)[1]).intY();;
+                    g.drawLine(x1, y1, x2, y2);
+                } catch (Exception e) {
+                }
             }
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
             g.setColor(Color.green);
             int value = (int) (new Random().nextInt(255) / 2) * 4;
             

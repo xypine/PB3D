@@ -57,7 +57,7 @@ public class CodeNameProjection {
     
 }
 class driver{
-    boolean rotation = false;
+    boolean rotation = true;
     
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
@@ -239,8 +239,8 @@ class driver{
             screenPosition = screenPosition_org.clone();
             if(rotation){
                 //screenPosition.z = screenPosition.z - screenPosition.x;
-                screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
-                screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
+                //screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
+                //screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
             }
             //screenPosition.z = screenPosition_org.z;
             //Calc
