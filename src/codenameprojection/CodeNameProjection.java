@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import JFUtils.dVector;
 import JFUtils.dVector3;
 import JFUtils.fVector3;
+import java.io.IOException;
 
 /**
  *
@@ -125,15 +126,22 @@ class driver{
         s.addMouseListener(inp);
         points = new LinkedList<>();
         lines = new LinkedList<>();
-        //addCube(new dVector3(0, 0, 0), 0.5);
-        int r = 8;
-        for (int i : new Range(r)) {
-            for (int j : new Range(r)) {
-                for (int z : new Range(r)) {
-                    addCube(new dVector3(i, j, z), 0.5, false);
+        try {
+            //addCube(new dVector3(0, 0, 0), 0.5);
+            points = new modelParser().parse();
+        } catch (IOException ex) {
+            int r = 8;
+            int r2 = 8;
+            int r3 = 1;
+            for (int i : new Range(r)) {
+                for (int j : new Range(r2)) {
+                    for (int z : new Range(r3)) {
+                        addCube(new dVector3(i, j, z), 0.5, true);
+                    }
                 }
             }
         }
+        
         
         
         double angleY = 0;
@@ -157,7 +165,8 @@ class driver{
             yScreenCenter = s.r.h / 2;
             
             //Check input   -0.025D*0.05
-            double factor = -0.025D*0.05;
+            double factor_rotation = -0.025D*0.05;
+            double factor = -0.025D*0.05*4;
             if(inp.keys[68] == true){
                 screenPosition_org.x += factor;
             }
@@ -178,35 +187,35 @@ class driver{
             }
             //c
             if(inp.keys[67] == true){
-                viewAngle.z += factor*15;
+                viewAngle.z += factor_rotation*15;
             }
             //z
             if(inp.keys[90] == true){
-                viewAngle.z -= factor*15;
+                viewAngle.z -= factor_rotation*15;
             }
             //space
             if(inp.keys[32] == true){
-                viewAngle.y += factor*15;
+                //viewAngle.y += factor*15;
             }
             //z
             if(inp.keys[88] == true){
-                viewAngle.y -= factor*15;
+                //viewAngle.y -= factor*15;
             }
             //j
             if(inp.keys[74] == true){
-                angleXM = angleXM - 0.0004D * 0.1;
+                angleXM = angleXM - 0.0004D * 0.3;
             }
             //l
             if(inp.keys[76] == true){
-                angleXM = angleXM + 0.0004D * 0.1;
+                angleXM = angleXM + 0.0004D * 0.3;
             }
             //i
             if(inp.keys[73] == true){
-                angleYM = angleYM + 0.0004D * 0.1;
+                angleYM = angleYM + 0.0004D * 0.3;
             }
             //k
             if(inp.keys[75] == true){
-                angleYM = angleYM - 0.0004D * 0.1;
+                angleYM = angleYM - 0.0004D * 0.3;
             }
             if(inp.keys[86] == true){
                 inp.verbodose = !inp.verbodose;
