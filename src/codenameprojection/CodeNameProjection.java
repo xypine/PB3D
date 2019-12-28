@@ -228,9 +228,9 @@ class driver{
             
             screenPosition = screenPosition_org.clone();
             if(rotation){
-                screenPosition.z = screenPosition.z - screenPosition.x;
-                screenPosition = matmul(RX((float) angleY), screenPosition_org.toFVector3()).toDVector3();
-                screenPosition = matmul(RY((float) angleX), screenPosition.toFVector3()).toDVector3();
+                //screenPosition.z = screenPosition.z - screenPosition.x;
+                screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
+                screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
             }
             //screenPosition.z = screenPosition_org.z;
             //Calc
@@ -247,8 +247,8 @@ class driver{
                 
                 if(rotation){
                     rotated = matmul(RX((float) -angleY ), rotated);
-                    rotated.z = rotated.z - rotated.x;
-                    rotated = matmul(RY((float) -angleX ), rotated);
+                    //rotated.z = rotated.z - rotated.x;
+                    rotated = matmul(RY((float) angleX ), rotated);
                 }
                 /*rotated = matmul(RX((float) 0 ), rotated);
                 rotated = matmul(RX((float) 0 ), rotated);
@@ -364,7 +364,7 @@ class driver{
         return new float[][]{
             new float[]{1, 0, 0},
             new float[]{0, c, ns},
-            new float[]{1, s, c}
+            new float[]{0, s, c}
         };
     }
     public static float[][] RY (float o){
