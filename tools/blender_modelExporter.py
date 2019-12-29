@@ -23,33 +23,38 @@ plain_verts = [vert.to_tuple() for vert in verts]
 #print(plain_verts)
 st = ""
 st2 = ""
+print("Reading vertices...",end="")
 for i in verts:
     for c in i:
-        print(int(c*100),end=" ")
+        #print(int(c*100),end=" ")
         st = st + str(int(c*100)) + " "
-    print()
+    #print()
     st = st + "\n"
+print("DONE")
+print("Reading edges...",end="")
 for i in lines:
-    print("LINE: " + str(i))
+    #print("LINE: " + str(i))
     p1 = i[0]
     p2 = i[1]
-    print(str(obj.data.vertices[p1].co) + ", " + str(obj.data.vertices[p2].co))
-    print(int(obj.data.vertices[p1].co[0]*100),end=" ")
-    print(int(obj.data.vertices[p1].co[1]*100),end=" ")
-    print(int(obj.data.vertices[p1].co[2]*100),end=" ")
-    print(int(obj.data.vertices[p2].co[0]*100),end=" ")
-    print(int(obj.data.vertices[p2].co[1]*100),end=" ")
-    print(int(obj.data.vertices[p2].co[2]*100),end=" ")
+    #print(str(obj.data.vertices[p1].co) + ", " + str(obj.data.vertices[p2].co))
+    #print(int(obj.data.vertices[p1].co[0]*100),end=" ")
+    #print(int(obj.data.vertices[p1].co[1]*100),end=" ")
+    #print(int(obj.data.vertices[p1].co[2]*100),end=" ")
+    #print(int(obj.data.vertices[p2].co[0]*100),end=" ")
+    #print(int(obj.data.vertices[p2].co[1]*100),end=" ")
+    #print(int(obj.data.vertices[p2].co[2]*100),end=" ")
     st2 = st2 + str(int(obj.data.vertices[p1].co[0]*100)) + " "
     st2 = st2 + str(int(obj.data.vertices[p1].co[1]*100)) + " "
     st2 = st2 + str(int(obj.data.vertices[p1].co[2]*100)) + " "
     st2 = st2 + str(int(obj.data.vertices[p2].co[0]*100)) + " "
     st2 = st2 + str(int(obj.data.vertices[p2].co[1]*100)) + " "
     st2 = st2 + str(int(obj.data.vertices[p2].co[2]*100)) + " "
-    print()
+    #print()
     st2 = st2 + "\n"
+print("DONE")
+print("Saving...")
 f = bpy.data.texts.new('model.txt')
 f.from_string(st)
 f = bpy.data.texts.new('model_lines.txt')
 f.from_string(st2)
-print("Everything is done, have a good day!")
+print("Everything done, have a good day.")
