@@ -26,13 +26,17 @@ package codenameprojection;
 import JFUtils.Input;
 import JFUtils.InputActivated;
 import JFUtils.Range;
+import JFUtils.point.Point2D;
+import JFUtils.point.Point3D;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import JFUtils.dVector;
-import JFUtils.dVector3;
-import JFUtils.fVector3;
+import JFUtils.vector.dVector2;
+import JFUtils.vector.dVector3;
+import JFUtils.point.Point3F;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  *
@@ -57,14 +61,17 @@ public class CodeNameProjection {
     
 }
 class driver{
+    Duration deltaTime = Duration.ZERO;
+    Instant beginTime = Instant.now();
+    
     boolean rotation = true;
     
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
-    private dVector3 screenPosition = new dVector3( 0, 0, 7 );
-    private dVector3 screenPosition_org = screenPosition.clone();
+    private Point3D screenPosition = new dVector3( 0, 0, 7 );
+    private Point3D screenPosition_org = screenPosition.clone();
     private dVector3 viewAngle = new dVector3( 0, 90, 90 );
-    private dVector3 viewAngle_org = viewAngle.clone();
+    private Point3D viewAngle_org = viewAngle.clone();
     
     private static final double DEG_TO_RAD = 0.017453292;
     private double modelScale = 10;
@@ -150,12 +157,16 @@ class driver{
         double angleX = 0;
         double angleXM = 0;
         int sleep = 0;
-        while(true){
+        boolean running = true;
+        
+        
+        while(running){
+            beginTime = Instant.now();
             //Init
-            LinkedList<dVector> set = new LinkedList<>();
-            LinkedList<dVector> sizes = new LinkedList<>();
-            LinkedList<dVector[]> lines_set = new LinkedList<>();
-            LinkedList<dVector[]> lines_sizes = new LinkedList<>();
+            LinkedList<Point2D> set = new LinkedList<>();
+            LinkedList<Point2D> sizes = new LinkedList<>();
+            LinkedList<Point2D[]> lines_set = new LinkedList<>();
+            LinkedList<Point2D[]> lines_sizes = new LinkedList<>();
             
             CT = Math.cos( DEG_TO_RAD * viewAngle.x );//CT=0;
             ST = Math.sin( DEG_TO_RAD * viewAngle.x );//ST=0;
@@ -249,7 +260,7 @@ class driver{
                     //continue;
                 }
                 //System.out.println("Original[" +i.hashCode() + "] :" + i);
-                fVector3 rotated = i.toFVector3();
+                Point3F rotated = i.toFVector3();
                 
                 if(rotation){
                     
@@ -285,7 +296,7 @@ class driver{
                 }*/
                 //projected = fVector3.multiply(projected, new fVector3(20, 20, 20));
                 //projected = fVector3.add(projected, new fVector3(s.r.w/2, s.r.h/2, 0));
-                fVector3 projected = new fVector3(0, 0, 0);
+                Point3F projected = new Point3F(0, 0, 0);
                 /*float[][] projection = {
                 {z, 0, 0},
                 {0, z, 0}
@@ -295,7 +306,7 @@ class driver{
                 /*projected = matmul(projection, rotated).toDVector3();
                 projected = dVector3.multiply(projected, new dVector3(200, 200, 200));
                 projected = dVector3.add(projected, new dVector3(200, 200, 20));*/
-                dVector point2D = new dVector(projected.x, projected.y);
+                Point2D point2D = new Point2D(projected.x, projected.y);
                 point2D.identifier = i.identifier;
                 int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
                 if(size < 0){
@@ -303,7 +314,7 @@ class driver{
                 }
                 //System.out.println("Projected: " + point2);
                 if(rotated.z < screenPosition.z){
-                    sizes.add(new dVector(size, size));
+                    sizes.add(new Point2D(size, size));
                     set.add(point2D);
                 }
             }
@@ -328,6 +339,9 @@ class driver{
             angleY = (float) (angleY + angleYM);
             angleXM = angleXM * 0.95D;
             angleX = (float) (angleX + angleXM);
+            deltaTime = Duration.between(beginTime, Instant.now());
+            s.r.nano = deltaTime.getNano();
+            //System.out.println(deltaTime.getNano() + " nano passed");
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException ex) {
@@ -340,7 +354,7 @@ class driver{
         }
     }
     
-    public void projectPoint( fVector3 input, fVector3 output )
+    public void projectPoint( Point3F input, Point3F output )
     {
         float sx = (float) screenPosition.x;
         float sy = (float) screenPosition.y;
@@ -402,7 +416,7 @@ class driver{
     
     //The following is copied (edited to suit JFTools) from Daniel Shiffmans code, at: https://github.com/CodingTrain/website/blob/master/CodingChallenges/CC_112_3D_Rendering/Processing/CC_112_3D_Rendering/matrix.pde#L50
     //Why? becouse i do not know how multiplication matricies work! :P
-    float[][] vecToMatrix(fVector3 v) {
+    float[][] vecToMatrix(Point3F v) {
         float[][] m = new float[3][1];
         m[0][0] = (float) v.x;
         m[1][0] = (float) v.y;
@@ -410,8 +424,8 @@ class driver{
         return m;
       }
 
-    fVector3 matrixToVec(float[][] m) {
-        fVector3 v = new fVector3(0,0,0);
+    Point3F matrixToVec(float[][] m) {
+        Point3F v = new Point3F(0,0,0);
         v.x = m[0][0];
         v.y = m[1][0];
         if (m.length > 2) {
@@ -419,7 +433,7 @@ class driver{
         }
         return v;
       }
-    fVector3 matmul(float[][] a, fVector3 b) {
+    Point3F matmul(float[][] a, Point3F b) {
         float[][] m = vecToMatrix(b);
         return matrixToVec(matmul(a,m));
     }

@@ -9,10 +9,9 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import JFUtils.Range;
-import JFUtils.InputActivated;
-import JFUtils.dVector;
+import JFUtils.point.Point2D;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.Objects;
 
 /**
  *
@@ -39,8 +38,9 @@ public class Screen extends JFrame{
     }
 }
 class renderer extends JPanel{
-    private LinkedList<dVector> points = new LinkedList<>();
-    private LinkedList<dVector> points_sizes = new LinkedList<>();
+    public float nano = 0;
+    private LinkedList<Point2D> points = new LinkedList<>();
+    private LinkedList<Point2D> points_sizes = new LinkedList<>();
     private LinkedList<Integer[]> lines = new LinkedList<>();
     public int w;
     public int h;
@@ -58,41 +58,46 @@ class renderer extends JPanel{
         g.fillRect(0, 0, w, h);
         
             g.setColor(Color.red);
-            HashMap<Integer, dVector> a = getIDMap();
+            HashMap<Integer, Point2D> a = getIDMap();
             drawnLines = 0;
             for (int i : new Range(lines.size())) {
                 try {
-                    int x1 = a.get(lines.get(i)[0]).intX();
-                    int x2 = a.get(lines.get(i)[1]).intX();;
-                    int y1 = a.get(lines.get(i)[0]).intY();;
-                    int y2 = a.get(lines.get(i)[1]).intY();;
-                    g.drawLine(x1, y1, x2, y2);
-                    drawnLines++;
+                    if(!(Objects.isNull(a.get(lines.get(i)[0]))) && !(Objects.isNull(a.get(lines.get(i)[1])))){
+                        int x1 = a.get(lines.get(i)[0]).intX();
+                        int x2 = a.get(lines.get(i)[1]).intX();
+                        int y1 = a.get(lines.get(i)[0]).intY();
+                        int y2 = a.get(lines.get(i)[1]).intY();
+                        g.drawLine(x1, y1, x2, y2);
+                        drawnLines++;
+                    }
                 } catch (Exception e) {
+                    throw e;
                 }
             }
             g.setColor(Color.green);
-            int value = (int) (new Random().nextInt(255) / 2) * 4;
+            //int value = (int) (new Random().nextInt(255) / 2) * 4;
             
             
             for (int i : new Range(points.size())) {
                 try {
-                    int value2 = new Random().nextInt(255) / 2;
-                    int value3 = new Random().nextInt(255) / 2;
+                    //int value2 = new Random().nextInt(255) / 2;
+                    //int value3 = new Random().nextInt(255) / 2;
                     //g.setColor(new Color(value2, value, value3));
                     
-                    dVector pos = points.get(i);
-                    dVector s = points_sizes.get(i);
+                    Point2D pos = points.get(i);
+                    Point2D s = points_sizes.get(i);
                     int xOff = s.intX() / 2;
                     int yOff = s.intY() / 2;
                     g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                 } catch (Exception e) {
+                    throw e;
                 }
             }
         g.setColor(Color.white);
         g.drawString("" + points.size() + " Points, " + drawnLines + " Lines drawn", w/10, h/10);
+        g.drawString("" + nano + " nanoseconds passed", w - w/5, h/10);
     }
-    public void updatePoints(LinkedList<dVector> newSet, LinkedList<dVector> newSizes){
+    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes){
         this.points = newSet;
         this.points_sizes = newSizes;
     }
@@ -100,8 +105,8 @@ class renderer extends JPanel{
         this.lines = newSet;
     }
     private HashMap getIDMap(){
-        HashMap<Integer, dVector> out = new HashMap<Integer, dVector>();
-        for(dVector i : points){
+        HashMap<Integer, Point2D> out = new HashMap<Integer, Point2D>();
+        for(Point2D i : points){
             out.put(i.identifier, i);
         }
         return out;
