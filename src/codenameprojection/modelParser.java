@@ -6,7 +6,7 @@
 
 package codenameprojection;
 
-import JFUtils.dVector3;
+import JFUtils.vector.dVector3;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -45,7 +45,7 @@ public class modelParser {
                              curr = curr + i;
                          }
                      }
-                     out.add(new dVector3(coord[0], coord[1], coord[2]));
+                     out.add(new dVector3(coord[0]/10, coord[1]/10, coord[2]/10));
                  } catch (IOException | NumberFormatException iOException) {
                  }
                     catch(Exception e){
@@ -93,7 +93,7 @@ public class modelParser {
              }
 
              System.out.println(line);
-        System.out.println(out.size() + " points loaded and parsed succesfully!");
+        System.out.println(out.size() + " lines loaded and parsed succesfully!");
         return out;
     }
     public static void main(String[] args) {
