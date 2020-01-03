@@ -26,6 +26,7 @@ package codenameprojection;
 import JFUtils.Input;
 import JFUtils.InputActivated;
 import JFUtils.Range;
+import JFUtils.graphing.Graph;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import java.util.LinkedList;
@@ -34,16 +35,18 @@ import java.util.logging.Logger;
 import JFUtils.vector.dVector2;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
+import PBEngine.Supervisor;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 
 /**
  *
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.3;
+    public static double minUtilsVer = 2.56;
 
     /**
      * @param args the command line arguments
@@ -52,11 +55,15 @@ public class CodeNameProjection {
     
     public static void main(String[] args) {
         if(JFUtils.versionCheck.version != minUtilsVer){
-            throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer);
+            throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
         }
 
     
         new driver();
+        HashMap<String, String> param = new HashMap<>();
+        param.put("nowindows", "");
+        Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
+        supervisor.run();
     }
     
 }
@@ -159,7 +166,8 @@ class driver{
         int sleep = 0;
         boolean running = true;
         
-        
+        //Graph grapher = new Graph();
+        int tickC = 0;
         while(running){
             beginTime = Instant.now();
             //Init
@@ -340,7 +348,18 @@ class driver{
             angleXM = angleXM * 0.95D;
             angleX = (float) (angleX + angleXM);
             deltaTime = Duration.between(beginTime, Instant.now());
-            s.r.nano = deltaTime.getNano();
+            s.r.nano = JFUtils.math.Conversions.toCPNS(deltaTime.getNano());
+            int value = (int) (JFUtils.math.Conversions.toFPS(deltaTime.getNano()));
+            if(value < 0) {
+                value = 0;
+            }
+            //System.out.println(value);
+            try {
+                //grapher.update(value, tickC);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            tickC++;
             //System.out.println(deltaTime.getNano() + " nano passed");
             try {
                 Thread.sleep(sleep);
