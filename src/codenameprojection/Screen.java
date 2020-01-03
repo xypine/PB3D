@@ -90,12 +90,13 @@ class renderer extends JPanel{
                     int yOff = s.intY() / 2;
                     g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                 } catch (Exception e) {
-                    throw e;
+                    //throw e;
                 }
             }
         g.setColor(Color.white);
         g.drawString("" + points.size() + " Points, " + drawnLines + " Lines drawn", w/10, h/10);
-        g.drawString("" + nano + " nanoseconds passed", w - w/5, h/10);
+        g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
+        g.drawString("" + (int) (nano * 1000000000) + " FPS", w - w/5, h/7);
     }
     public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes){
         this.points = newSet;
