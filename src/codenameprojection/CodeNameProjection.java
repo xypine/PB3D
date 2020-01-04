@@ -36,10 +36,12 @@ import JFUtils.vector.dVector2;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
+import java.awt.Color;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  *
@@ -87,6 +89,10 @@ class driver{
     double ST = Math.sin( DEG_TO_RAD * viewAngle.x );
     double CP = Math.cos( DEG_TO_RAD * viewAngle.y );
     double SP = Math.sin( DEG_TO_RAD * viewAngle.y );
+    
+    //False: "gloabal"
+    //True: "local"
+    public boolean rotation_mode = true;
     
     
     
@@ -175,6 +181,12 @@ class driver{
             LinkedList<Point2D> sizes = new LinkedList<>();
             LinkedList<Point2D[]> lines_set = new LinkedList<>();
             LinkedList<Point2D[]> lines_sizes = new LinkedList<>();
+            LinkedList<Color> lines_color = new LinkedList<>();
+            HashMap<Integer, Float> dist = new HashMap<>();
+            lines_color = new LinkedList<>();
+            
+            HashMap<Integer, Point2D> idVSserial = s.r.getIDMap();
+            
             
             CT = Math.cos( DEG_TO_RAD * viewAngle.x );//CT=0;
             ST = Math.sin( DEG_TO_RAD * viewAngle.x );//ST=0;
@@ -184,26 +196,41 @@ class driver{
             xScreenCenter = s.r.w / 2;
             yScreenCenter = s.r.h / 2;
             
+            screenPosition = screenPosition_org.clone();
+            if(!rotation_mode){
+                screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
+                screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
+            }
+            
             //Check input   -0.025D*0.05
             double factor_rotation = -0.025D*0.05;
             double factor = -0.025D*0.05*4;
+            double boost = 1;
+            //space
+            if(inp.keys[32] == true){
+                //viewAngle.y += factor*15;
+                factor = factor * 7;
+                factor_rotation = factor_rotation * 15;
+                boost = 5;
+                
+            }
             if(inp.keys[68] == true){
-                screenPosition_org.x += factor;
+                screenPosition_org.x = screenPosition_org.x + factor;
             }
             if(inp.keys[65] == true){
-                screenPosition_org.x -= factor;
+                screenPosition_org.x = screenPosition_org.x - factor;
             }
             if(inp.keys[87] == true){
-                screenPosition_org.y += factor;
+                screenPosition_org.y = screenPosition_org.y + factor;
             }
             if(inp.keys[83] == true){
-                screenPosition_org.y -= factor;
+                screenPosition_org.y = screenPosition_org.y - factor;
             }
             if(inp.keys[81] == true){
-                screenPosition_org.z -= factor*5;
+                screenPosition_org.z = screenPosition_org.z - factor*5;
             }
             if(inp.keys[69] == true){
-                screenPosition_org.z += factor*5;
+                screenPosition_org.z = screenPosition_org.z + factor*5;
             }
             //c
             if(inp.keys[67] == true){
@@ -213,29 +240,26 @@ class driver{
             if(inp.keys[90] == true){
                 viewAngle.z -= factor_rotation*15;
             }
-            //space
-            if(inp.keys[32] == true){
-                //viewAngle.y += factor*15;
-            }
+            
             //z
             if(inp.keys[88] == true){
                 //viewAngle.y -= factor*15;
             }
             //j
             if(inp.keys[74] == true){
-                angleXM = angleXM - 0.0004D * 0.3;
+                angleXM = angleXM - 0.0004D * 0.3 * boost;
             }
             //l
             if(inp.keys[76] == true){
-                angleXM = angleXM + 0.0004D * 0.3;
+                angleXM = angleXM + 0.0004D * 0.3 * boost;
             }
             //i
             if(inp.keys[73] == true){
-                angleYM = angleYM + 0.0004D * 0.3;
+                angleYM = angleYM + 0.0004D * 0.3 * boost;
             }
             //k
             if(inp.keys[75] == true){
-                angleYM = angleYM - 0.0004D * 0.3;
+                angleYM = angleYM - 0.0004D * 0.3 * boost;
             }
             if(inp.keys[86] == true){
                 inp.verbodose = !inp.verbodose;
@@ -246,21 +270,16 @@ class driver{
             }
             //1
             if(inp.keys[49] == true){
-                rotation = false;
+                rotation_mode = false;
             }
             //2
             if(inp.keys[50] == true){
-                rotation = true;
+                rotation_mode = true;
             }
             else{
             }
+            s.r.speed = (float) factor;
             
-            screenPosition = screenPosition_org.clone();
-            if(rotation){
-                //screenPosition.z = screenPosition.z - screenPosition.x;
-                //screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
-                //screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
-            }
             //screenPosition.z = screenPosition_org.z;
             //Calc
             for(dVector3 i : points){
@@ -317,6 +336,8 @@ class driver{
                 Point2D point2D = new Point2D(projected.x, projected.y);
                 point2D.identifier = i.identifier;
                 int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
+                float distP = (float) (screenPosition.z - rotated.z);
+                dist.put(i.identifier, distP);
                 if(size < 0){
                     size = 0;
                 }
@@ -337,9 +358,36 @@ class driver{
             e.printStackTrace();
             }
             }*/
+            
+            for(Integer[] line : lines){
+                Point2D point = null;
+                try {
+                    point = idVSserial.get(line[0]);
+                } catch (Exception e) {
+                    try {
+                        point = idVSserial.get(line[1]);
+                    } catch (Exception ez) {
+                        //throw ez;
+                        lines_color.add(Color.pink);
+                    }
+                }
+                
+                if(!Objects.isNull(point)){
+                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5);
+                    //System.out.println(distP);
+                    if(distP > 255){
+                        distP = 255;
+                    }
+                    if(distP < 0){
+                        distP = 0;
+                    }
+                    lines_color.add(new Color(distP, distP, distP));
+                }
+            }
+            
             //Rendering
             s.r.updatePoints(set, sizes);
-            s.r.updateLines(lines);
+            s.r.updateLines(lines, lines_color);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             

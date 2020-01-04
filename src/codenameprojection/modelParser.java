@@ -32,7 +32,7 @@ public class modelParser {
              {
                     try {
                      String curr = "";
-                     System.out.println(line);
+                     //System.out.println(line);
                      line = in.readLine();
                      int place = 0;
                      int[] coord = new int[3];
@@ -45,7 +45,7 @@ public class modelParser {
                              curr = curr + i;
                          }
                      }
-                     out.add(new dVector3(coord[0]/10, coord[1]/10, coord[2]/10));
+                     out.add(new dVector3(coord[0]/100F, coord[1]/100F, coord[2]/100F));
                  } catch (IOException | NumberFormatException iOException) {
                  }
                     catch(Exception e){
@@ -68,7 +68,7 @@ public class modelParser {
              {
                     try {
                      String curr = "";
-                     System.out.println(line);
+                     //System.out.println(line);
                      line = in.readLine();
                      int place = 0;
                      int[] coord = new int[2];
