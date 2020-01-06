@@ -10,7 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import JFUtils.Range;
 import JFUtils.point.Point2D;
+import JFUtils.quickTools;
 import java.awt.Polygon;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -71,19 +73,19 @@ class renderer extends JPanel{
             
             for(int i : new Range(faces.size())){
                 try {
-                    if (!(Objects.isNull(a.get(faces.get(i)[0]))) && !(Objects.isNull(a.get(faces.get(i)[1]))) && !(Objects.isNull(a.get(faces.get(i)[2])))) {
-                        int x1 = a.get(faces.get(i)[0]).intX();
-                        int x2 = a.get(faces.get(i)[1]).intX();
-                        int x3 = a.get(faces.get(i)[2]).intX();
-                        int y1 = a.get(faces.get(i)[0]).intY();
-                        int y2 = a.get(faces.get(i)[1]).intY();
-                        int y3 = a.get(faces.get(i)[2]).intY();
+                    if (!(Objects.isNull(a.get(faces.get(i).points[0]))) && !(Objects.isNull(a.get(faces.get(i).points[1]))) && !(Objects.isNull(a.get(faces.get(i).points[2])))) {
+                        int x1 = a.get(faces.get(i).points[0]).intX();
+                        int x2 = a.get(faces.get(i).points[1]).intX();
+                        int x3 = a.get(faces.get(i).points[2]).intX();
+                        int y1 = a.get(faces.get(i).points[0]).intY();
+                        int y2 = a.get(faces.get(i).points[1]).intY();
+                        int y3 = a.get(faces.get(i).points[2]).intY();
                         
                         
                         boolean draw = true;
                         Color c = Color.blue;
                         try {
-                            c = faces_color.get(i);
+                            c = faces_color.get(faces.get(i).originalIndex);
                         } catch (Exception e) {
                             //throw e;
                             if (!drawErrors) {
@@ -187,13 +189,15 @@ class renderer extends JPanel{
         this.lines = newSet;
         this.lines_color = color;
     }
-    LinkedList<Integer[]> faces = new LinkedList<>();
+    LinkedList<face> faces = new LinkedList<>();
     LinkedList<Color> faces_color = new LinkedList<>();
     LinkedList<Float> faces_dist = new LinkedList<>();
     public void updateFaces(LinkedList<Integer[]> newSet, LinkedList<Color> color, LinkedList<Float> dist){
-        this.faces = newSet;
+        
         this.faces_color = color;
         this.faces_dist = dist;
+        this.faces = constructFaceList(newSet);
+        Collections.sort(this.faces);
     }
     public HashMap getIDMap(){
         HashMap<Integer, Point2D> out = new HashMap<Integer, Point2D>();
@@ -202,5 +206,40 @@ class renderer extends JPanel{
         }
         return out;
     }
+    LinkedList<face> constructFaceList(LinkedList<Integer[]> origin){
+        int index = 0;
+        LinkedList<face> out = new LinkedList<>();
+        for(Integer[] i : origin){
+            float z = 1;
+            try {
+                z = faces_dist.get(index);
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+            out.add(new face(index, z, i));
+            index++;
+        }
+        return out;
+    }
     public float speed = 0;
+}
+class face implements Comparable<face>{
+    public face(int ogIndex, float z, Integer[] points){
+        this.originalIndex = ogIndex;
+        this.z = z;
+        this.points = points;
+    }
+    
+    int originalIndex;
+    Integer[] points = new Integer[]{};
+    
+    public float z = (float) Integer.MAX_VALUE;
+    public Float getZ(){
+        return z;
+    }
+    @Override
+    public int compareTo(face o) {
+        return(getZ().compareTo(o.getZ()));
+    }
+    
 }

@@ -47,7 +47,7 @@ import java.util.Objects;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.56;
+    public static double minUtilsVer = 2.57;
 
     /**
      * @param args the command line arguments
@@ -392,6 +392,7 @@ class driver{
                 }
             }
             
+            LinkedList<Float> face_dists = new LinkedList<>();
             for(Integer[] face : faces){
                 Point2D point = null;
                 try {
@@ -420,6 +421,7 @@ class driver{
                         distP = 0;
                     }
                     faces_color.add(new Color(distP, distP, distP));
+                    face_dists.add((float)distP);
                     //faces_color.add(Color.pink);
                 }
             }
@@ -427,7 +429,7 @@ class driver{
             //Rendering
             s.r.updatePoints(set, sizes);
             s.r.updateLines(lines, lines_color);
-            s.r.updateFaces(faces, faces_color, new LinkedList<>());
+            s.r.updateFaces(faces, faces_color, face_dists);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             
