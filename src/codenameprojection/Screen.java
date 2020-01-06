@@ -53,7 +53,8 @@ class renderer extends JPanel{
     
     public boolean drawPoints = true;
     public boolean drawLines = true;
-    public boolean drawErrors = true;
+    public boolean drawFaces = true;
+    public boolean drawErrors = false;
     
     @Override
     public void paintComponent(Graphics g) {
@@ -71,45 +72,7 @@ class renderer extends JPanel{
             HashMap<Integer, Point2D> a = getIDMap();
             drawnFaces = 0;
             
-            for(int i : new Range(faces.size())){
-                try {
-                    if (!(Objects.isNull(a.get(faces.get(i).points[0]))) && !(Objects.isNull(a.get(faces.get(i).points[1]))) && !(Objects.isNull(a.get(faces.get(i).points[2])))) {
-                        int x1 = a.get(faces.get(i).points[0]).intX();
-                        int x2 = a.get(faces.get(i).points[1]).intX();
-                        int x3 = a.get(faces.get(i).points[2]).intX();
-                        int y1 = a.get(faces.get(i).points[0]).intY();
-                        int y2 = a.get(faces.get(i).points[1]).intY();
-                        int y3 = a.get(faces.get(i).points[2]).intY();
-                        
-                        
-                        boolean draw = true;
-                        Color c = Color.blue;
-                        try {
-                            c = faces_color.get(faces.get(i).originalIndex);
-                        } catch (Exception e) {
-                            //throw e;
-                            if (!drawErrors) {
-                                draw = false;
-                            }
-                        }
-                        g.setColor(c);
-                        
-                        //g.setColor(Color.CYAN);
-                        
-                        int xpoints[] = {x1, x2, x3};
-                        int ypoints[] = {y1, y2, y3};
-                        int npoints = 3;
-                        if (draw) {
-                            //g.fillPolygon(new Polygon(new int[]{x1, x2, x3}, new int[]{x1, x2, x3}, 3));
-                            g.fillPolygon(xpoints, ypoints, npoints);
-                            //g.drawLine(x1, y1, x2, y2);
-                            drawnFaces++;
-                        }
-                    }
-                } catch (Exception e) {
-                    throw e;
-                }
-            }
+            
             
             if (drawLines) {
             for (int i : new Range(lines.size())) {
@@ -172,6 +135,45 @@ class renderer extends JPanel{
                     g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                 } catch (Exception e) {
                     //throw e;
+                }
+            }
+        }
+            if (drawFaces) {
+            for (int i : new Range(faces.size())) {
+                try {
+                    if (!(Objects.isNull(a.get(faces.get(i).points[0]))) && !(Objects.isNull(a.get(faces.get(i).points[1]))) && !(Objects.isNull(a.get(faces.get(i).points[2])))) {
+                        int x1 = a.get(faces.get(i).points[0]).intX();
+                        int x2 = a.get(faces.get(i).points[1]).intX();
+                        int x3 = a.get(faces.get(i).points[2]).intX();
+                        int y1 = a.get(faces.get(i).points[0]).intY();
+                        int y2 = a.get(faces.get(i).points[1]).intY();
+                        int y3 = a.get(faces.get(i).points[2]).intY();
+                        
+                        boolean draw = true;
+                        Color c = Color.blue;
+                        try {
+                            c = faces_color.get(faces.get(i).originalIndex);
+                        } catch (Exception e) {
+                            //throw e;
+                            if (!drawErrors) {
+                                draw = false;
+                            }
+                        }
+                        g.setColor(c);
+
+                        //g.setColor(Color.CYAN);
+                        int xpoints[] = {x1, x2, x3};
+                        int ypoints[] = {y1, y2, y3};
+                        int npoints = 3;
+                        if (draw) {
+                            //g.fillPolygon(new Polygon(new int[]{x1, x2, x3}, new int[]{x1, x2, x3}, 3));
+                            g.fillPolygon(xpoints, ypoints, npoints);
+                            //g.drawLine(x1, y1, x2, y2);
+                            drawnFaces++;
+                        }
+                    }
+                } catch (Exception e) {
+                    throw e;
                 }
             }
         }

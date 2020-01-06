@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  * @author Jonnelafin
  */
 public class modelParser {
+    final float size = 10;
     public LinkedList<dVector3> parse() throws FileNotFoundException, IOException{
         LinkedList<dVector3> out = new LinkedList<>();
         String line;
@@ -45,7 +46,7 @@ public class modelParser {
                              curr = curr + i;
                          }
                      }
-                     out.add(new dVector3(coord[0]/100F, coord[1]/100F, coord[2]/100F));
+                     out.add(new dVector3(coord[0]/size, coord[1]/size, coord[2]/size));
                  } catch (IOException | NumberFormatException iOException) {
                  }
                     catch(Exception e){
@@ -84,6 +85,46 @@ public class modelParser {
                      out.add(new Integer[]{
                          points.get(coord[0]-1).identifier,
                          points.get(coord[1]-1).identifier
+                     });
+                 } catch (IOException | NumberFormatException iOException) {
+                 }
+                    catch(Exception e){
+                        System.out.println("Error parsing line: " + e);
+                    }
+             }
+
+             System.out.println(line);
+        System.out.println(out.size() + " lines loaded and parsed succesfully!");
+        return out;
+    }
+    public LinkedList<Integer[]> parseFaces(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
+        LinkedList<Integer[]> out = new LinkedList<>();
+        String line;
+        BufferedReader in;
+        in = new BufferedReader(new FileReader("model_faces.txt"));
+             line = in.readLine();
+
+             while(!Objects.isNull(line))
+             {
+                    try {
+                     String curr = "";
+                     //System.out.println(line);
+                     line = in.readLine();
+                     int place = 0;
+                     int[] coord = new int[3];
+                     for (char i : line.toCharArray()) {
+                         if (i == ' ') {
+                             coord[place] = Integer.parseInt(curr);
+                             place++;
+                             curr = "";
+                         } else {
+                             curr = curr + i;
+                         }
+                     }
+                     out.add(new Integer[]{
+                         points.get(coord[0]-1).identifier,
+                         points.get(coord[1]-1).identifier,
+                         points.get(coord[2]-1).identifier
                      });
                  } catch (IOException | NumberFormatException iOException) {
                  }

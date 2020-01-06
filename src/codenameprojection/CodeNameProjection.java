@@ -152,9 +152,9 @@ class driver{
         try {
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
-            throw new NullPointerException();
-            //points = new modelParser().parse();
-            //lines = new modelParser().parseLines(points);
+            points = new modelParser().parse();
+            lines = new modelParser().parseLines(points);
+            faces = new modelParser().parseFaces(points);
         } catch (Exception ex) {
             int r = 3;
             int r2 = 3;
@@ -380,7 +380,7 @@ class driver{
                 }
                 
                 if(!Objects.isNull(point)){
-                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5);
+                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5*0.5);
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -412,7 +412,7 @@ class driver{
                 }
                 
                 if(!Objects.isNull(point)){
-                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5);
+                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25);
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
