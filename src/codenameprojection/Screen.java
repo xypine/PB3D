@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import JFUtils.Range;
 import JFUtils.point.Point2D;
+import java.awt.Polygon;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -46,9 +47,11 @@ class renderer extends JPanel{
     public int w;
     public int h;
     public int drawnLines;
+    public int drawnFaces;
     
     public boolean drawPoints = true;
     public boolean drawLines = true;
+    public boolean drawErrors = true;
     
     @Override
     public void paintComponent(Graphics g) {
@@ -64,7 +67,48 @@ class renderer extends JPanel{
         
             g.setColor(Color.red);
             HashMap<Integer, Point2D> a = getIDMap();
-            drawnLines = 0;
+            drawnFaces = 0;
+            
+            for(int i : new Range(faces.size())){
+                try {
+                    if (!(Objects.isNull(a.get(faces.get(i)[0]))) && !(Objects.isNull(a.get(faces.get(i)[1]))) && !(Objects.isNull(a.get(faces.get(i)[2])))) {
+                        int x1 = a.get(faces.get(i)[0]).intX();
+                        int x2 = a.get(faces.get(i)[1]).intX();
+                        int x3 = a.get(faces.get(i)[2]).intX();
+                        int y1 = a.get(faces.get(i)[0]).intY();
+                        int y2 = a.get(faces.get(i)[1]).intY();
+                        int y3 = a.get(faces.get(i)[2]).intY();
+                        
+                        
+                        boolean draw = true;
+                        Color c = Color.blue;
+                        try {
+                            c = faces_color.get(i);
+                        } catch (Exception e) {
+                            //throw e;
+                            if (!drawErrors) {
+                                draw = false;
+                            }
+                        }
+                        g.setColor(c);
+                        
+                        //g.setColor(Color.CYAN);
+                        
+                        int xpoints[] = {x1, x2, x3};
+                        int ypoints[] = {y1, y2, y3};
+                        int npoints = 3;
+                        if (draw) {
+                            //g.fillPolygon(new Polygon(new int[]{x1, x2, x3}, new int[]{x1, x2, x3}, 3));
+                            g.fillPolygon(xpoints, ypoints, npoints);
+                            //g.drawLine(x1, y1, x2, y2);
+                            drawnFaces++;
+                        }
+                    }
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+            
             if (drawLines) {
             for (int i : new Range(lines.size())) {
                 try {
@@ -74,16 +118,23 @@ class renderer extends JPanel{
                         int y1 = a.get(lines.get(i)[0]).intY();
                         int y2 = a.get(lines.get(i)[1]).intY();
                         
+                        
+                        boolean draw = true;
                         Color c = Color.red;
                         try {
                             c = lines_color.get(i);
                         } catch (Exception e) {
                             //throw e;
+                            if (!drawErrors) {
+                                draw = false;
+                            }
                         }
                         g.setColor(c);
                         
-                        g.drawLine(x1, y1, x2, y2);
-                        drawnLines++;
+                        if (draw) {
+                            g.drawLine(x1, y1, x2, y2);
+                            drawnLines++;
+                        }
                     }
                 } catch (Exception e) {
                     throw e;
@@ -123,7 +174,7 @@ class renderer extends JPanel{
             }
         }
         g.setColor(Color.white);
-        g.drawString("" + points.size() + " Points, " + drawnLines + " Lines drawn", w/10, h/10);
+        g.drawString("" + points.size() + " Points, " + drawnLines + " Lines and " + drawnFaces + " faces drawn", w/10, h/10);
         g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
         g.drawString("" + (int) (nano * 1000000000) + " FPS", w - w/5, h/7);
         g.drawString("speed: " + speed + "", w - w/5, h/6);
@@ -135,6 +186,14 @@ class renderer extends JPanel{
     public void updateLines(LinkedList<Integer[]> newSet, LinkedList<Color> color){
         this.lines = newSet;
         this.lines_color = color;
+    }
+    LinkedList<Integer[]> faces = new LinkedList<>();
+    LinkedList<Color> faces_color = new LinkedList<>();
+    LinkedList<Float> faces_dist = new LinkedList<>();
+    public void updateFaces(LinkedList<Integer[]> newSet, LinkedList<Color> color, LinkedList<Float> dist){
+        this.faces = newSet;
+        this.faces_color = color;
+        this.faces_dist = dist;
     }
     public HashMap getIDMap(){
         HashMap<Integer, Point2D> out = new HashMap<Integer, Point2D>();

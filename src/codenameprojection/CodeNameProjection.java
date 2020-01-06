@@ -26,17 +26,16 @@ package codenameprojection;
 import JFUtils.Input;
 import JFUtils.InputActivated;
 import JFUtils.Range;
-import JFUtils.graphing.Graph;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import JFUtils.vector.dVector2;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -96,7 +95,7 @@ class driver{
     
     
     
-    public void addCube(dVector3 center, double size, boolean Addlines){
+    public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
         dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
         dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
@@ -130,12 +129,16 @@ class driver{
             lines.add(new Integer[]{dru.identifier, uru.identifier});
             lines.add(new Integer[]{drd.identifier, urd.identifier});
         }
+        if(addFaces){
+            faces.add(new Integer[]{dlu.identifier, dld.identifier, dru.identifier});
+        }
     }
     public void addCube(dVector3 center, double size){
-        addCube(center, size, true);
+        addCube(center, size, true, true);
     }
     LinkedList<dVector3> points;
     LinkedList<Integer[]> lines;
+    LinkedList<Integer[]> faces = new LinkedList<>();
     public driver(){
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
@@ -148,16 +151,18 @@ class driver{
         lines = new LinkedList<>();
         try {
             //addCube(new dVector3(0, 0, 0), 0.5);
-            points = new modelParser().parse();
-            lines = new modelParser().parseLines(points);
-        } catch (IOException ex) {
-            int r = 8;
-            int r2 = 8;
-            int r3 = 1;
+            //File err = new File("err.txt");
+            throw new NullPointerException();
+            //points = new modelParser().parse();
+            //lines = new modelParser().parseLines(points);
+        } catch (Exception ex) {
+            int r = 3;
+            int r2 = 3;
+            int r3 = 3;
             for (int i : new Range(r)) {
                 for (int j : new Range(r2)) {
                     for (int z : new Range(r3)) {
-                        addCube(new dVector3(i, j, z), 0.5, true);
+                        addCube(new dVector3(i, j, z), 0.5, true, true);
                     }
                 }
             }
@@ -182,8 +187,10 @@ class driver{
             LinkedList<Point2D[]> lines_set = new LinkedList<>();
             LinkedList<Point2D[]> lines_sizes = new LinkedList<>();
             LinkedList<Color> lines_color = new LinkedList<>();
+            LinkedList<Color> faces_color = new LinkedList<>();
             HashMap<Integer, Float> dist = new HashMap<>();
             lines_color = new LinkedList<>();
+            faces_color = new LinkedList<>();
             
             HashMap<Integer, Point2D> idVSserial = s.r.getIDMap();
             
@@ -385,9 +392,42 @@ class driver{
                 }
             }
             
+            for(Integer[] face : faces){
+                Point2D point = null;
+                try {
+                    point = idVSserial.get(face[0]);
+                } catch (Exception e) {
+                    try {
+                        point = idVSserial.get(face[1]);
+                    } catch (Exception ez) {
+                        //throw ez;
+                        try {
+                            point = idVSserial.get(face[2]);
+                        } catch (Exception ezz) {
+                            //throw ez;
+                            faces_color.add(Color.pink);
+                        }
+                    }
+                }
+                
+                if(!Objects.isNull(point)){
+                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5);
+                    //System.out.println(distP);
+                    if(distP > 255){
+                        distP = 255;
+                    }
+                    if(distP < 0){
+                        distP = 0;
+                    }
+                    faces_color.add(new Color(distP, distP, distP));
+                    //faces_color.add(Color.pink);
+                }
+            }
+            
             //Rendering
             s.r.updatePoints(set, sizes);
             s.r.updateLines(lines, lines_color);
+            s.r.updateFaces(faces, faces_color, new LinkedList<>());
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             
