@@ -66,7 +66,7 @@ class renderer extends JPanel{
         repaint();
         
         g.setColor(Color.black);
-        g.fillRect(0, 0, w, h);
+        //g.fillRect(0, 0, w, h);
         
             g.setColor(Color.red);
             HashMap<Integer, Point2D> a = getIDMap();
@@ -95,6 +95,9 @@ class renderer extends JPanel{
                             }
                         }
                         g.setColor(c);
+                        
+                        draw = true;
+                        g.setColor(Color.white);
                         
                         if (draw) {
                             g.drawLine(x1, y1, x2, y2);
@@ -142,14 +145,24 @@ class renderer extends JPanel{
             for (int i : new Range(faces.size())) {
                 try {
                     if (!(Objects.isNull(a.get(faces.get(i).points[0]))) && !(Objects.isNull(a.get(faces.get(i).points[1]))) && !(Objects.isNull(a.get(faces.get(i).points[2])))) {
-                        int x1 = a.get(faces.get(i).points[0]).intX();
-                        int x2 = a.get(faces.get(i).points[1]).intX();
-                        int x3 = a.get(faces.get(i).points[2]).intX();
-                        int y1 = a.get(faces.get(i).points[0]).intY();
-                        int y2 = a.get(faces.get(i).points[1]).intY();
-                        int y3 = a.get(faces.get(i).points[2]).intY();
-                        
+                        int x1 = 0;
+                        int x2 = 0;
+                        int x3 = 0;
+                        int y1 = 0;
+                        int y2 = 0;
+                        int y3 = 0;
                         boolean draw = true;
+                        try {
+                            x1 = a.get(faces.get(i).points[0]).intX();
+                            x2 = a.get(faces.get(i).points[1]).intX();
+                            x3 = a.get(faces.get(i).points[2]).intX();
+                            y1 = a.get(faces.get(i).points[0]).intY();
+                            y2 = a.get(faces.get(i).points[1]).intY();
+                            y3 = a.get(faces.get(i).points[2]).intY();
+                        } catch (Exception e) {
+                            draw = false;
+                        }
+                        
                         Color c = Color.blue;
                         try {
                             c = faces_color.get(faces.get(i).originalIndex);

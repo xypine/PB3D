@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @author Jonnelafin
  */
 public class modelParser {
-    final float size = 10;
+    final float size = 50;
     public LinkedList<dVector3> parse() throws FileNotFoundException, IOException{
         LinkedList<dVector3> out = new LinkedList<>();
         String line;
