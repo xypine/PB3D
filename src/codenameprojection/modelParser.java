@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  * @author Jonnelafin
  */
 public class modelParser {
+    IDManager ids = new IDManager();
     final float size = 50;
     public LinkedList<dVector3> parse() throws FileNotFoundException, IOException{
         LinkedList<dVector3> out = new LinkedList<>();
@@ -46,7 +47,9 @@ public class modelParser {
                              curr = curr + i;
                          }
                      }
-                     out.add(new dVector3(coord[0]/size, coord[1]/size, coord[2]/size));
+                     dVector3 tmp = new dVector3(coord[0]/size, coord[1]/size, coord[2]/size);
+                     tmp.identifier = ids.getFreeID();
+                     out.add(tmp);
                  } catch (IOException | NumberFormatException iOException) {
                  }
                     catch(Exception e){

@@ -97,6 +97,7 @@ class driver{
     
     public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
+        //zxy
         dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
         dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
         dVector3 dru = new dVector3(center.x -s, center.y +s, center.z -s);
@@ -131,6 +132,25 @@ class driver{
         }
         if(addFaces){
             faces.add(new Integer[]{dlu.identifier, dld.identifier, dru.identifier});
+            faces.add(new Integer[]{dld.identifier, drd.identifier, dru.identifier});
+            faces.add(new Integer[]{ulu.identifier, uld.identifier, uru.identifier});
+            faces.add(new Integer[]{uld.identifier, urd.identifier, uru.identifier});
+            
+            faces.add(new Integer[]{dlu.identifier, dld.identifier, ulu.identifier});
+            faces.add(new Integer[]{ulu.identifier, uld.identifier, dld.identifier});
+            faces.add(new Integer[]{dru.identifier, drd.identifier, uru.identifier});
+            faces.add(new Integer[]{uru.identifier, urd.identifier, drd.identifier});
+            
+            faces.add(new Integer[]{ulu.identifier, uru.identifier, urd.identifier});
+            
+            //faces.add(new Integer[]{urd.identifier, drd.identifier, dru.identifier});
+            
+            //faces.add(new Integer[]{ulu.identifier, uld.identifier, uru.identifier});
+            //faces.add(new Integer[]{uld.identifier, urd.identifier, uru.identifier});
+            //faces.add(new Integer[]{ulu.identifier, dld.identifier, dru.identifier});
+            //faces.add(new Integer[]{uld.identifier, drd.identifier, dru.identifier});
+            
+            //faces.add(new Integer[]{dld.identifier, drd.identifier, drd.identifier});
         }
     }
     public void addCube(dVector3 center, double size){
@@ -139,6 +159,9 @@ class driver{
     LinkedList<dVector3> points;
     LinkedList<Integer[]> lines;
     LinkedList<Integer[]> faces = new LinkedList<>();
+    
+    IDManager ids = new IDManager();
+    
     public driver(){
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
@@ -152,16 +175,19 @@ class driver{
         try {
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
+            //throw new Exception();
             points = new modelParser().parse();
             lines = new modelParser().parseLines(points);
             faces = new modelParser().parseFaces(points);
         } catch (Exception ex) {
-            int r = 3;
-            int r2 = 3;
-            int r3 = 3;
+            int r = 1;
+            int r2 = 1;
+            int r3 = 1;
             for (int i : new Range(r)) {
                 for (int j : new Range(r2)) {
                     for (int z : new Range(r3)) {
+                        addCube(new dVector3(i, j, z), 0.5, true, true);
+                        addCube(new dVector3(i, j, z), 0.5, true, true);
                         addCube(new dVector3(i, j, z), 0.5, true, true);
                     }
                 }
@@ -210,15 +236,15 @@ class driver{
             }
             
             //Check input   -0.025D*0.05
-            double factor_rotation = -0.025D*0.05;
-            double factor = -0.025D*0.05*4;
-            double boost = 1;
+            double factor_rotation = -0.025D*0.05 * deltaTime.getNano();
+            double factor = -0.025D*0.05*4 * deltaTime.getNano() * 0.000001;
+            double boost = 1 * deltaTime.getNano() * 0.000002;
             //space
             if(inp.keys[32] == true){
                 //viewAngle.y += factor*15;
                 factor = factor * 7;
                 factor_rotation = factor_rotation * 15;
-                boost = 5;
+                boost = boost * 5;
                 
             }
             if(inp.keys[68] == true){
@@ -374,13 +400,14 @@ class driver{
                     try {
                         point = idVSserial.get(line[1]);
                     } catch (Exception ez) {
-                        //throw ez;
-                        lines_color.add(Color.pink);
+                        throw ez;
+                        //lines_color.add(Color.pink);
                     }
                 }
                 
                 if(!Objects.isNull(point)){
                     int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5*0.5);
+                    
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -406,13 +433,18 @@ class driver{
                             point = idVSserial.get(face[2]);
                         } catch (Exception ezz) {
                             //throw ez;
-                            faces_color.add(Color.pink);
+                            
                         }
                     }
                 }
                 
+                float lastZ = 0;
+                
                 if(!Objects.isNull(point)){
-                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25);
+                    float distP = (255 - dist.get(point.identifier) * 25);
+                    if(distP == 0){
+                        System.out.println("F2");
+                    }
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -420,9 +452,16 @@ class driver{
                     if(distP < 0){
                         distP = 0;
                     }
-                    faces_color.add(new Color(distP, distP, distP));
+                    lastZ = distP;
+                    faces_color.add(new Color((int)distP, (int)distP,(int) distP));
                     face_dists.add((float)distP);
                     //faces_color.add(Color.pink);
+                }
+                else{
+                    //System.out.println("F");
+                    face_dists.add(lastZ);
+                    //System.out.println(lastZ);
+                    faces_color.add(Color.pink);
                 }
             }
             

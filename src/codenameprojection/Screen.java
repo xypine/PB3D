@@ -51,10 +51,10 @@ class renderer extends JPanel{
     public int drawnLines;
     public int drawnFaces;
     
-    public boolean drawPoints = true;
-    public boolean drawLines = true;
+    public boolean drawPoints = false;
+    public boolean drawLines = false;
     public boolean drawFaces = true;
-    public boolean drawErrors = false;
+    public boolean drawErrors = true;
     
     @Override
     public void paintComponent(Graphics g) {
@@ -66,11 +66,12 @@ class renderer extends JPanel{
         repaint();
         
         g.setColor(Color.black);
-        //g.fillRect(0, 0, w, h);
+        g.fillRect(0, 0, w, h);
         
             g.setColor(Color.red);
             HashMap<Integer, Point2D> a = getIDMap();
             drawnFaces = 0;
+            drawnLines = 0;
             
             
             
@@ -145,20 +146,20 @@ class renderer extends JPanel{
             for (int i : new Range(faces.size())) {
                 try {
                     if (!(Objects.isNull(a.get(faces.get(i).points[0]))) && !(Objects.isNull(a.get(faces.get(i).points[1]))) && !(Objects.isNull(a.get(faces.get(i).points[2])))) {
-                        int x1 = 0;
-                        int x2 = 0;
-                        int x3 = 0;
-                        int y1 = 0;
-                        int y2 = 0;
-                        int y3 = 0;
+                        double x1 = 0;
+                        double x2 = 0;
+                        double x3 = 0;
+                        double y1 = 0;
+                        double y2 = 0;
+                        double y3 = 0;
                         boolean draw = true;
                         try {
-                            x1 = a.get(faces.get(i).points[0]).intX();
-                            x2 = a.get(faces.get(i).points[1]).intX();
-                            x3 = a.get(faces.get(i).points[2]).intX();
-                            y1 = a.get(faces.get(i).points[0]).intY();
-                            y2 = a.get(faces.get(i).points[1]).intY();
-                            y3 = a.get(faces.get(i).points[2]).intY();
+                            x1 = a.get(faces.get(i).points[0]).x;
+                            x2 = a.get(faces.get(i).points[1]).x;
+                            x3 = a.get(faces.get(i).points[2]).x;
+                            y1 = a.get(faces.get(i).points[0]).y;
+                            y2 = a.get(faces.get(i).points[1]).y;
+                            y3 = a.get(faces.get(i).points[2]).y;
                         } catch (Exception e) {
                             draw = false;
                         }
@@ -175,12 +176,12 @@ class renderer extends JPanel{
                         g.setColor(c);
 
                         //g.setColor(Color.CYAN);
-                        int xpoints[] = {x1, x2, x3};
-                        int ypoints[] = {y1, y2, y3};
+                        int xpoints[] = {(int)x1,(int) x2,(int) x3};
+                        int ypoints[] = {(int)y1,(int) y2,(int) y3};
                         int npoints = 3;
                         if (draw) {
-                            //g.fillPolygon(new Polygon(new int[]{x1, x2, x3}, new int[]{x1, x2, x3}, 3));
-                            g.fillPolygon(xpoints, ypoints, npoints);
+                            g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                            //g.drawPolygon(xpoints, ypoints, npoints);
                             //g.drawLine(x1, y1, x2, y2);
                             drawnFaces++;
                         }
@@ -221,6 +222,7 @@ class renderer extends JPanel{
         }
         return out;
     }
+    float last_z = 0;
     LinkedList<face> constructFaceList(LinkedList<Integer[]> origin){
         int index = 0;
         LinkedList<face> out = new LinkedList<>();
@@ -228,8 +230,16 @@ class renderer extends JPanel{
             float z = 1;
             try {
                 z = faces_dist.get(index);
-            } catch (Exception e) {
-                //e.printStackTrace();
+                last_z = z;
+            } 
+            catch(IndexOutOfBoundsException e){
+                //System.out.println(e);
+                z = last_z;
+                //System.out.println(z);
+            }
+            catch (Exception e) {
+                
+                throw e;
             }
             out.add(new face(index, z, i));
             index++;
