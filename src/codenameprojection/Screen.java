@@ -52,7 +52,7 @@ class renderer extends JPanel{
     public int drawnFaces;
     public int frame;
     
-    public boolean drawPoints = false;
+    public boolean drawPoints = true;
     public boolean drawLines = true;
     public boolean drawFaces = true;
     public boolean drawErrors = false;
@@ -67,7 +67,7 @@ class renderer extends JPanel{
         super.paintComponent(g);
         repaint();
         
-        g.setColor(Color.black);
+        g.setColor(Color.white);
         g.fillRect(0, 0, w, h);
         
             g.setColor(Color.red);
@@ -186,6 +186,9 @@ class renderer extends JPanel{
                             drawnFaces++;
                         }
                     }
+                    else{
+                        System.out.println("Points not found for index " + i);
+                    }
                 } catch (Exception e) {
                     throw e;
                 }
@@ -228,7 +231,7 @@ class renderer extends JPanel{
         int index = 0;
         LinkedList<face> out = new LinkedList<>();
         for(Integer[] i : origin){
-            float z = 1;
+            float z = Float.MAX_VALUE;
             try {
                 z = faces_dist.get(index);
                 last_z = z;
@@ -237,6 +240,7 @@ class renderer extends JPanel{
                 //System.out.println(e);
                 z = last_z;
                 //System.out.println(z);
+                throw e;
             }
             catch (Exception e) {
                 
@@ -251,6 +255,19 @@ class renderer extends JPanel{
 }
 class face implements Comparable<face>{
     public face(int ogIndex, float z, Integer[] points){
+        if(Objects.isNull(originalIndex) || Objects.isNull(z) || Objects.isNull(points)){
+            System.out.println("a");
+            if(points.length > 0){
+                if(Objects.isNull(points[0]) || Objects.isNull(points[1]) || Objects.isNull(this.points[2])){
+                    System.out.println("NOOOO");
+                }
+            }
+            else{
+                System.out.println("\"Verticies must contain 3 points!\"");
+                throw new IllegalArgumentException("Verticies must contain 3 points!");
+            }
+        }
+        
         this.originalIndex = ogIndex;
         this.z = z;
         this.points = points;
@@ -260,8 +277,8 @@ class face implements Comparable<face>{
     Integer[] points = new Integer[]{};
     
     public float z = (float) Integer.MAX_VALUE;
-    public Float getZ(){
-        return z;
+    public Integer getZ(){
+        return (int) z * 100000;
     }
     @Override
     public int compareTo(face o) {

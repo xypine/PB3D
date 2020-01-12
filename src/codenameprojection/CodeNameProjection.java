@@ -35,13 +35,10 @@ import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
 import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Objects;
-import org.graalvm.compiler.nodes.FrameState;
 
 /**
  *
@@ -93,7 +90,7 @@ class driver{
     //False: "gloabal"
     //True: "local"
     public boolean rotation_mode = true;
-    private LinkedList<LinkedList<dVector3>> frames;
+    private LinkedList<LinkedList<dVector3>> frames = new LinkedList<>();
     
     float tickDelta = 0F;
     
@@ -144,7 +141,7 @@ class driver{
             faces.add(new Integer[]{dru.identifier, drd.identifier, uru.identifier});
             faces.add(new Integer[]{uru.identifier, urd.identifier, drd.identifier});
             
-            faces.add(new Integer[]{ulu.identifier, uru.identifier, urd.identifier});
+            faces.add(new Integer[]{dlu.identifier, dru.identifier, dru.identifier});
             
             //faces.add(new Integer[]{urd.identifier, drd.identifier, dru.identifier});
             
@@ -184,7 +181,7 @@ class driver{
             lines = new modelParser().parseLines(points);
             faces = new modelParser().parseFaces(points);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             
             int r = 1;
             int r2 = 1;
@@ -198,6 +195,7 @@ class driver{
                     }
                 }
             }
+            frames.add(points);
         }
         
         
@@ -457,6 +455,18 @@ class driver{
             
             LinkedList<Float> face_dists = new LinkedList<>();
             for(Integer[] face : faces){
+                boolean cont = false;
+                if(face.length == 3){
+                    cont = true;
+                }
+                else{
+                    faces.remove(face);
+                }
+                
+                if(cont){
+                    //continue;
+                }
+                
                 Point2D point = null;
                 try {
                     point = idVSserial.get(face[0]);

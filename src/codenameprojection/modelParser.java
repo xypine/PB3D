@@ -22,6 +22,9 @@ import java.util.logging.Logger;
  */
 public class modelParser {
     IDManager ids = new IDManager();
+    
+    public String filename = "suzanne";
+    
     final float size = 50;
     public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
         LinkedList<dVector3> buffer = new LinkedList<>();
@@ -31,7 +34,7 @@ public class modelParser {
         int index = 0;
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader("model.txt"));
+        in = new BufferedReader(new FileReader(filename + ".txt"));
              line = in.readLine();
 
              while(!Objects.isNull(line))
@@ -83,7 +86,7 @@ public class modelParser {
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader("model_lines.txt"));
+        in = new BufferedReader(new FileReader(filename + "_lines.txt"));
              line = in.readLine();
 
              while(!Objects.isNull(line))
@@ -109,8 +112,8 @@ public class modelParser {
                         }
                         try {
                             out.add(new Integer[]{
-                                points.get(coord[0] - 1).identifier,
-                                points.get(coord[1] - 1).identifier
+                                points.get(coord[0]+1).identifier,
+                                points.get(coord[1]+1).identifier
                             });
                         } 
                         catch(Exception e){
@@ -138,7 +141,7 @@ public class modelParser {
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader("model_faces.txt"));
+        in = new BufferedReader(new FileReader(filename + "_faces.txt"));
              line = in.readLine();
 
              while(!Objects.isNull(line))
@@ -165,9 +168,9 @@ public class modelParser {
                         }
                      try {
                         out.add(new Integer[]{
-                            points.get(coord[0]-1).identifier,
-                            points.get(coord[1]-1).identifier,
-                            points.get(coord[2]-1).identifier
+                            points.get(coord[0]+1).identifier,
+                            points.get(coord[1]+1).identifier,
+                            points.get(coord[2]+1).identifier
                         });
                      }
                      catch(Exception e){
