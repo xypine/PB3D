@@ -23,8 +23,12 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     final float size = 50;
-    public LinkedList<dVector3> parse() throws FileNotFoundException, IOException{
-        LinkedList<dVector3> out = new LinkedList<>();
+    public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
+        LinkedList<dVector3> buffer = new LinkedList<>();
+        LinkedList<LinkedList<dVector3>> out = new LinkedList<>();
+        int frames = 0;
+        int points = 0;
+        int index = 0;
         String line;
         BufferedReader in;
         in = new BufferedReader(new FileReader("model.txt"));
@@ -39,6 +43,15 @@ public class modelParser {
                      int place = 0;
                      int[] coord = new int[3];
                      for (char i : line.toCharArray()) {
+                         if (i == '#' && frames > 0){
+                             out.add(buffer);
+                             buffer = new LinkedList<>();
+                             frames++;
+                             index = 0;
+                         }
+                         if(i == '#' && !(frames > 0)){
+                             frames++;
+                         }
                          if (i == ' ') {
                              coord[place] = Integer.parseInt(curr);
                              place++;
@@ -48,8 +61,10 @@ public class modelParser {
                          }
                      }
                      dVector3 tmp = new dVector3(coord[0]/size, coord[1]/size, coord[2]/size);
-                     tmp.identifier = ids.getFreeID();
-                     out.add(tmp);
+                     points++;
+                     tmp.identifier = index;
+                     index++;
+                     buffer.add(tmp);
                  } catch (IOException | NumberFormatException iOException) {
                  }
                     catch(Exception e){
@@ -58,7 +73,10 @@ public class modelParser {
              }
 
              System.out.println(line);
-        System.out.println(out.size() + " points loaded and parsed succesfully!");
+        out.add(buffer);
+        buffer = new LinkedList<>();
+        frames++;
+        System.out.println(points + " points in " + frames + " frames loaded and parsed succesfully!");
         return out;
     }
     public LinkedList<Integer[]> parseLines(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
@@ -142,8 +160,8 @@ public class modelParser {
     }
     public static void main(String[] args) {
         try {
-            LinkedList<dVector3> parse = new modelParser().parse();
-            new modelParser().parseLines(parse);
+            LinkedList<LinkedList<dVector3>> parse = new modelParser().parse();
+            new modelParser().parseLines(parse.getFirst());
         } catch (IOException ex) {
             Logger.getLogger(modelParser.class.getName()).log(Level.SEVERE, null, ex);
         }

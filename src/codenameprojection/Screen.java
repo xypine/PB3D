@@ -50,11 +50,13 @@ class renderer extends JPanel{
     public int h;
     public int drawnLines;
     public int drawnFaces;
+    public int frame;
     
     public boolean drawPoints = false;
-    public boolean drawLines = false;
+    public boolean drawLines = true;
     public boolean drawFaces = true;
-    public boolean drawErrors = true;
+    public boolean drawErrors = false;
+    
     
     @Override
     public void paintComponent(Graphics g) {
@@ -97,8 +99,6 @@ class renderer extends JPanel{
                         }
                         g.setColor(c);
                         
-                        draw = true;
-                        g.setColor(Color.white);
                         
                         if (draw) {
                             g.drawLine(x1, y1, x2, y2);
@@ -192,6 +192,7 @@ class renderer extends JPanel{
             }
         }
         g.setColor(Color.white);
+        g.drawString("frame " + frame, w/10, h/7);
         g.drawString("" + points.size() + " Points, " + drawnLines + " Lines and " + drawnFaces + " faces drawn", w/10, h/10);
         g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
         g.drawString("" + (int) (nano * 1000000000) + " FPS", w - w/5, h/7);

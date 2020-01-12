@@ -41,6 +41,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Objects;
+import org.graalvm.compiler.nodes.FrameState;
 
 /**
  *
@@ -92,7 +93,9 @@ class driver{
     //False: "gloabal"
     //True: "local"
     public boolean rotation_mode = true;
+    private LinkedList<LinkedList<dVector3>> frames;
     
+    float tickDelta = 0F;
     
     
     public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
@@ -176,7 +179,8 @@ class driver{
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
             //throw new Exception();
-            points = new modelParser().parse();
+            frames = new modelParser().parse();
+            points = frames.getFirst();
             lines = new modelParser().parseLines(points);
             faces = new modelParser().parseFaces(points);
         } catch (Exception ex) {
@@ -205,9 +209,27 @@ class driver{
         
         //Graph grapher = new Graph();
         int tickC = 0;
+        
+        int frame = 0;
         while(running){
             beginTime = Instant.now();
             //Init
+            
+            int step = 1;
+            if (tickC % 24 == 0) {
+                if (frame < frames.size()-1) {
+                    frame++;
+                } else {
+                    //System.out.println("frame was " + frame + " before reset");
+                    frame = 0;
+                }
+                
+                points = frames.get(frame);
+                
+            }
+            s.r.frame = frame;
+            points = frames.get(frame);
+            
             LinkedList<Point2D> set = new LinkedList<>();
             LinkedList<Point2D> sizes = new LinkedList<>();
             LinkedList<Point2D[]> lines_set = new LinkedList<>();
@@ -406,7 +428,7 @@ class driver{
                 }
                 
                 if(!Objects.isNull(point)){
-                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5*0.5);
+                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25);
                     
                     //System.out.println(distP);
                     if(distP > 255){
@@ -489,6 +511,7 @@ class driver{
                 System.out.println(e);
             }
             tickC++;
+            tickDelta = tickDelta + (1 * deltaTime.getNano());
             //System.out.println(deltaTime.getNano() + " nano passed");
             try {
                 Thread.sleep(sleep);
