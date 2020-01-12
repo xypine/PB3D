@@ -94,24 +94,40 @@ public class modelParser {
                      line = in.readLine();
                      int place = 0;
                      int[] coord = new int[2];
-                     for (char i : line.toCharArray()) {
-                         if (i == ' ') {
-                             coord[place] = Integer.parseInt(curr);
-                             place++;
-                             curr = "";
-                         } else {
-                             curr = curr + i;
-                         }
-                     }
-                     out.add(new Integer[]{
-                         points.get(coord[0]-1).identifier,
-                         points.get(coord[1]-1).identifier
-                     });
+                        try {
+                            for (char i : line.toCharArray()) {
+                                if (i == ' ') {
+                                    coord[place] = Integer.parseInt(curr);
+                                    place++;
+                                    curr = "";
+                                } else {
+                                    curr = curr + i;
+                                }
+                            }
+                        } catch (NullPointerException nu) {
+                            System.out.println("char in the line was null!");
+                        }
+                        try {
+                            out.add(new Integer[]{
+                                points.get(coord[0] - 1).identifier,
+                                points.get(coord[1] - 1).identifier
+                            });
+                        } 
+                        catch(Exception e){
+                            try {
+                                out.add(new Integer[]{
+                                    points.get(coord[0]).identifier,
+                                    points.get(coord[1]).identifier
+                                });
+                            } catch (Exception ez) {
+                                
+                                System.out.println("Error parsing line: " + ez);
+                                //ez.printStackTrace();
+                            }
+                        }
                  } catch (IOException | NumberFormatException iOException) {
                  }
-                    catch(Exception e){
-                        System.out.println("Error parsing line: " + e);
-                    }
+                 
              }
 
              System.out.println(line);
@@ -133,29 +149,46 @@ public class modelParser {
                      line = in.readLine();
                      int place = 0;
                      int[] coord = new int[3];
-                     for (char i : line.toCharArray()) {
-                         if (i == ' ') {
-                             coord[place] = Integer.parseInt(curr);
-                             place++;
-                             curr = "";
-                         } else {
-                             curr = curr + i;
-                         }
+                        try {
+                            for (char i : line.toCharArray()) {
+                                if (i == ' ') {
+                                    coord[place] = Integer.parseInt(curr);
+                                    place++;
+                                    curr = "";
+                                } else {
+                                    curr = curr + i;
+                                }
+                            }
+                        } 
+                        catch (NullPointerException nu) {
+                            System.out.println("char in the line was null!");
+                        }
+                     try {
+                        out.add(new Integer[]{
+                            points.get(coord[0]-1).identifier,
+                            points.get(coord[1]-1).identifier,
+                            points.get(coord[2]-1).identifier
+                        });
                      }
-                     out.add(new Integer[]{
-                         points.get(coord[0]-1).identifier,
-                         points.get(coord[1]-1).identifier,
-                         points.get(coord[2]-1).identifier
-                     });
+                     catch(Exception e){
+                            try {
+                                out.add(new Integer[]{
+                                points.get(coord[0]).identifier,
+                                points.get(coord[1]).identifier,
+                                points.get(coord[2]).identifier
+                            });
+                            } catch (Exception ez) {
+                                
+                                System.out.println("Error parsing face: " + ez);
+                                //ez.printStackTrace();
+                            }
+                        }
                  } catch (IOException | NumberFormatException iOException) {
                  }
-                    catch(Exception e){
-                        System.out.println("Error parsing line: " + e);
-                    }
              }
 
              System.out.println(line);
-        System.out.println(out.size() + " lines loaded and parsed succesfully!");
+        System.out.println(out.size() + " faces loaded and parsed succesfully!");
         return out;
     }
     public static void main(String[] args) {

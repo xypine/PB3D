@@ -184,6 +184,8 @@ class driver{
             lines = new modelParser().parseLines(points);
             faces = new modelParser().parseFaces(points);
         } catch (Exception ex) {
+            ex.printStackTrace();
+            
             int r = 1;
             int r2 = 1;
             int r3 = 1;
@@ -216,7 +218,19 @@ class driver{
             //Init
             
             int step = 1;
-            if (tickC % 24 == 0) {
+            
+            int zep = 1;
+            
+            try {
+               //zep = (int) (24F * (deltaTime.getNano() *0.000000001F + 1F ));
+            } catch (Exception e) {
+            }
+            
+            if(zep == 0){
+                zep = 1;
+            }
+            //System.out.println(zep);
+            if (tickC % 10 == 0) {
                 if (frame < frames.size()-1) {
                     frame++;
                 } else {
