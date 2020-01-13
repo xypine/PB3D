@@ -9,12 +9,15 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import JFUtils.Range;
+import JFUtils.pathfinding.astarNode;
 import JFUtils.point.Point2D;
-import JFUtils.quickTools;
 import java.awt.Polygon;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -53,10 +56,11 @@ class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = true;
-    public boolean drawLines = true;
+    public boolean drawLines = false;
     public boolean drawFaces = true;
-    public boolean drawErrors = false;
-    
+    public boolean drawErrors = true;
+    public int received = 0;
+    public int errors = 0;
     
     @Override
     public void paintComponent(Graphics g) {
@@ -103,6 +107,9 @@ class renderer extends JPanel{
                         if (draw) {
                             g.drawLine(x1, y1, x2, y2);
                             drawnLines++;
+                        }
+                        else{
+                            errors++;
                         }
                     }
                 } catch (Exception e) {
@@ -167,6 +174,9 @@ class renderer extends JPanel{
                         Color c = Color.blue;
                         try {
                             c = faces_color.get(faces.get(i).originalIndex);
+                            if(c.equals(Color.green)){
+                                errors++;
+                            }
                         } catch (Exception e) {
                             //throw e;
                             if (!drawErrors) {
@@ -185,6 +195,9 @@ class renderer extends JPanel{
                             //g.drawLine(x1, y1, x2, y2);
                             drawnFaces++;
                         }
+                        else{
+                            errors++;
+                        }
                     }
                     else{
                         System.out.println("Points not found for index " + i);
@@ -196,6 +209,8 @@ class renderer extends JPanel{
         }
         g.setColor(Color.white);
         g.drawString("frame " + frame, w/10, h/7);
+        g.drawString("" + errors + " errors while drawing", w/10, h/5);
+        g.drawString("" + received + " faces received", w/10, h/6);
         g.drawString("" + points.size() + " Points, " + drawnLines + " Lines and " + drawnFaces + " faces drawn", w/10, h/10);
         g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
         g.drawString("" + (int) (nano * 1000000000) + " FPS", w - w/5, h/7);
@@ -216,8 +231,23 @@ class renderer extends JPanel{
         
         this.faces_color = color;
         this.faces_dist = dist;
+        this.received = newSet.size();
         this.faces = constructFaceList(newSet);
-        Collections.sort(this.faces);
+        
+        Comparator comp = face.DESCENDING_COMPARATOR;
+        
+        PriorityQueue<face> pr = new PriorityQueue<>();
+        
+        LinkedList<face> newF = new LinkedList<>();
+        
+        faces.forEach(l -> pr.add(l));
+        
+        while(!pr.isEmpty()){
+            newF.add(pr.remove());
+        }
+        faces = newF;
+        //Collections.sort(this.faces);
+        //faces.sort(null);
     }
     public HashMap getIDMap(){
         HashMap<Integer, Point2D> out = new HashMap<Integer, Point2D>();
@@ -276,13 +306,21 @@ class face implements Comparable<face>{
     int originalIndex;
     Integer[] points = new Integer[]{};
     
-    public float z = (float) Integer.MAX_VALUE;
+    public float z = (float) 0;
     public Integer getZ(){
         return (int) z * 100000;
     }
     @Override
     public int compareTo(face o) {
-        return(getZ().compareTo(o.getZ()));
+        //return(getZ().compareTo(o.getZ()));
+        return ((int)z*10)-((int)o.z*10);
     }
+    
+    public static final Comparator<face> DESCENDING_COMPARATOR = new Comparator<face>() {
+        // Overriding the compare method to sort the age
+        public int compare(face d, face d1) {
+            return d.getZ() - d1.getZ();
+        }
+    };
     
 }

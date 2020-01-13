@@ -94,6 +94,7 @@ class driver{
     
     float tickDelta = 0F;
     
+    public boolean an_pause = false;
     
     public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
@@ -180,12 +181,14 @@ class driver{
             points = frames.getFirst();
             lines = new modelParser().parseLines(points);
             faces = new modelParser().parseFaces(points);
+            
+            
         } catch (Exception ex) {
             //ex.printStackTrace();
             
-            int r = 1;
-            int r2 = 1;
-            int r3 = 1;
+            int r = 4;
+            int r2 = 4;
+            int r3 = 4;
             for (int i : new Range(r)) {
                 for (int j : new Range(r2)) {
                     for (int z : new Range(r3)) {
@@ -228,7 +231,7 @@ class driver{
                 zep = 1;
             }
             //System.out.println(zep);
-            if (tickC % 10 == 0) {
+            if (tickC % 10 == 0 && !an_pause) {
                 if (frame < frames.size()-1) {
                     frame++;
                 } else {
@@ -327,6 +330,10 @@ class driver{
             //k
             if(inp.keys[75] == true){
                 angleYM = angleYM - 0.0004D * 0.3 * boost;
+            }
+            //p
+            if(inp.keys[80] == true){
+                an_pause = !an_pause;
             }
             if(inp.keys[86] == true){
                 inp.verbodose = !inp.verbodose;
@@ -454,13 +461,14 @@ class driver{
             }
             
             LinkedList<Float> face_dists = new LinkedList<>();
+            float lastZ = 0;
             for(Integer[] face : faces){
                 boolean cont = false;
                 if(face.length == 3){
                     cont = true;
                 }
                 else{
-                    faces.remove(face);
+                    //faces.remove(face);
                 }
                 
                 if(cont){
@@ -484,13 +492,18 @@ class driver{
                     }
                 }
                 
-                float lastZ = 0;
+                
                 
                 if(!Objects.isNull(point)){
                     float distP = (255 - dist.get(point.identifier) * 25);
-                    if(distP == 0){
+                    if(distP == 0.0F){
                         System.out.println("F2");
                     }
+                    else{
+                        lastZ = distP;
+                        //System.out.println("F3");
+                    }
+                    face_dists.add((float)distP);
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -498,16 +511,16 @@ class driver{
                     if(distP < 0){
                         distP = 0;
                     }
-                    lastZ = distP;
+                    
                     faces_color.add(new Color((int)distP, (int)distP,(int) distP));
-                    face_dists.add((float)distP);
                     //faces_color.add(Color.pink);
                 }
                 else{
-                    //System.out.println("F");
-                    face_dists.add(lastZ);
+                    //System.out.println("F:");
+                    //face_dists.add(lastZ);
+                    face_dists.add(Float.MAX_VALUE);
                     //System.out.println(lastZ);
-                    faces_color.add(Color.pink);
+                    faces_color.add(Color.green);
                 }
             }
             
