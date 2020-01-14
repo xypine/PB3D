@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public String filename = "model";
+    public String filename = "Land";
     
     final float size = 50;
     public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
@@ -86,7 +86,7 @@ public class modelParser {
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader(filename + "_lines.txt"));
+        in = new BufferedReader(new FileReader(filename + "_lines.pb3d"));
              line = in.readLine();
 
              while(!Objects.isNull(line))
@@ -141,7 +141,7 @@ public class modelParser {
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader(filename + "_faces.txt"));
+        in = new BufferedReader(new FileReader(filename + "_faces.pb3d"));
              line = in.readLine();
 
              while(!Objects.isNull(line))

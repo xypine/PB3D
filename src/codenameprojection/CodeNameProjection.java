@@ -192,7 +192,7 @@ class driver{
             
             
         } catch (Exception ex) {
-            //ex.printStackTrace();
+            ex.printStackTrace();
             
             int r = 4;
             int r2 = 4;

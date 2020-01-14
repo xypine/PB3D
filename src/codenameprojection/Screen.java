@@ -55,10 +55,10 @@ class renderer extends JPanel{
     public int drawnFaces;
     public int frame;
     
-    public boolean drawPoints = true;
-    public boolean drawLines = false;
-    public boolean drawFaces = true;
-    public boolean drawErrors = true;
+    public boolean drawPoints = false;
+    public boolean drawLines = true;
+    public boolean drawFaces = false;
+    public boolean drawErrors = false;
     public int received = 0;
     public int errors = 0;
     
@@ -71,7 +71,7 @@ class renderer extends JPanel{
         super.paintComponent(g);
         repaint();
         
-        g.setColor(Color.white);
+        g.setColor(Color.black);
         g.fillRect(0, 0, w, h);
         
             g.setColor(Color.red);
@@ -100,7 +100,7 @@ class renderer extends JPanel{
                             if (!drawErrors) {
                                 draw = false;
                             }
-                            throw e;
+                            //throw e;
                         }
                         g.setColor(c);
                         
