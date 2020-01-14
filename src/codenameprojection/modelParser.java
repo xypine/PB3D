@@ -34,7 +34,7 @@ public class modelParser {
         int index = 0;
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader(filename + ".txt"));
+        in = new BufferedReader(new FileReader(filename + ".pb3d"));
              line = in.readLine();
 
              while(!Objects.isNull(line))

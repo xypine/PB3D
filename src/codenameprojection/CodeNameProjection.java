@@ -35,9 +35,17 @@ import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -61,8 +69,8 @@ public class CodeNameProjection {
         new driver();
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
-        Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
-        supervisor.run();
+        //Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
+        //supervisor.run();
     }
     
 }
@@ -315,6 +323,15 @@ class driver{
             if(inp.keys[88] == true){
                 //viewAngle.y -= factor*15;
             }
+            
+            //z
+            if(inp.keys[66] == true){
+                System.out.print("Saving face lists to file...");
+                listToFile(s.r.faces);
+                listToFile(s.r.faces_unsorted);
+                System.out.println("Done!");
+            }
+            
             //j
             if(inp.keys[74] == true){
                 angleXM = angleXM - 0.0004D * 0.3 * boost;
@@ -668,6 +685,23 @@ class driver{
         }
         return result;
     }
+    void listToFile(List l){
+        String filename = l.toString().hashCode() + "";
+        String tmp = "";
+        for(int i : new Range(l.size())){
+            tmp = tmp + l.get(i) + "\n";
+        }
+        
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "utf-8"))) {
+            writer.write(tmp);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
 /*class driver{
 public double x = 20;
@@ -730,3 +764,4 @@ x = x + 1;
 
 }
 }*/
+

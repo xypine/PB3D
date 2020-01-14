@@ -96,10 +96,11 @@ class renderer extends JPanel{
                         try {
                             c = lines_color.get(i);
                         } catch (Exception e) {
-                            //throw e;
+                            
                             if (!drawErrors) {
                                 draw = false;
                             }
+                            throw e;
                         }
                         g.setColor(c);
                         
@@ -169,6 +170,7 @@ class renderer extends JPanel{
                             y3 = a.get(faces.get(i).points[2]).y;
                         } catch (Exception e) {
                             draw = false;
+                            //throw e;
                         }
                         
                         Color c = Color.blue;
@@ -182,6 +184,7 @@ class renderer extends JPanel{
                             if (!drawErrors) {
                                 draw = false;
                             }
+                            throw e;
                         }
                         g.setColor(c);
 
@@ -225,6 +228,7 @@ class renderer extends JPanel{
         this.lines_color = color;
     }
     LinkedList<face> faces = new LinkedList<>();
+    LinkedList<face> faces_unsorted = new LinkedList<>();
     LinkedList<Color> faces_color = new LinkedList<>();
     LinkedList<Float> faces_dist = new LinkedList<>();
     public void updateFaces(LinkedList<Integer[]> newSet, LinkedList<Color> color, LinkedList<Float> dist){
@@ -245,6 +249,7 @@ class renderer extends JPanel{
         while(!pr.isEmpty()){
             newF.add(pr.remove());
         }
+        faces_unsorted = (LinkedList<face>) faces.clone();
         faces = newF;
         //Collections.sort(this.faces);
         //faces.sort(null);

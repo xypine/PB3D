@@ -11,6 +11,8 @@ frames = range(end)
 
 #Flags
 keyframes = True
+filename = "default"
+filetype = ".pb3d"
 
 if not keyframes:
     frames = [frame]
@@ -32,6 +34,9 @@ def updateMesh():
     global verts
     global lines
     global faces
+    global filename
+    
+    filename = obj.name
     
     #new_obj = obj.copy()
     #new_obj.data = obj.data.copy()
@@ -99,11 +104,11 @@ for i in faces:
 st3 = st3 + "\n"
 print("DONE")
 print("Saving...")
-f = bpy.data.texts.new('model.txt')
+f = bpy.data.texts.new(filename + filetype)
 f.from_string(st)
-f = bpy.data.texts.new('model_lines.txt')
+f = bpy.data.texts.new(filename + "_lines" + filetype)
 f.from_string(st2)
-f = bpy.data.texts.new('model_faces.txt')
+f = bpy.data.texts.new(filename + "_faces" + filetype)
 f.from_string(st3)
 print("Everything done, have a good day.")
 
