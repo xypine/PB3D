@@ -53,7 +53,7 @@ import java.util.Objects;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.57;
+    public static double minUtilsVer = 2.58;
 
     /**
      * @param args the command line arguments
@@ -82,7 +82,7 @@ class driver{
     
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
-    private Point3D screenPosition = new dVector3( 0, 0, 7 );
+    private Point3D screenPosition = new dVector3( 0, 0, 0 );
     private Point3D screenPosition_org = screenPosition.clone();
     private dVector3 viewAngle = new dVector3( 0, 90, 90 );
     private Point3D viewAngle_org = viewAngle.clone();
@@ -188,7 +188,7 @@ class driver{
             frames = new modelParser().parse();
             points = frames.getFirst();
             lines = new modelParser().parseLines(points);
-            faces = new modelParser().parseFaces(points);
+            //faces = new modelParser().parseFaces(points);
             
             
         } catch (Exception ex) {
@@ -275,9 +275,11 @@ class driver{
             yScreenCenter = s.r.h / 2;
             
             screenPosition = screenPosition_org.clone();
+            
             if(!rotation_mode){
                 screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
-                screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
+                screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
+                //screenPosition = JFUtils.math.General.average(screenPosition, matmul(RY((float) -angleX), screenPosition_org.toFVector3()).toDVector3(), screenPosition.identifier);
             }
             
             //Check input   -0.025D*0.05
@@ -298,8 +300,17 @@ class driver{
             if(inp.keys[65] == true){
                 screenPosition_org.x = screenPosition_org.x - factor;
             }
-            if(inp.keys[87] == true){
-                screenPosition_org.y = screenPosition_org.y + factor;
+            //' tai *
+            if(inp.keys[222] == true){
+                if(inp.keys[87] == true){
+                    //screenPosition_org.y = screenPosition_org.y + factor;
+                    screenPosition_org = JFUtils.vector.dVector3.add(screenPosition_org, screenPosition_org);
+                }
+            }
+            else{
+                if(inp.keys[87] == true){
+                    screenPosition_org.y = screenPosition_org.y + factor;
+                }
             }
             if(inp.keys[83] == true){
                 screenPosition_org.y = screenPosition_org.y - factor;
@@ -385,9 +396,12 @@ class driver{
                 }
                 
                 if(rotation){
+                    Point3F rotated_org = rotated.clone();
                     rotated = matmul(RX((float) -angleY ), rotated);
                     //rotated.z = rotated.z - rotated.x;
-                    rotated = matmul(RY((float) angleX ), rotated);
+                    //rotated = matmul(RY((float) angleX ), rotated);
+                    rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
+                    //rotated = JFUtils.math.General.average(rotated.toDVector3(), matmul(RY((float) angleX ), rotated_org).toDVector3(), rotated.identifier).toFVector3();
                 }
                 /*rotated = matmul(RX((float) 0 ), rotated);
                 rotated = matmul(RX((float) 0 ), rotated);
