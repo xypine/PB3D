@@ -11,13 +11,21 @@ import javax.swing.JPanel;
 import JFUtils.Range;
 import JFUtils.pathfinding.astarNode;
 import JFUtils.point.Point2D;
+import JFUtils.point.Point2Int;
+import java.awt.Component;
+import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.PriorityQueue;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -25,9 +33,12 @@ import java.util.PriorityQueue;
  */
 public class Screen extends JFrame{
     renderer r;
+    
+    
+    
     public Screen(){
         //Create the renderer
-        r = new renderer();
+        r = new renderer(this);
         
         //init this
         this.setTitle("Projection renderer");
@@ -44,6 +55,12 @@ public class Screen extends JFrame{
     }
 }
 class renderer extends JPanel{
+    public BufferedImage output;
+    
+    public renderer(Component parent){
+        //output = new BufferedImage(parent.getWidth(), parent.getWidth(), BufferedImage.TYPE_INT_RGB);
+    }
+    
     public float nano = 0;
     private LinkedList<Point2D> points = new LinkedList<>();
     private LinkedList<Point2D> points_sizes = new LinkedList<>();
@@ -55,12 +72,55 @@ class renderer extends JPanel{
     public int drawnFaces;
     public int frame;
     
-    public boolean drawPoints = false;
-    public boolean drawLines = true;
+    public boolean drawPoints = true;
+    public boolean drawLines = false;
     public boolean drawFaces = false;
     public boolean drawErrors = false;
     public int received = 0;
     public int errors = 0;
+    
+    public boolean usePixelRendering = false;
+    
+    private void drawPolygon(Polygon p, Color c){
+        for(int x : new Range( output.getWidth()) ) {
+            for(int y : new Range( output.getHeight() )){
+                if(p.contains(  new Point(x, y)  )){
+                    output.setRGB(x, y, c.getRGB());
+                }
+            }
+        }
+    }
+    private void drawLine(Point2Int start, Point2Int end, Color c){
+        for(int x : new Range( output.getWidth()) ) {
+            for(int y : new Range( output.getHeight() )){
+                if (new Polygon(new int[]{start.x, end.x}, new int[]{start.y,end.y}, 2).contains(new Point(x, y))) {
+                    output.setRGB(x, y, c.getRGB());
+                }
+            }
+        }
+    }
+    
+    private void drawPoint(Point2Int point, Color c){
+        output.setRGB(point.x, point.y, c.getRGB());
+    }
+    
+    
+    private void clear(){
+        for(int x : new Range( output.getWidth()) ) {
+            for(int y : new Range( output.getHeight() )){
+                output.setRGB(x, y, 0);
+            }
+        }
+    }
+    
+    private BufferedImage createImageFromBytes(byte[] imageData) {
+        ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
+        try {
+            return ImageIO.read(bais);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     
     @Override
     public void paintComponent(Graphics g) {
@@ -69,6 +129,16 @@ class renderer extends JPanel{
         h = currentSize.height;
         this.setSize(currentSize);
         super.paintComponent(g);
+        
+        if (usePixelRendering) {
+            if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
+                output = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            } else {
+                clear();
+            }
+        }
+        
+        
         repaint();
         
         g.setColor(Color.black);
@@ -106,7 +176,12 @@ class renderer extends JPanel{
                         
                         
                         if (draw) {
-                            g.drawLine(x1, y1, x2, y2);
+                            //
+                            if (usePixelRendering) {
+                                drawLine(new Point2Int(x1, y1), new Point2Int(x2, y2), c);
+                            } else {
+                                g.drawLine(x1, y1, x2, y2);
+                            }
                             drawnLines++;
                         }
                         else{
@@ -143,8 +218,12 @@ class renderer extends JPanel{
                     }
                     
                     //g.setColor(new Color(cS, cS, cS));
-                    
-                    g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                    if (usePixelRendering) {
+                        drawPoint(pos, Color.red);
+                    } else {
+                        g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                    }
+                    //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                 } catch (Exception e) {
                     //throw e;
                 }
@@ -193,7 +272,13 @@ class renderer extends JPanel{
                         int ypoints[] = {(int)y1,(int) y2,(int) y3};
                         int npoints = 3;
                         if (draw) {
-                            g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                            //g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                            //Rectangle r = new Rectangle();
+                            if (usePixelRendering) {
+                                drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
+                            } else {
+                                g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                            }
                             //g.drawPolygon(xpoints, ypoints, npoints);
                             //g.drawLine(x1, y1, x2, y2);
                             drawnFaces++;
@@ -210,6 +295,14 @@ class renderer extends JPanel{
                 }
             }
         }
+            
+        
+        if (usePixelRendering) {
+            g.drawImage(output, 0, 0, this);
+        }
+            
+            
+            
         g.setColor(Color.white);
         g.drawString("frame " + frame, w/10, h/7);
         g.drawString("" + errors + " errors while drawing", w/10, h/5);

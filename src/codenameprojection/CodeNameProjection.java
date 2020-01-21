@@ -64,17 +64,32 @@ public class CodeNameProjection {
         if(JFUtils.versionCheck.version != minUtilsVer){
             throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
         }
-
-    
-        new driver();
+        
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
-        //Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
-        //supervisor.run();
+        Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
+        Thread a = new Thread(supervisor);
+        a.start();
+        while (!supervisor.ready) {            
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        new driver(supervisor);
+        
+        
     }
     
 }
 class driver{
+    public Supervisor pbSudo = null;
+    
+    private boolean usePB = true;
+    
+    
+    
     Duration deltaTime = Duration.ZERO;
     Instant beginTime = Instant.now();
     
@@ -82,7 +97,7 @@ class driver{
     
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
-    private Point3D screenPosition = new dVector3( 0, 0, 0 );
+    private Point3D screenPosition = new dVector3( 0, 0, 7 );
     private Point3D screenPosition_org = screenPosition.clone();
     private dVector3 viewAngle = new dVector3( 0, 90, 90 );
     private Point3D viewAngle_org = viewAngle.clone();
@@ -171,7 +186,12 @@ class driver{
     
     IDManager ids = new IDManager();
     
-    public driver(){
+    public driver(Supervisor sudo){
+        pbSudo = sudo;
+        if(Objects.isNull(pbSudo)){
+            usePB = false;
+        }
+        usePB = false;
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
         Screen s = new Screen();
@@ -188,7 +208,7 @@ class driver{
             frames = new modelParser().parse();
             points = frames.getFirst();
             lines = new modelParser().parseLines(points);
-            //faces = new modelParser().parseFaces(points);
+            faces = new modelParser().parseFaces(points);
             
             
         } catch (Exception ex) {
@@ -226,6 +246,15 @@ class driver{
             beginTime = Instant.now();
             //Init
             
+            if(usePB){
+                points = new LinkedList<>();
+                lines = new LinkedList<>();
+                faces = new LinkedList<>();
+                
+                sudo.objectManager.getObjects().forEach(l -> addCube(new dVector3(l.x, l.y, 1), 0.5, true, false));
+            }
+            
+            
             int step = 1;
             
             int zep = 1;
@@ -238,20 +267,22 @@ class driver{
             if(zep == 0){
                 zep = 1;
             }
-            //System.out.println(zep);
-            if (tickC % 10 == 0 && !an_pause) {
-                if (frame < frames.size()-1) {
-                    frame++;
-                } else {
-                    //System.out.println("frame was " + frame + " before reset");
-                    frame = 0;
+            if (!usePB) {
+//System.out.println(zep);
+                if (tickC % 25 == 0 && !an_pause) {
+                    if (frame < frames.size() - 1) {
+                        frame++;
+                    } else {
+                        //System.out.println("frame was " + frame + " before reset");
+                        frame = 0;
+                    }
+                    
+                    points = frames.get(frame);
+                    
                 }
-                
+                s.r.frame = frame;
                 points = frames.get(frame);
-                
             }
-            s.r.frame = frame;
-            points = frames.get(frame);
             
             LinkedList<Point2D> set = new LinkedList<>();
             LinkedList<Point2D> sizes = new LinkedList<>();
@@ -278,7 +309,8 @@ class driver{
             
             if(!rotation_mode){
                 screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
-                screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
+                screenPosition = matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3()).toDVector3();
+                //screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
                 //screenPosition = JFUtils.math.General.average(screenPosition, matmul(RY((float) -angleX), screenPosition_org.toFVector3()).toDVector3(), screenPosition.identifier);
             }
             
@@ -399,8 +431,8 @@ class driver{
                     Point3F rotated_org = rotated.clone();
                     rotated = matmul(RX((float) -angleY ), rotated);
                     //rotated.z = rotated.z - rotated.x;
-                    //rotated = matmul(RY((float) angleX ), rotated);
-                    rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
+                    rotated = matmul(RY((float) angleX ), rotated);
+                    //rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
                     //rotated = JFUtils.math.General.average(rotated.toDVector3(), matmul(RY((float) angleX ), rotated_org).toDVector3(), rotated.identifier).toFVector3();
                 }
                 /*rotated = matmul(RX((float) 0 ), rotated);
