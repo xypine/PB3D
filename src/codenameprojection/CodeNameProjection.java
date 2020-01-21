@@ -26,21 +26,26 @@ package codenameprojection;
 import JFUtils.Input;
 import JFUtils.InputActivated;
 import JFUtils.Range;
-import JFUtils.graphing.Graph;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import JFUtils.vector.dVector2;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -48,7 +53,7 @@ import java.util.Objects;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.56;
+    public static double minUtilsVer = 2.58;
 
     /**
      * @param args the command line arguments
@@ -59,17 +64,32 @@ public class CodeNameProjection {
         if(JFUtils.versionCheck.version != minUtilsVer){
             throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
         }
-
-    
-        new driver();
+        
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
         Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
-        supervisor.run();
+        Thread a = new Thread(supervisor);
+        a.start();
+        while (!supervisor.ready) {            
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        new driver(supervisor);
+        
+        
     }
     
 }
 class driver{
+    public Supervisor pbSudo = null;
+    
+    private boolean usePB = true;
+    
+    
+    
     Duration deltaTime = Duration.ZERO;
     Instant beginTime = Instant.now();
     
@@ -93,11 +113,15 @@ class driver{
     //False: "gloabal"
     //True: "local"
     public boolean rotation_mode = true;
+    private LinkedList<LinkedList<dVector3>> frames = new LinkedList<>();
     
+    float tickDelta = 0F;
     
+    public boolean an_pause = false;
     
-    public void addCube(dVector3 center, double size, boolean Addlines){
+    public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
+        //zxy
         dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
         dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
         dVector3 dru = new dVector3(center.x -s, center.y +s, center.z -s);
@@ -130,13 +154,44 @@ class driver{
             lines.add(new Integer[]{dru.identifier, uru.identifier});
             lines.add(new Integer[]{drd.identifier, urd.identifier});
         }
+        if(addFaces){
+            faces.add(new Integer[]{dlu.identifier, dld.identifier, dru.identifier});
+            faces.add(new Integer[]{dld.identifier, drd.identifier, dru.identifier});
+            faces.add(new Integer[]{ulu.identifier, uld.identifier, uru.identifier});
+            faces.add(new Integer[]{uld.identifier, urd.identifier, uru.identifier});
+            
+            faces.add(new Integer[]{dlu.identifier, dld.identifier, ulu.identifier});
+            faces.add(new Integer[]{ulu.identifier, uld.identifier, dld.identifier});
+            faces.add(new Integer[]{dru.identifier, drd.identifier, uru.identifier});
+            faces.add(new Integer[]{uru.identifier, urd.identifier, drd.identifier});
+            
+            faces.add(new Integer[]{dlu.identifier, dru.identifier, dru.identifier});
+            
+            //faces.add(new Integer[]{urd.identifier, drd.identifier, dru.identifier});
+            
+            //faces.add(new Integer[]{ulu.identifier, uld.identifier, uru.identifier});
+            //faces.add(new Integer[]{uld.identifier, urd.identifier, uru.identifier});
+            //faces.add(new Integer[]{ulu.identifier, dld.identifier, dru.identifier});
+            //faces.add(new Integer[]{uld.identifier, drd.identifier, dru.identifier});
+            
+            //faces.add(new Integer[]{dld.identifier, drd.identifier, drd.identifier});
+        }
     }
     public void addCube(dVector3 center, double size){
-        addCube(center, size, true);
+        addCube(center, size, true, true);
     }
     LinkedList<dVector3> points;
     LinkedList<Integer[]> lines;
-    public driver(){
+    LinkedList<Integer[]> faces = new LinkedList<>();
+    
+    IDManager ids = new IDManager();
+    
+    public driver(Supervisor sudo){
+        pbSudo = sudo;
+        if(Objects.isNull(pbSudo)){
+            usePB = false;
+        }
+        usePB = false;
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
         Screen s = new Screen();
@@ -148,19 +203,30 @@ class driver{
         lines = new LinkedList<>();
         try {
             //addCube(new dVector3(0, 0, 0), 0.5);
-            points = new modelParser().parse();
+            //File err = new File("err.txt");
+            //throw new Exception();
+            frames = new modelParser().parse();
+            points = frames.getFirst();
             lines = new modelParser().parseLines(points);
-        } catch (IOException ex) {
-            int r = 8;
-            int r2 = 8;
-            int r3 = 1;
+            faces = new modelParser().parseFaces(points);
+            
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            
+            int r = 4;
+            int r2 = 4;
+            int r3 = 4;
             for (int i : new Range(r)) {
                 for (int j : new Range(r2)) {
                     for (int z : new Range(r3)) {
-                        addCube(new dVector3(i, j, z), 0.5, true);
+                        addCube(new dVector3(i, j, z), 0.5, true, true);
+                        addCube(new dVector3(i, j, z), 0.5, true, true);
+                        addCube(new dVector3(i, j, z), 0.5, true, true);
                     }
                 }
             }
+            frames.add(points);
         }
         
         
@@ -174,16 +240,59 @@ class driver{
         
         //Graph grapher = new Graph();
         int tickC = 0;
+        
+        int frame = 0;
         while(running){
             beginTime = Instant.now();
             //Init
+            
+            if(usePB){
+                points = new LinkedList<>();
+                lines = new LinkedList<>();
+                faces = new LinkedList<>();
+                
+                sudo.objectManager.getObjects().forEach(l -> addCube(new dVector3(l.x, l.y, 1), 0.5, true, false));
+            }
+            
+            
+            int step = 1;
+            
+            int zep = 1;
+            
+            try {
+               //zep = (int) (24F * (deltaTime.getNano() *0.000000001F + 1F ));
+            } catch (Exception e) {
+            }
+            
+            if(zep == 0){
+                zep = 1;
+            }
+            if (!usePB) {
+//System.out.println(zep);
+                if (tickC % 25 == 0 && !an_pause) {
+                    if (frame < frames.size() - 1) {
+                        frame++;
+                    } else {
+                        //System.out.println("frame was " + frame + " before reset");
+                        frame = 0;
+                    }
+                    
+                    points = frames.get(frame);
+                    
+                }
+                s.r.frame = frame;
+                points = frames.get(frame);
+            }
+            
             LinkedList<Point2D> set = new LinkedList<>();
             LinkedList<Point2D> sizes = new LinkedList<>();
             LinkedList<Point2D[]> lines_set = new LinkedList<>();
             LinkedList<Point2D[]> lines_sizes = new LinkedList<>();
             LinkedList<Color> lines_color = new LinkedList<>();
+            LinkedList<Color> faces_color = new LinkedList<>();
             HashMap<Integer, Float> dist = new HashMap<>();
             lines_color = new LinkedList<>();
+            faces_color = new LinkedList<>();
             
             HashMap<Integer, Point2D> idVSserial = s.r.getIDMap();
             
@@ -197,21 +306,24 @@ class driver{
             yScreenCenter = s.r.h / 2;
             
             screenPosition = screenPosition_org.clone();
+            
             if(!rotation_mode){
-                screenPosition = matmul(RX((float) angleY), screenPosition.toFVector3()).toDVector3();
-                screenPosition = matmul(RY((float) -angleX), screenPosition.toFVector3()).toDVector3();
+                screenPosition = matmul(RX((float) -angleY), screenPosition.toFVector3()).toDVector3();
+                screenPosition = matmul(RY((float) -angleX), screenPosition.clone().toFVector3()).toDVector3();
+                //screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
+                //screenPosition = JFUtils.math.General.average(screenPosition, matmul(RY((float) -angleX), screenPosition_org.toFVector3()).toDVector3(), screenPosition.identifier);
             }
             
             //Check input   -0.025D*0.05
-            double factor_rotation = -0.025D*0.05;
-            double factor = -0.025D*0.05*4;
-            double boost = 1;
+            double factor_rotation = -0.025D*0.05 * deltaTime.getNano();
+            double factor = -0.025D*0.05*4 * deltaTime.getNano() * 0.000001;
+            double boost = 1 * deltaTime.getNano() * 0.000002;
             //space
             if(inp.keys[32] == true){
                 //viewAngle.y += factor*15;
                 factor = factor * 7;
                 factor_rotation = factor_rotation * 15;
-                boost = 5;
+                boost = boost * 5;
                 
             }
             if(inp.keys[68] == true){
@@ -220,8 +332,17 @@ class driver{
             if(inp.keys[65] == true){
                 screenPosition_org.x = screenPosition_org.x - factor;
             }
-            if(inp.keys[87] == true){
-                screenPosition_org.y = screenPosition_org.y + factor;
+            //' tai *
+            if(inp.keys[222] == true){
+                if(inp.keys[87] == true){
+                    //screenPosition_org.y = screenPosition_org.y + factor;
+                    screenPosition_org = JFUtils.vector.dVector3.add(screenPosition_org, screenPosition_org);
+                }
+            }
+            else{
+                if(inp.keys[87] == true){
+                    screenPosition_org.y = screenPosition_org.y + factor;
+                }
             }
             if(inp.keys[83] == true){
                 screenPosition_org.y = screenPosition_org.y - factor;
@@ -245,6 +366,15 @@ class driver{
             if(inp.keys[88] == true){
                 //viewAngle.y -= factor*15;
             }
+            
+            //z
+            if(inp.keys[66] == true){
+                System.out.print("Saving face lists to file...");
+                listToFile(s.r.faces);
+                listToFile(s.r.faces_unsorted);
+                System.out.println("Done!");
+            }
+            
             //j
             if(inp.keys[74] == true){
                 angleXM = angleXM - 0.0004D * 0.3 * boost;
@@ -260,6 +390,10 @@ class driver{
             //k
             if(inp.keys[75] == true){
                 angleYM = angleYM - 0.0004D * 0.3 * boost;
+            }
+            //p
+            if(inp.keys[80] == true){
+                an_pause = !an_pause;
             }
             if(inp.keys[86] == true){
                 inp.verbodose = !inp.verbodose;
@@ -294,9 +428,12 @@ class driver{
                 }
                 
                 if(rotation){
-                    rotated = matmul(RX((float) -angleY ), rotated);
+                    Point3F rotated_org = rotated.clone();
+                    rotated = matmul(RX((float) angleY ), rotated);
                     //rotated.z = rotated.z - rotated.x;
                     rotated = matmul(RY((float) angleX ), rotated);
+                    //rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
+                    //rotated = JFUtils.math.General.average(rotated.toDVector3(), matmul(RY((float) angleX ), rotated_org).toDVector3(), rotated.identifier).toFVector3();
                 }
                 /*rotated = matmul(RX((float) 0 ), rotated);
                 rotated = matmul(RX((float) 0 ), rotated);
@@ -367,13 +504,14 @@ class driver{
                     try {
                         point = idVSserial.get(line[1]);
                     } catch (Exception ez) {
-                        //throw ez;
-                        lines_color.add(Color.pink);
+                        throw ez;
+                        //lines_color.add(Color.pink);
                     }
                 }
                 
                 if(!Objects.isNull(point)){
-                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25.5);
+                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25);
+                    
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -385,9 +523,74 @@ class driver{
                 }
             }
             
+            LinkedList<Float> face_dists = new LinkedList<>();
+            float lastZ = 0;
+            for(Integer[] face : faces){
+                boolean cont = false;
+                if(face.length == 3){
+                    cont = true;
+                }
+                else{
+                    //faces.remove(face);
+                }
+                
+                if(cont){
+                    //continue;
+                }
+                
+                Point2D point = null;
+                try {
+                    point = idVSserial.get(face[0]);
+                } catch (Exception e) {
+                    try {
+                        point = idVSserial.get(face[1]);
+                    } catch (Exception ez) {
+                        //throw ez;
+                        try {
+                            point = idVSserial.get(face[2]);
+                        } catch (Exception ezz) {
+                            //throw ez;
+                            
+                        }
+                    }
+                }
+                
+                
+                
+                if(!Objects.isNull(point)){
+                    float distP = (255 - dist.get(point.identifier) * 25);
+                    if(distP == 0.0F){
+                        System.out.println("F2");
+                    }
+                    else{
+                        lastZ = distP;
+                        //System.out.println("F3");
+                    }
+                    face_dists.add((float)distP);
+                    //System.out.println(distP);
+                    if(distP > 255){
+                        distP = 255;
+                    }
+                    if(distP < 0){
+                        distP = 0;
+                    }
+                    
+                    faces_color.add(new Color((int)distP, (int)distP,(int) distP));
+                    //faces_color.add(Color.pink);
+                }
+                else{
+                    //System.out.println("F:");
+                    //face_dists.add(lastZ);
+                    face_dists.add(Float.MAX_VALUE);
+                    //System.out.println(lastZ);
+                    faces_color.add(Color.green);
+                }
+            }
+            
             //Rendering
             s.r.updatePoints(set, sizes);
             s.r.updateLines(lines, lines_color);
+            s.r.updateFaces(faces, faces_color, face_dists);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             
@@ -408,6 +611,7 @@ class driver{
                 System.out.println(e);
             }
             tickC++;
+            tickDelta = tickDelta + (1 * deltaTime.getNano());
             //System.out.println(deltaTime.getNano() + " nano passed");
             try {
                 Thread.sleep(sleep);
@@ -527,6 +731,23 @@ class driver{
         }
         return result;
     }
+    void listToFile(List l){
+        String filename = l.toString().hashCode() + "";
+        String tmp = "";
+        for(int i : new Range(l.size())){
+            tmp = tmp + l.get(i) + "\n";
+        }
+        
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "utf-8"))) {
+            writer.write(tmp);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
 /*class driver{
 public double x = 20;
@@ -589,3 +810,4 @@ x = x + 1;
 
 }
 }*/
+
