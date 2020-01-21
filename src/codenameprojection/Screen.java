@@ -49,6 +49,7 @@ class renderer extends JPanel{
     
     public boolean drawPoints = true;
     public boolean drawLines = true;
+    public boolean shading = false;
     
     @Override
     public void paintComponent(Graphics g) {
@@ -74,13 +75,15 @@ class renderer extends JPanel{
                         int y1 = a.get(lines.get(i)[0]).intY();
                         int y2 = a.get(lines.get(i)[1]).intY();
                         
-                        Color c = Color.red;
+                        Color c = Color.black;
                         try {
                             c = lines_color.get(i);
                         } catch (Exception e) {
                             //throw e;
                         }
-                        g.setColor(c);
+                        if (shading) {
+                            g.setColor(c);
+                        }
                         
                         g.drawLine(x1, y1, x2, y2);
                         drawnLines++;
