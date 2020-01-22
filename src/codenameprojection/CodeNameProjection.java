@@ -69,19 +69,19 @@ public class CodeNameProjection {
         
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
-        Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
+        /*Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
         Thread a = new Thread(supervisor);
         a.start();
-        while (!supervisor.ready) {            
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        while (!supervisor.ready) {
+        try {
+        Thread.sleep(10);
+        } catch (InterruptedException ex) {
+        Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
+        }
         }
         supervisor.objectManager.addObject(new gameObject(new Point2D(10, 0), 1, 1, renderType.box, supervisor, supervisor.objectManager.getUsableID()));
-        supervisor.engine_gravity = new Point2D(0, 0.1);
-        new driver(supervisor);
+        supervisor.engine_gravity = new Point2D(0, 0.1);*/
+        new driver(null);
         
         
     }
@@ -247,7 +247,6 @@ class driver{
         
         int frame = 0;
         while(running){
-            frame = 30;
             beginTime = Instant.now();
             //Init
             

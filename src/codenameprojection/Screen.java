@@ -12,6 +12,7 @@ import JFUtils.Range;
 import JFUtils.pathfinding.astarNode;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
+import codenameprojection.drawables.Face;
 import codenameprojection.drawables.Line;
 import codenameprojection.drawables.point;
 import java.awt.Component;
@@ -74,20 +75,33 @@ class renderer extends JPanel{
     public int drawnFaces;
     public int frame;
     
-    public boolean drawPoints = true;
+    public boolean drawPoints = false;
     public boolean drawLines = true;
     public boolean drawFaces = false;
-    public boolean drawErrors = false;
+    public boolean drawErrors = true;
     public int received = 0;
     public int errors = 0;
     
-    public boolean usePixelRendering = true;
+    public boolean usePixelRendering = false;
     
     private void drawPolygon(Polygon p, Color c){
+        faces_d.add(new Face(p, c));
+    }
+    private void drawFaces(){
+        if(Objects.isNull(output)){
+            System.out.println("IMAGE IS NULL");
+            return;
+        }
+        if(Objects.isNull(output.getWidth()) || Objects.isNull(output.getHeight())){
+            System.out.println("IMAGE IS NULL");
+            return;
+        }
         for(int x : new Range( output.getWidth()) ) {
             for(int y : new Range( output.getHeight() )){
-                if(p.contains(  new Point(x, y)  )){
-                    output.setRGB(x, y, c.getRGB());
+                for(Face f : faces_d){
+                    if(f.p.contains(  new Point(x, y)  )){
+                        output.setRGB(x, y, f.c.getRGB());
+                    }
                 }
             }
         }
@@ -95,6 +109,7 @@ class renderer extends JPanel{
     private void drawLine(Point2Int start, Point2Int end, Color c){
         lines_d.add(new Line(start, end, c));
     }
+    LinkedList<Face> faces_d = new LinkedList<>();
     LinkedList<Line> lines_d = new LinkedList<>();
     LinkedList<point> points_d = new LinkedList<>();
     private void drawLines(){
@@ -113,6 +128,14 @@ class renderer extends JPanel{
         int ml[] = {};
         int consl[] = {};
         Color cl[] = {};
+        if(Objects.isNull(output)){
+            System.out.println("IMAGE IS NULL");
+            return;
+        }
+        if(Objects.isNull(output.getWidth()) || Objects.isNull(output.getHeight())){
+            System.out.println("IMAGE IS NULL");
+            return;
+        }
         for(int x : new Range( output.getWidth())){
             for(int y : new Range( output.getHeight() )){
                 for(int i : new Range(lines_d.size())){
@@ -121,9 +144,9 @@ class renderer extends JPanel{
                     int y1 = l.start.y;
                     int x2 = l.end.x;
                     int y2 = l.end.y;
-                    int m = ml[i];
-                    int cons = consl[i];
-                    Color c = cl[i];
+                    int m = getSlope(x1, y1, x2, y2);
+                    int cons = getConstant(x1, y1, x2, y2, m);
+                    Color c = l.c;
                     if(checkPointLiesonLine(x,y,m,cons)){
                         output.setRGB(x, y, c.getRGB());
                     }
@@ -164,6 +187,8 @@ class renderer extends JPanel{
         
         if (usePixelRendering) {
             if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
+                drawLines();
+                drawFaces();
                 output = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             } else {
                 clear();

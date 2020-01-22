@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public String filename = "model";
+    public String filename = "suzanne";
     
     final float size = 50;
     public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
