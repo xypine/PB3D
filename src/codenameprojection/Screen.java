@@ -12,6 +12,8 @@ import JFUtils.Range;
 import JFUtils.pathfinding.astarNode;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
+import codenameprojection.drawables.Line;
+import codenameprojection.drawables.point;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -73,13 +75,13 @@ class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = true;
-    public boolean drawLines = false;
+    public boolean drawLines = true;
     public boolean drawFaces = false;
     public boolean drawErrors = false;
     public int received = 0;
     public int errors = 0;
     
-    public boolean usePixelRendering = false;
+    public boolean usePixelRendering = true;
     
     private void drawPolygon(Polygon p, Color c){
         for(int x : new Range( output.getWidth()) ) {
@@ -91,10 +93,40 @@ class renderer extends JPanel{
         }
     }
     private void drawLine(Point2Int start, Point2Int end, Color c){
+        lines_d.add(new Line(start, end, c));
+    }
+    LinkedList<Line> lines_d = new LinkedList<>();
+    LinkedList<point> points_d = new LinkedList<>();
+    private void drawLines(){
+        /*if(true){return;}
         for(int x : new Range( output.getWidth()) ) {
+        for(int y : new Range( output.getHeight() )){
+        if (new Polygon(new int[]{start.x, end.x}, new int[]{start.y,end.y}, 2).contains(new Point(x, y))) {
+        output.setRGB(x, y, c.getRGB());
+        }
+        }
+        }*/
+        int x1l[] = {};
+        int y1l[] = {};
+        int x2l[] = {};
+        int y2l[] = {};
+        int ml[] = {};
+        int consl[] = {};
+        Color cl[] = {};
+        for(int x : new Range( output.getWidth())){
             for(int y : new Range( output.getHeight() )){
-                if (new Polygon(new int[]{start.x, end.x}, new int[]{start.y,end.y}, 2).contains(new Point(x, y))) {
-                    output.setRGB(x, y, c.getRGB());
+                for(int i : new Range(lines_d.size())){
+                    Line l = lines_d.get(i);
+                    int x1 = l.start.x;
+                    int y1 = l.start.y;
+                    int x2 = l.end.x;
+                    int y2 = l.end.y;
+                    int m = ml[i];
+                    int cons = consl[i];
+                    Color c = cl[i];
+                    if(checkPointLiesonLine(x,y,m,cons)){
+                        output.setRGB(x, y, c.getRGB());
+                    }
                 }
             }
         }
@@ -380,6 +412,25 @@ class renderer extends JPanel{
         return out;
     }
     public float speed = 0;
+    
+    private static boolean checkPointLiesonLine(int x3, int y3, int m, int c)
+    {
+        Integer temp = m*x3+c;
+        return temp.compareTo(y3)==0;
+    }
+
+    private static int getConstant(int x1, int y1, int x2, int y2, int m)
+    {       
+        return y1-m*x1;
+    }
+
+    private static int getSlope(int x1, int y1, int x2, int y2)
+    {
+        if(x2-x1 == 0){
+            return 0;
+        }
+        return (y2-y1)/(x2-x1);
+    }
 }
 class face implements Comparable<face>{
     public face(int ogIndex, float z, Integer[] points){

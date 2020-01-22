@@ -33,7 +33,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
+import PBEngine.Rendering.core.renderType;
 import PBEngine.Supervisor;
+import PBEngine.gameObjects.gameObject;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -77,6 +79,8 @@ public class CodeNameProjection {
                 Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        supervisor.objectManager.addObject(new gameObject(new Point2D(10, 0), 1, 1, renderType.box, supervisor, supervisor.objectManager.getUsableID()));
+        supervisor.engine_gravity = new Point2D(0, 0.1);
         new driver(supervisor);
         
         
@@ -86,7 +90,7 @@ public class CodeNameProjection {
 class driver{
     public Supervisor pbSudo = null;
     
-    private boolean usePB = true;
+    private boolean usePB = false;
     
     
     
@@ -191,7 +195,7 @@ class driver{
         if(Objects.isNull(pbSudo)){
             usePB = false;
         }
-        usePB = false;
+        //usePB = false;
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
         Screen s = new Screen();
@@ -243,6 +247,7 @@ class driver{
         
         int frame = 0;
         while(running){
+            frame = 30;
             beginTime = Instant.now();
             //Init
             
@@ -251,7 +256,7 @@ class driver{
                 lines = new LinkedList<>();
                 faces = new LinkedList<>();
                 
-                sudo.objectManager.getObjects().forEach(l -> addCube(new dVector3(l.x, l.y, 1), 0.5, true, false));
+                sudo.objectManager.getObjects().forEach(l -> addCube(new dVector3(l.x, l.y, 1), 0.5, true, true));
             }
             
             
@@ -269,7 +274,7 @@ class driver{
             }
             if (!usePB) {
 //System.out.println(zep);
-                if (tickC % 25 == 0 && !an_pause) {
+                if (tickC % 10 == 0 && !an_pause) {
                     if (frame < frames.size() - 1) {
                         frame++;
                     } else {
