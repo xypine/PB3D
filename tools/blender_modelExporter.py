@@ -227,9 +227,11 @@ class exporter(bpy.types.Operator):
         return {'RUNNING_MODAL'}
         
 def register():
+    
     bpy.utils.register_class(exporter)
-
+    print("PB3D Exporter registered.")
 def unregister():
     bpy.utils.unregister_class(exporter)
+    print("PB3D Exporter unregistered.")
 if __name__ == "__main__":
     register()

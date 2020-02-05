@@ -69,15 +69,15 @@ public class CodeNameProjection {
         param.put("nowindows", "");
         Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
         Thread a = new Thread(supervisor);
-        a.start();
-        while (!supervisor.ready) {            
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        //a.start();
+        /*while (!supervisor.ready) {
+        try {
+        Thread.sleep(10);
+        } catch (InterruptedException ex) {
+        Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
         }
-        new driver(supervisor);
+        }*/
+        new driver(null);
         
         
     }
@@ -186,6 +186,8 @@ class driver{
     
     IDManager ids = new IDManager();
     
+    LinkedList<Float> face_dists = new LinkedList<>();
+    LinkedList<Color> faces_color = new LinkedList<>();
     public driver(Supervisor sudo){
         pbSudo = sudo;
         if(Objects.isNull(pbSudo)){
@@ -269,7 +271,7 @@ class driver{
             }
             if (!usePB) {
 //System.out.println(zep);
-                if (tickC % 25 == 0 && !an_pause) {
+                if (tickC % 1 == 0 && !an_pause) {
                     if (frame < frames.size() - 1) {
                         frame++;
                     } else {
@@ -289,10 +291,9 @@ class driver{
             LinkedList<Point2D[]> lines_set = new LinkedList<>();
             LinkedList<Point2D[]> lines_sizes = new LinkedList<>();
             LinkedList<Color> lines_color = new LinkedList<>();
-            LinkedList<Color> faces_color = new LinkedList<>();
             HashMap<Integer, Float> dist = new HashMap<>();
             lines_color = new LinkedList<>();
-            faces_color = new LinkedList<>();
+            //faces_color = new LinkedList<>();
             
             HashMap<Integer, Point2D> idVSserial = s.r.getIDMap();
             
@@ -336,7 +337,8 @@ class driver{
             if(inp.keys[222] == true){
                 if(inp.keys[87] == true){
                     //screenPosition_org.y = screenPosition_org.y + factor;
-                    screenPosition_org = JFUtils.vector.dVector3.add(screenPosition_org, screenPosition_org);
+                    screenPosition_org = Point3D.add(viewAngle, screenPosition_org);
+                    //screenPosition_org = JFUtils.vector.dVector3.add(screenPosition_org, screenPosition_org);
                 }
             }
             else{
@@ -473,7 +475,9 @@ class driver{
                 Point2D point2D = new Point2D(projected.x, projected.y);
                 point2D.identifier = i.identifier;
                 int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
-                float distP = (float) (screenPosition.z - rotated.z);
+                float distP;
+                //distP = (float) (screenPosition.z - rotated.z);
+                distP = (float) Utils.getDistance(rotated.toDVector3(), screenPosition);
                 dist.put(i.identifier, distP);
                 if(size < 0){
                     size = 0;
@@ -523,8 +527,24 @@ class driver{
                 }
             }
             
-            LinkedList<Float> face_dists = new LinkedList<>();
+            
+            //face_dists = new LinkedList<>();
+            //faces_color = new LinkedList<>();
             float lastZ = 0;
+            int index = 0;
+            final Color def = new Color(0, 0, 0);
+            if(face_dists.isEmpty()){
+                System.out.println("FACES_DIST SIZE: " + face_dists.size());
+                System.out.println("List too small, inflating...");
+                faces.forEach(l -> face_dists.add(0F));
+            }
+            if(faces_color.isEmpty()){
+                System.out.println("FACES_COLOR SIZE: " + faces_color.size());
+                System.out.println("List too small, inflating...");
+                for(Integer[] face : faces){
+                    faces_color.add(new Color(0, 0, 0));
+                }
+            }
             for(Integer[] face : faces){
                 boolean cont = false;
                 if(face.length == 3){
@@ -556,17 +576,26 @@ class driver{
                 }
                 
                 
-                
+                //System.out.println(face_dists.size());
                 if(!Objects.isNull(point)){
+                    boolean change = true;
                     float distP = (255 - dist.get(point.identifier) * 25);
                     if(distP == 0.0F){
-                        System.out.println("F2");
+                        //System.out.println("F2");
+                        change = false;
                     }
                     else{
                         lastZ = distP;
                         //System.out.println("F3");
                     }
-                    face_dists.add((float)distP);
+                    //face_dists.add((float)distP);
+                    
+                    if(Objects.isNull(face_dists.get(index))){
+                        change = false;
+                        //face_dists.add(index, lastZ);
+                        //System.out.println("List too small, inflating...");
+                    }
+                    
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -574,17 +603,20 @@ class driver{
                     if(distP < 0){
                         distP = 0;
                     }
-                    
-                    faces_color.add(new Color((int)distP, (int)distP,(int) distP));
+                    if(change){
+                        face_dists.set(index, lastZ);
+                        faces_color.set(index, new Color((int)distP, (int)distP,(int) distP));
+                    }
                     //faces_color.add(Color.pink);
                 }
                 else{
                     //System.out.println("F:");
                     //face_dists.add(lastZ);
-                    face_dists.add(Float.MAX_VALUE);
+                    //face_dists.add(Float.MAX_VALUE);
                     //System.out.println(lastZ);
-                    faces_color.add(Color.green);
+                    //faces_color.add(Color.green);
                 }
+                index++;
             }
             
             //Rendering

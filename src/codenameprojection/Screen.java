@@ -69,10 +69,10 @@ class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = false;
-    public boolean shading = false;
+    public boolean shading = true;
     public boolean drawLines = true;
-    public boolean drawFaces = false;
-    public boolean drawErrors = false;
+    public boolean drawFaces = true;
+    public boolean drawErrors = true;
     public int received = 0;
     public int errors = 0;
     
@@ -135,7 +135,7 @@ class renderer extends JPanel{
             }
         }
         
-        
+        errors = 0;
         repaint();
         
         g.setColor(Color.black);
@@ -240,6 +240,7 @@ class renderer extends JPanel{
                         double y3 = 0;
                         boolean draw = true;
                         try {
+                            //face name = (face) (getIDMap().get(i));
                             x1 = a.get(faces.get(i).points[0]).x;
                             x2 = a.get(faces.get(i).points[1]).x;
                             x3 = a.get(faces.get(i).points[2]).x;
@@ -248,7 +249,7 @@ class renderer extends JPanel{
                             y3 = a.get(faces.get(i).points[2]).y;
                         } catch (Exception e) {
                             draw = false;
-                            //throw e;
+                            throw e;
                         }
                         
                         Color c = Color.blue;
@@ -410,7 +411,7 @@ class face implements Comparable<face>{
     @Override
     public int compareTo(face o) {
         //return(getZ().compareTo(o.getZ()));
-        return ((int)z*10)-((int)o.z*10);
+        return ((int)z*100)-((int)o.z*100);
     }
     
     public static final Comparator<face> DESCENDING_COMPARATOR = new Comparator<face>() {
