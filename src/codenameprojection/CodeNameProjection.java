@@ -356,7 +356,7 @@ class driver{
             if(inp.keys[222] == true){
                 if(inp.keys[87] == true){
                     //screenPosition_org.y = screenPosition_org.y + factor;
-                    screenPosition_org = Point3D.add(viewAngle, screenPosition_org);
+                    screenPosition_org = Point3D.add(Point3D.multiply(viewAngle, new Point3D(0.0001D, 0.0001D, 0.0001D)), screenPosition_org);
                     //screenPosition_org = JFUtils.vector.dVector3.add(screenPosition_org, screenPosition_org);
                 }
             }

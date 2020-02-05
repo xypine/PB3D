@@ -12,8 +12,10 @@ import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -58,6 +60,7 @@ class renderer extends JPanel{
     
     public renderer(Component parent){
         //output = new BufferedImage(parent.getWidth(), parent.getWidth(), BufferedImage.TYPE_INT_RGB);
+        setIgnoreRepaint(true);
     }
     
     public float nano = 0;
@@ -79,7 +82,7 @@ class renderer extends JPanel{
     public int received = 0;
     public int errors = 0;
     
-    public boolean usePixelRendering = false;
+    public boolean usePixelRendering = true;
     
     private void drawPolygon(Polygon p, Color c){
         for(int x : new Range( output.getWidth()) ) {
@@ -99,6 +102,8 @@ class renderer extends JPanel{
             }
         }
     }
+    
+    
     
     private void drawPoint(Point2Int point, Color c){
         output.setRGB(point.x, point.y, c.getRGB());
@@ -129,7 +134,7 @@ class renderer extends JPanel{
         h = currentSize.height;
         this.setSize(currentSize);
         super.paintComponent(g);
-        Graphics gb = null;
+        Graphics2D gb = null;
         if (usePixelRendering) {
             if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
                 output = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
@@ -137,7 +142,10 @@ class renderer extends JPanel{
                 clear();
             }
             
-            gb = output.getGraphics();
+            gb = output.createGraphics();
+            gb.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         }
         
         errors = 0;
