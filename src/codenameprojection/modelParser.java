@@ -6,7 +6,9 @@
 
 package codenameprojection;
 
+import JFUtils.point.Point2D;
 import JFUtils.vector.dVector3;
+import static codenameprojection.Utils.vToP2;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,7 +25,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public String filename = "Suzanne";
+    public String filename = "model";
     
     final float size = 50;
     public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
@@ -137,8 +139,8 @@ public class modelParser {
         System.out.println(out.size() + " lines loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Integer[]> parseFaces(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
-        LinkedList<Integer[]> out = new LinkedList<>();
+    public LinkedList<Point2D[]> parseFaces(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
+        LinkedList<Point2D[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
         in = new BufferedReader(new FileReader(filename + "_faces.pb3d"));
@@ -167,18 +169,18 @@ public class modelParser {
                             System.out.println("char in the line was null!");
                         }
                      try {
-                        out.add(new Integer[]{
-                            points.get(coord[0]+1).identifier,
-                            points.get(coord[1]+1).identifier,
-                            points.get(coord[2]+1).identifier
+                        out.add(new Point2D[]{
+                            vToP2(points.get(coord[0]+1)),
+                            vToP2(points.get(coord[1]+1)),
+                            vToP2(points.get(coord[2]+1))
                         });
                      }
                      catch(Exception e){
                             try {
-                                out.add(new Integer[]{
-                                points.get(coord[0]).identifier,
-                                points.get(coord[1]).identifier,
-                                points.get(coord[2]).identifier
+                                out.add(new Point2D[]{
+                                vToP2(points.get(coord[0])),
+                                vToP2(points.get(coord[1])),
+                                vToP2(points.get(coord[2]))
                             });
                             } catch (Exception ez) {
                                 

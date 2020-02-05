@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
+import static codenameprojection.Utils.vToP2;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -44,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -155,26 +157,26 @@ class driver{
             lines.add(new Integer[]{drd.identifier, urd.identifier});
         }
         if(addFaces){
-            faces.add(new Integer[]{dlu.identifier, dld.identifier, dru.identifier});
-            faces.add(new Integer[]{dld.identifier, drd.identifier, dru.identifier});
-            faces.add(new Integer[]{ulu.identifier, uld.identifier, uru.identifier});
-            faces.add(new Integer[]{uld.identifier, urd.identifier, uru.identifier});
+            faces.add(new Point2D[]{vToP2(dlu), vToP2(dld), vToP2(dru)});
+            faces.add(new Point2D[]{vToP2(dld), vToP2(drd), vToP2(dru)});
+            faces.add(new Point2D[]{vToP2(ulu), vToP2(uld), vToP2(uru)});
+            faces.add(new Point2D[]{vToP2(uld), vToP2(urd), vToP2(uru)});
             
-            faces.add(new Integer[]{dlu.identifier, dld.identifier, ulu.identifier});
-            faces.add(new Integer[]{ulu.identifier, uld.identifier, dld.identifier});
-            faces.add(new Integer[]{dru.identifier, drd.identifier, uru.identifier});
-            faces.add(new Integer[]{uru.identifier, urd.identifier, drd.identifier});
+            faces.add(new Point2D[]{vToP2(dlu), vToP2(dld), vToP2(ulu)});
+            faces.add(new Point2D[]{vToP2(ulu), vToP2(uld), vToP2(dld)});
+            faces.add(new Point2D[]{vToP2(dru), vToP2(drd), vToP2(uru)});
+            faces.add(new Point2D[]{vToP2(uru), vToP2(urd), vToP2(drd)});
             
-            faces.add(new Integer[]{dlu.identifier, dru.identifier, dru.identifier});
+            faces.add(new Point2D[]{vToP2(dlu), vToP2(dru), vToP2(dru)});
             
-            //faces.add(new Integer[]{urd.identifier, drd.identifier, dru.identifier});
+            //faces.add(new Integer[]{urd), drd), dru)});
             
-            //faces.add(new Integer[]{ulu.identifier, uld.identifier, uru.identifier});
-            //faces.add(new Integer[]{uld.identifier, urd.identifier, uru.identifier});
-            //faces.add(new Integer[]{ulu.identifier, dld.identifier, dru.identifier});
-            //faces.add(new Integer[]{uld.identifier, drd.identifier, dru.identifier});
+            //faces.add(new Integer[]{ulu), uld), uru)});
+            //faces.add(new Integer[]{uld), urd), uru)});
+            //faces.add(new Integer[]{ulu), dld), dru)});
+            //faces.add(new Integer[]{uld), drd), dru)});
             
-            //faces.add(new Integer[]{dld.identifier, drd.identifier, drd.identifier});
+            //faces.add(new Integer[]{dld), drd), drd)});
         }
     }
     public void addCube(dVector3 center, double size){
@@ -182,7 +184,7 @@ class driver{
     }
     LinkedList<dVector3> points;
     LinkedList<Integer[]> lines;
-    LinkedList<Integer[]> faces = new LinkedList<>();
+    LinkedList<Point2D[]> faces = new LinkedList<>();
     
     IDManager ids = new IDManager();
     
@@ -245,8 +247,13 @@ class driver{
         
         int frame = 0;
         while(running){
+            //frame = 10;
             beginTime = Instant.now();
             //Init
+            
+            s.r.cx = screenPosition_org.intX();
+            s.r.cy = screenPosition_org.intY();
+            s.r.cz = screenPosition_org.intZ();
             
             if(usePB){
                 points = new LinkedList<>();
@@ -271,7 +278,7 @@ class driver{
             }
             if (!usePB) {
 //System.out.println(zep);
-                if (tickC % 1 == 0 && !an_pause) {
+                if (tickC % 15 == 0 && !an_pause) {
                     if (frame < frames.size() - 1) {
                         frame++;
                     } else {
@@ -327,6 +334,18 @@ class driver{
                 boost = boost * 5;
                 
             }
+            
+            //t
+            if(inp.keys[84] == true){
+                s.r.drawLines = true;
+                s.r.drawFaces = false;
+            }
+            //g
+            if(inp.keys[71] == true){
+                s.r.drawLines = false;
+                s.r.drawFaces = true;
+            }
+            
             if(inp.keys[68] == true){
                 screenPosition_org.x = screenPosition_org.x + factor;
             }
@@ -541,11 +560,11 @@ class driver{
             if(faces_color.isEmpty()){
                 System.out.println("FACES_COLOR SIZE: " + faces_color.size());
                 System.out.println("List too small, inflating...");
-                for(Integer[] face : faces){
+                for(Point2D[] face : faces){
                     faces_color.add(new Color(0, 0, 0));
                 }
             }
-            for(Integer[] face : faces){
+            for(Point2D[] face : faces){
                 boolean cont = false;
                 if(face.length == 3){
                     cont = true;
@@ -560,14 +579,14 @@ class driver{
                 
                 Point2D point = null;
                 try {
-                    point = idVSserial.get(face[0]);
+                    point = face[0];
                 } catch (Exception e) {
                     try {
-                        point = idVSserial.get(face[1]);
+                        point = face[1];
                     } catch (Exception ez) {
                         //throw ez;
                         try {
-                            point = idVSserial.get(face[2]);
+                            point = face[2];
                         } catch (Exception ezz) {
                             //throw ez;
                             
@@ -622,7 +641,13 @@ class driver{
             //Rendering
             s.r.updatePoints(set, sizes);
             s.r.updateLines(lines, lines_color);
-            s.r.updateFaces(faces, faces_color, face_dists);
+            
+            
+            //Sort faces
+            LinkedList<face> sorted = new Utils().constructFaceList(faces, face_dists);
+            Collections.sort(sorted);
+            
+            s.r.updateFaces(sorted, faces_color, face_dists);
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             
