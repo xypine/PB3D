@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import JFUtils.Range;
-import JFUtils.pathfinding.astarNode;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
 import codenameprojection.drawables.Face;
@@ -18,14 +17,11 @@ import codenameprojection.drawables.point;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import javax.imageio.ImageIO;
@@ -76,6 +72,7 @@ class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = false;
+    public boolean shading = false;
     public boolean drawLines = true;
     public boolean drawFaces = false;
     public boolean drawErrors = true;
@@ -189,6 +186,8 @@ class renderer extends JPanel{
             if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
                 drawLines();
                 drawFaces();
+                lines_d = new LinkedList<>();
+                faces_d = new LinkedList<>();
                 output = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             } else {
                 clear();
@@ -229,7 +228,9 @@ class renderer extends JPanel{
                             }
                             //throw e;
                         }
-                        g.setColor(c);
+                        if (shading) {
+                            g.setColor(c);
+                        }
                         
                         
                         if (draw) {
