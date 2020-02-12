@@ -24,6 +24,16 @@ public class Utils {
         o.identifier = source.identifier;
         return o;
     }
+    public static Point3D dToP2(dVector3 source){
+        Point3D o = new Point3D(source.x, source.y, source.z);
+        o.identifier = source.identifier;
+        return o;
+    }
+    public static Point2D p3to2(Point3D source){
+        Point2D o = new Point2D(source.x, source.y);
+        o.identifier = source.identifier;
+        return o;
+    }
     float last_z = 0;
     public LinkedList<face> constructFaceList(LinkedList<Point2D[]> origin, LinkedList<Float> faces_dist){
         int index = 0;

@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
+import static codenameprojection.Utils.p3to2;
 import static codenameprojection.Utils.vToP2;
 import java.awt.Color;
 import java.io.BufferedWriter;
@@ -115,11 +116,37 @@ class driver{
     //False: "gloabal"
     //True: "local"
     public boolean rotation_mode = true;
-    private LinkedList<LinkedList<dVector3>> frames = new LinkedList<>();
+    private LinkedList<LinkedList<Point3D>> frames = new LinkedList<>();
     
     float tickDelta = 0F;
     
     public boolean an_pause = false;
+    
+    public void addPlane(Point3D center, double size){
+        Point3D lu = new Point3D(center.x-1*size, center.y+1*size, center.z);
+        Point3D ld = new Point3D(center.x-1*size, center.y-1*size, center.z);
+        Point3D ru = new Point3D(center.x+1*size, center.y+1*size, center.z);
+        Point3D rd = new Point3D(center.x+1*size, center.y-1*size, center.z);
+        
+        LinkedList<Point3D> p = new LinkedList<>();
+        p.add(lu); p.add(ld); p.add(ru); p.add(rd);
+        
+        for(LinkedList<Point3D> fr : frames){
+            fr.addAll(p);
+        }
+        LinkedList<Integer[]> l = new LinkedList<Integer[]>();
+        l.add(new Integer[]{lu.identifier, ld.identifier});
+        l.add(new Integer[]{ld.identifier, rd.identifier});
+        l.add(new Integer[]{rd.identifier, ru.identifier});
+        l.add(new Integer[]{ru.identifier, lu.identifier});
+        lines.addAll(l);
+        
+        LinkedList<Point2D[]> f = new LinkedList<>();
+        f.add(new Point2D[]{p3to2(lu), p3to2(ld), p3to2(rd)});
+        f.add(new Point2D[]{p3to2(rd), p3to2(ru), p3to2(ld)});
+        
+        faces.addAll(f);
+    }
     
     public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
@@ -182,7 +209,7 @@ class driver{
     public void addCube(dVector3 center, double size){
         addCube(center, size, true, true);
     }
-    LinkedList<dVector3> points;
+    LinkedList<Point3D> points;
     LinkedList<Integer[]> lines;
     LinkedList<Point2D[]> faces = new LinkedList<>();
     
@@ -205,6 +232,9 @@ class driver{
         s.addMouseListener(inp);
         points = new LinkedList<>();
         lines = new LinkedList<>();
+        
+        
+        
         try {
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
@@ -233,7 +263,7 @@ class driver{
             frames.add(points);
         }
         
-        
+        addPlane(new Point3D(0, 0, -10), 100);
         
         double angleY = 0;
         double angleYM = 0;
@@ -437,7 +467,7 @@ class driver{
             
             //screenPosition.z = screenPosition_org.z;
             //Calc
-            for(dVector3 i : points){
+            for(Point3D i : points){
                 if(i.z > screenPosition.z){
                     //continue;
                 }
