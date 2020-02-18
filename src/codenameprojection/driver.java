@@ -73,7 +73,18 @@ public class driver{
     
     public boolean an_pause = false;
     
-    public void addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
+    
+    public HashMap<Integer, model> models = new HashMap<>();
+    
+    /**
+     *
+     * @param center
+     * @param size
+     * @param Addlines
+     * @param addFaces
+     * @return The handle of the added object
+     */
+    public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
         //zxy
         dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
@@ -130,6 +141,7 @@ public class driver{
             
             //faces.add(new Integer[]{dld), drd), drd)});
         }
+        CONTINUE FROM HERE, ADD THE CUBE TO THE MODELS MAP
     }
     public void addCube(dVector3 center, double size){
         addCube(center, size, true, true);
@@ -405,7 +417,15 @@ public class driver{
             try {
                 points_bak.addAll(points);
             } catch (Exception e) {
-                points.forEach(l -> {dVector3 d = new dVector3(l.x, l.y, l.z);d.identifier = l.identifier;points_bak.add(d);});
+                try {
+                    points.forEach(l -> {
+                        dVector3 d = new dVector3(l.x, l.y, l.z);
+                        d.identifier = l.identifier;
+                        points_bak.add(d);
+                    });
+                } catch (Exception ex) {
+                    //points_bak = points;
+                }
             }
             for(Point3D i : points_bak){
                 if(i.z > screenPosition.z){
@@ -488,8 +508,13 @@ public class driver{
             e.printStackTrace();
             }
             }*/
-            LinkedList<Integer[]> lines2;
-            for(Integer[] line : lines){
+            LinkedList<Integer[]> lines2 = new LinkedList<>();
+            try {
+                lines2.addAll(lines);
+            } catch (Exception e) {
+                lines.forEach(l -> {lines2.add(l);});
+            }
+            for(Integer[] line : lines2){
                 Point2D point = null;
                 try {
                     point = idVSserial.get(line[0]);
@@ -568,7 +593,7 @@ public class driver{
                 //System.out.println(face_dists.size());
                 if(!Objects.isNull(point)){
                     boolean change = true;
-                    float distP = (255 - dist.get(point.identifier) * 25);
+                    float distP = (255 - dist.get(point.identifier) * 7);
                     if(distP == 0.0F){
                         //System.out.println("F2");
                         change = false;
