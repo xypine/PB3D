@@ -7,7 +7,9 @@
 package codenameprojection;
 
 import JFUtils.point.Point2D;
+import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
+import static codenameprojection.Utils.p3to2;
 import static codenameprojection.Utils.vToP2;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -28,9 +30,9 @@ public class modelParser {
     public String filename = "models/viper";
     
     final float size = 50;
-    public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
-        LinkedList<dVector3> buffer = new LinkedList<>();
-        LinkedList<LinkedList<dVector3>> out = new LinkedList<>();
+    public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
+        LinkedList<Point3D> buffer = new LinkedList<>();
+        LinkedList<LinkedList<Point3D>> out = new LinkedList<>();
         int frames = 0;
         int points = 0;
         int index = 0;
@@ -84,7 +86,7 @@ public class modelParser {
         System.out.println(points + " points in " + frames + " frames loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Integer[]> parseLines(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
+    public LinkedList<Integer[]> parseLines(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
@@ -139,7 +141,7 @@ public class modelParser {
         System.out.println(out.size() + " lines loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Point2D[]> parseFaces(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
+    public LinkedList<Point2D[]> parseFaces(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
         LinkedList<Point2D[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
@@ -170,17 +172,17 @@ public class modelParser {
                         }
                      try {
                         out.add(new Point2D[]{
-                            vToP2(points.get(coord[0]+1)),
-                            vToP2(points.get(coord[1]+1)),
-                            vToP2(points.get(coord[2]+1))
+                            p3to2(points.get(coord[0]+1)),
+                            p3to2(points.get(coord[1]+1)),
+                            p3to2(points.get(coord[2]+1))
                         });
                      }
                      catch(Exception e){
                             try {
                                 out.add(new Point2D[]{
-                                vToP2(points.get(coord[0])),
-                                vToP2(points.get(coord[1])),
-                                vToP2(points.get(coord[2]))
+                                p3to2(points.get(coord[0])),
+                                p3to2(points.get(coord[1])),
+                                p3to2(points.get(coord[2]))
                             });
                             } catch (Exception ez) {
                                 
@@ -198,7 +200,7 @@ public class modelParser {
     }
     public static void main(String[] args) {
         try {
-            LinkedList<LinkedList<dVector3>> parse = new modelParser().parse();
+            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             new modelParser().parseLines(parse.getFirst());
         } catch (IOException ex) {
             Logger.getLogger(modelParser.class.getName()).log(Level.SEVERE, null, ex);

@@ -67,7 +67,7 @@ public class driver{
     //False: "gloabal"
     //True: "local"
     public boolean rotation_mode = true;
-    public LinkedList<LinkedList<dVector3>> frames = new LinkedList<>();
+    public LinkedList<LinkedList<Point3D>> frames = new LinkedList<>();
     
     public float tickDelta = 0F;
     
@@ -134,7 +134,7 @@ public class driver{
     public void addCube(dVector3 center, double size){
         addCube(center, size, true, true);
     }
-    public LinkedList<dVector3> points;
+    public LinkedList<Point3D> points;
     public LinkedList<Integer[]> lines;
     public LinkedList<Point2D[]> faces = new LinkedList<>();
     
@@ -401,13 +401,13 @@ public class driver{
             
             //screenPosition.z = screenPosition_org.z;
             //Calc
-            LinkedList<dVector3> points_bak = new LinkedList<>();
+            LinkedList<Point3D> points_bak = new LinkedList<>();
             try {
                 points_bak.addAll(points);
             } catch (Exception e) {
                 points.forEach(l -> {dVector3 d = new dVector3(l.x, l.y, l.z);d.identifier = l.identifier;points_bak.add(d);});
             }
-            for(dVector3 i : points_bak){
+            for(Point3D i : points_bak){
                 if(i.z > screenPosition.z){
                     //continue;
                 }

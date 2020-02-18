@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point3F;
 import PBEngine.Supervisor;
+import static codenameprojection.Utils.p3to2;
 import static codenameprojection.Utils.vToP2;
 import java.awt.Color;
 import java.io.BufferedWriter;
