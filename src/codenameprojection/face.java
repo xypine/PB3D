@@ -14,6 +14,10 @@ import java.util.Objects;
  * @author guest-f1wfbl
  */
 public class face implements Comparable<face>{
+
+    public face() {
+    }
+    
     public face(int ogIndex, float z, Point2D[] points){
         if(Objects.isNull(originalIndex) || Objects.isNull(z) || Objects.isNull(points)){
             System.out.println("a");
