@@ -15,8 +15,10 @@ import codenameprojection.drawables.Face;
 import codenameprojection.drawables.Line;
 import codenameprojection.drawables.point;
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,9 +57,13 @@ public class Screen extends JFrame{
 }
 class renderer extends JPanel{
     public BufferedImage output;
+    public int cx;
+    public int cy;
+    public int cz;
     
     public renderer(Component parent){
         //output = new BufferedImage(parent.getWidth(), parent.getWidth(), BufferedImage.TYPE_INT_RGB);
+        setIgnoreRepaint(true);
     }
     
     public float nano = 0;
@@ -72,14 +78,14 @@ class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = false;
-    public boolean shading = false;
-    public boolean drawLines = true;
-    public boolean drawFaces = false;
+    public boolean shading = true;
+    public boolean drawLines = false;
+    public boolean drawFaces = true;
     public boolean drawErrors = true;
     public int received = 0;
     public int errors = 0;
     
-    public boolean usePixelRendering = false;
+    public boolean usePixelRendering = true;
     
     private void drawPolygon(Polygon p, Color c){
         faces_d.add(new Face(p, c));
@@ -152,6 +158,8 @@ class renderer extends JPanel{
         }
     }
     
+    
+    
     private void drawPoint(Point2Int point, Color c){
         output.setRGB(point.x, point.y, c.getRGB());
     }
@@ -181,7 +189,7 @@ class renderer extends JPanel{
         h = currentSize.height;
         this.setSize(currentSize);
         super.paintComponent(g);
-        
+        Graphics2D gb = null;
         if (usePixelRendering) {
             if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
                 drawLines();
@@ -192,9 +200,14 @@ class renderer extends JPanel{
             } else {
                 clear();
             }
+            
+            gb = output.createGraphics();
+            gb.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         }
         
-        
+        errors = 0;
         repaint();
         
         g.setColor(Color.black);
@@ -236,7 +249,9 @@ class renderer extends JPanel{
                         if (draw) {
                             //
                             if (usePixelRendering) {
-                                drawLine(new Point2Int(x1, y1), new Point2Int(x2, y2), c);
+                                //drawLine(new Point2Int(x1, y1), new Point2Int(x2, y2), c);
+                                gb.setColor(c);
+                                gb.drawLine(x1, y1, x2, y2);
                             } else {
                                 g.drawLine(x1, y1, x2, y2);
                             }
@@ -290,7 +305,7 @@ class renderer extends JPanel{
             if (drawFaces) {
             for (int i : new Range(faces.size())) {
                 try {
-                    if (!(Objects.isNull(a.get(faces.get(i).points[0]))) && !(Objects.isNull(a.get(faces.get(i).points[1]))) && !(Objects.isNull(a.get(faces.get(i).points[2])))) {
+                    if (!(Objects.isNull(a.get(faces.get(i).points[0].identifier))) && !(Objects.isNull(a.get(faces.get(i).points[1].identifier))) && !(Objects.isNull(a.get(faces.get(i).points[2].identifier)))) {
                         double x1 = 0;
                         double x2 = 0;
                         double x3 = 0;
@@ -299,15 +314,16 @@ class renderer extends JPanel{
                         double y3 = 0;
                         boolean draw = true;
                         try {
-                            x1 = a.get(faces.get(i).points[0]).x;
-                            x2 = a.get(faces.get(i).points[1]).x;
-                            x3 = a.get(faces.get(i).points[2]).x;
-                            y1 = a.get(faces.get(i).points[0]).y;
-                            y2 = a.get(faces.get(i).points[1]).y;
-                            y3 = a.get(faces.get(i).points[2]).y;
+                            //face name = (face) (getIDMap().get(i));
+                            x1 = a.get(faces.get(i).points[0].identifier).x;
+                            x2 = a.get(faces.get(i).points[1].identifier).x;
+                            x3 = a.get(faces.get(i).points[2].identifier).x;
+                            y1 = a.get(faces.get(i).points[0].identifier).y;
+                            y2 = a.get(faces.get(i).points[1].identifier).y;
+                            y3 = a.get(faces.get(i).points[2].identifier).y;
                         } catch (Exception e) {
                             draw = false;
-                            //throw e;
+                            throw e;
                         }
                         
                         Color c = Color.blue;
@@ -333,7 +349,9 @@ class renderer extends JPanel{
                             //g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             //Rectangle r = new Rectangle();
                             if (usePixelRendering) {
-                                drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
+                                gb.setColor(c);
+                                gb.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                                //drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
                             } else {
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
@@ -369,6 +387,7 @@ class renderer extends JPanel{
         g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
         g.drawString("" + (int) (nano * 1000000000) + " FPS", w - w/5, h/7);
         g.drawString("speed: " + speed + "", w - w/5, h/6);
+        g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w/5, h/5);
     }
     public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes){
         this.points = newSet;
@@ -382,26 +401,26 @@ class renderer extends JPanel{
     LinkedList<face> faces_unsorted = new LinkedList<>();
     LinkedList<Color> faces_color = new LinkedList<>();
     LinkedList<Float> faces_dist = new LinkedList<>();
-    public void updateFaces(LinkedList<Integer[]> newSet, LinkedList<Color> color, LinkedList<Float> dist){
+    public void updateFaces(LinkedList<face> newSet, LinkedList<Color> color, LinkedList<Float> dist){
         
         this.faces_color = color;
         this.faces_dist = dist;
         this.received = newSet.size();
-        this.faces = constructFaceList(newSet);
+        this.faces_unsorted = newSet;
         
-        Comparator comp = face.DESCENDING_COMPARATOR;
+        //Comparator comp = face.DESCENDING_COMPARATOR;
         
-        PriorityQueue<face> pr = new PriorityQueue<>();
+        //PriorityQueue<face> pr = new PriorityQueue<>();
         
-        LinkedList<face> newF = new LinkedList<>();
+        //LinkedList<face> newF = new LinkedList<>();
         
-        faces.forEach(l -> pr.add(l));
+        //faces_unsorted.forEach(l -> pr.add(l));
         
-        while(!pr.isEmpty()){
-            newF.add(pr.remove());
-        }
-        faces_unsorted = (LinkedList<face>) faces.clone();
-        faces = newF;
+        //while(!pr.isEmpty()){
+        //    newF.add(pr.remove());
+        //}
+        //faces_unsorted = (LinkedList<face>) faces.clone();
+        faces = faces_unsorted;
         //Collections.sort(this.faces);
         //faces.sort(null);
     }
@@ -413,30 +432,7 @@ class renderer extends JPanel{
         return out;
     }
     float last_z = 0;
-    LinkedList<face> constructFaceList(LinkedList<Integer[]> origin){
-        int index = 0;
-        LinkedList<face> out = new LinkedList<>();
-        for(Integer[] i : origin){
-            float z = Float.MAX_VALUE;
-            try {
-                z = faces_dist.get(index);
-                last_z = z;
-            } 
-            catch(IndexOutOfBoundsException e){
-                //System.out.println(e);
-                z = last_z;
-                //System.out.println(z);
-                throw e;
-            }
-            catch (Exception e) {
-                
-                throw e;
-            }
-            out.add(new face(index, z, i));
-            index++;
-        }
-        return out;
-    }
+    
     public float speed = 0;
     
     private static boolean checkPointLiesonLine(int x3, int y3, int m, int c)
@@ -457,45 +453,4 @@ class renderer extends JPanel{
         }
         return (y2-y1)/(x2-x1);
     }
-}
-class face implements Comparable<face>{
-    public face(int ogIndex, float z, Integer[] points){
-        if(Objects.isNull(originalIndex) || Objects.isNull(z) || Objects.isNull(points)){
-            System.out.println("a");
-            if(points.length > 0){
-                if(Objects.isNull(points[0]) || Objects.isNull(points[1]) || Objects.isNull(this.points[2])){
-                    System.out.println("NOOOO");
-                }
-            }
-            else{
-                System.out.println("\"Verticies must contain 3 points!\"");
-                throw new IllegalArgumentException("Verticies must contain 3 points!");
-            }
-        }
-        
-        this.originalIndex = ogIndex;
-        this.z = z;
-        this.points = points;
-    }
-    
-    int originalIndex;
-    Integer[] points = new Integer[]{};
-    
-    public float z = (float) 0;
-    public Integer getZ(){
-        return (int) z * 100000;
-    }
-    @Override
-    public int compareTo(face o) {
-        //return(getZ().compareTo(o.getZ()));
-        return ((int)z*10)-((int)o.z*10);
-    }
-    
-    public static final Comparator<face> DESCENDING_COMPARATOR = new Comparator<face>() {
-        // Overriding the compare method to sort the age
-        public int compare(face d, face d1) {
-            return d.getZ() - d1.getZ();
-        }
-    };
-    
 }

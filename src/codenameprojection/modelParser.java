@@ -6,7 +6,11 @@
 
 package codenameprojection;
 
+import JFUtils.point.Point2D;
+import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
+import static codenameprojection.Utils.P3ToP2;
+import static codenameprojection.Utils.vToP2;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,12 +27,19 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public String filename = "tyrell";
+    public String filename = "ico";
+
+    public modelParser() {
+    }
+    
+    public modelParser(String filename) {
+        this.filename = filename;
+    }
     
     final float size = 50;
-    public LinkedList<LinkedList<dVector3>> parse() throws FileNotFoundException, IOException{
-        LinkedList<dVector3> buffer = new LinkedList<>();
-        LinkedList<LinkedList<dVector3>> out = new LinkedList<>();
+    public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
+        LinkedList<Point3D> buffer = new LinkedList<>();
+        LinkedList<LinkedList<Point3D>> out = new LinkedList<>();
         int frames = 0;
         int points = 0;
         int index = 0;
@@ -82,7 +93,7 @@ public class modelParser {
         System.out.println(points + " points in " + frames + " frames loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Integer[]> parseLines(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
+    public LinkedList<Integer[]> parseLines(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
@@ -91,10 +102,8 @@ public class modelParser {
 
              while(!Objects.isNull(line))
              {
-                    try {
                      String curr = "";
                      //System.out.println(line);
-                     line = in.readLine();
                      int place = 0;
                      int[] coord = new int[2];
                         try {
@@ -128,8 +137,7 @@ public class modelParser {
                                 //ez.printStackTrace();
                             }
                         }
-                 } catch (IOException | NumberFormatException iOException) {
-                 }
+                     line = in.readLine();
                  
              }
 
@@ -137,8 +145,8 @@ public class modelParser {
         System.out.println(out.size() + " lines loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Integer[]> parseFaces(LinkedList<dVector3> points) throws FileNotFoundException, IOException{
-        LinkedList<Integer[]> out = new LinkedList<>();
+    public LinkedList<Point2D[]> parseFaces(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
+        LinkedList<Point2D[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
         in = new BufferedReader(new FileReader(filename + "_faces.pb3d"));
@@ -146,10 +154,9 @@ public class modelParser {
 
              while(!Objects.isNull(line))
              {
-                    try {
                      String curr = "";
                      //System.out.println(line);
-                     line = in.readLine();
+                     
                      int place = 0;
                      int[] coord = new int[3];
                         try {
@@ -167,18 +174,18 @@ public class modelParser {
                             System.out.println("char in the line was null!");
                         }
                      try {
-                        out.add(new Integer[]{
-                            points.get(coord[0]+1).identifier,
-                            points.get(coord[1]+1).identifier,
-                            points.get(coord[2]+1).identifier
+                        out.add(new Point2D[]{
+                            P3ToP2(points.get(coord[0]+1)),
+                            P3ToP2(points.get(coord[1]+1)),
+                            P3ToP2(points.get(coord[2]+1))
                         });
                      }
                      catch(Exception e){
                             try {
-                                out.add(new Integer[]{
-                                points.get(coord[0]).identifier,
-                                points.get(coord[1]).identifier,
-                                points.get(coord[2]).identifier
+                                out.add(new Point2D[]{
+                                P3ToP2(points.get(coord[0])),
+                                P3ToP2(points.get(coord[1])),
+                                P3ToP2(points.get(coord[2]))
                             });
                             } catch (Exception ez) {
                                 
@@ -186,8 +193,8 @@ public class modelParser {
                                 //ez.printStackTrace();
                             }
                         }
-                 } catch (IOException | NumberFormatException iOException) {
-                 }
+                
+                    line = in.readLine();
              }
 
              System.out.println(line);
@@ -196,7 +203,7 @@ public class modelParser {
     }
     public static void main(String[] args) {
         try {
-            LinkedList<LinkedList<dVector3>> parse = new modelParser().parse();
+            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             new modelParser().parseLines(parse.getFirst());
         } catch (IOException ex) {
             Logger.getLogger(modelParser.class.getName()).log(Level.SEVERE, null, ex);
