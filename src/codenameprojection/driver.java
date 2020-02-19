@@ -25,13 +25,18 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -74,8 +79,44 @@ public class driver{
     public boolean an_pause = false;
     
     
-    public HashMap<Integer, model> models = new HashMap<>();
-    
+    public ConcurrentHashMap<Integer, model> models = new ConcurrentHashMap<>();
+    public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
+        LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();
+        LinkedList<LinkedList<Point3D>> ref = (LinkedList<LinkedList<Point3D>>) frames.clone();
+        int iz = 0;
+        for(LinkedList<Point3D> i: frames){
+            LinkedList<Point3D> i2 = new LinkedList<>();
+            for(Point3D d : i){
+                int id = d.identifier;
+                d =  dVector3.multiply(d, new dVector3(size, size, size));
+                d =  dVector3.add(d, center);
+                d.identifier = id;
+                i2.add(d);
+            }
+            ref.add(i2);
+            iz++;
+        }
+        LinkedList<Point3D> points2 = frames2.getFirst();
+        LinkedList<Integer[]> lines2 = new modelParser("Cube").parseLines(points2);
+        LinkedList<Point2D[]> faces2 = new modelParser("Cube").parseFaces(points2);
+        
+        model m = new model(new LinkedList<model_frame>(), true);
+        points2.forEach(l -> m.frames.getFirst().points.add(l));
+        int id = points2.hashCode();
+        models.put(id, m);
+        
+        //this.points.addAll(points2);
+        //this.lines.addAll(lines2);
+        //this.faces.addAll(faces2);
+        
+        //points = points2;
+        //lines = lines2;
+        //faces = faces2;
+        
+        //frames = frames2;
+        //this.frames = ref;
+        return id;
+    }
     /**
      *
      * @param center
@@ -84,7 +125,7 @@ public class driver{
      * @param addFaces
      * @return The handle of the added object
      */
-    public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces){
+    public int addCubeOLD(dVector3 center, double size, boolean Addlines, boolean addFaces){
         double s = size;
         //zxy
         dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
@@ -144,7 +185,7 @@ public class driver{
         //CONTINUE FROM HERE, ADD THE CUBE TO THE MODELS MAP
         return 0;
     }
-    public void addCube(dVector3 center, double size){
+    public void addCube(dVector3 center, double size) throws IOException{
         addCube(center, size, true, true);
     }
     public LinkedList<Point3D> points;
@@ -176,6 +217,23 @@ public class driver{
     
     public boolean running = false;
     public boolean init = false;
+    
+    
+    public void loadFrame(int f){
+        //LinkedList<LinkedList<Point3D>> frames2 = new LinkedList<>();
+        LinkedList<Point3D> points2 = new LinkedList<>();
+        LinkedList<Integer[]> lines2 = new LinkedList<>();
+        LinkedList<Point2D[]> faces2 = new LinkedList<>();
+        for(model m : models.values()){
+            points2.addAll(m.getFrame(f).points);
+            lines2.addAll(m.getFrame(f).lines);
+            faces2.addAll(m.getFrame(f).faces);
+        }
+        this.points = points2;
+        this.lines = lines2;
+        this.faces = faces2;
+    }
+    
     public void run(){
         points = new LinkedList<>();
         lines = new LinkedList<>();
@@ -183,11 +241,15 @@ public class driver{
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
             //throw new Exception();
-            frames = new modelParser().parse();
-            points = frames.getFirst();
-            lines = new modelParser().parseLines(points);
-            faces = new modelParser().parseFaces(points);
-            
+            LinkedList<LinkedList<Point3D>> frames2 = new modelParser().parse();
+            LinkedList<Point3D> points2 = frames2.getFirst();
+            LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
+            LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
+            model m = new model(new LinkedList<model_frame>(), false);
+            for(LinkedList<Point3D> list : frames2){
+                m.frames.add(new model_frame(list, lines2, faces2));
+            }
+            models.put(m.hashCode(), m);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -198,9 +260,13 @@ public class driver{
             for (int i : new Range(r)) {
                 for (int j : new Range(r2)) {
                     for (int z : new Range(r3)) {
-                        addCube(new dVector3(i, j, z), 0.5, true, true);
-                        addCube(new dVector3(i, j, z), 0.5, true, true);
-                        addCube(new dVector3(i, j, z), 0.5, true, true);
+                        try {
+                            addCube(new dVector3(i, j, z), 0.5, true, true);
+                            //addCube(new dVector3(i, j, z), 0.5, true, true);
+                            //addCube(new dVector3(i, j, z), 0.5, true, true);
+                        } catch (IOException ex1) {
+                            Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex1);
+                        }
                     }
                 }
             }
@@ -234,10 +300,10 @@ public class driver{
                 lines = new LinkedList<>();
                 faces = new LinkedList<>();
                 
-                pbSudo.objectManager.getObjects().forEach(l -> addCube(new dVector3(l.x, l.y, 1), 0.5, true, false));
+                //pbSudo.objectManager.getObjects().forEach(l -> addCube(new dVector3(l.x, l.y, 1), 0.5, true, false));
             }
             
-            
+            loadFrame(frame);
             int step = 1;
             
             int zep = 1;
@@ -260,12 +326,12 @@ public class driver{
                         frame = 0;
                     }
                     
-                    points = frames.get(frame);
+                    //points = frames.get(frame);
                     
                 }
                 s.r.frame = frame;
                 try {
-                    points = frames.get(frame);
+                    //points = frames.get(frame);
                 } catch (Exception e) {
                 }
             }

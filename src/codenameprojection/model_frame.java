@@ -14,11 +14,11 @@ import java.util.LinkedList;
  * @author guest-pecpvn
  */
 public class model_frame {
-    public LinkedList<LinkedList<Point3D>> points;
+    public LinkedList<Point3D> points;
     public LinkedList<Integer[]> lines;
     public LinkedList<Point2D[]> faces = new LinkedList<>();
 
-    public model_frame(LinkedList<LinkedList<Point3D>> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f) {
+    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f) {
         this.points = p;
         this.lines = l;
         this.faces = f;

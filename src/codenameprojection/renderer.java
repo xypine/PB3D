@@ -89,11 +89,11 @@ public class renderer extends JPanel{
     
     
     private void clear(){
-        for(int x : new Range( output.getWidth()) ) {
-            for(int y : new Range( output.getHeight() )){
-                output.setRGB(x, y, 0);
-            }
-        }
+    //    for(int x : new Range( output.getWidth()) ) {
+    //        for(int y : new Range( output.getHeight() )){
+    //            output.setRGB(x, y, 0);
+    //        }
+    //    }
     }
     
     private BufferedImage createImageFromBytes(byte[] imageData) {
@@ -117,13 +117,15 @@ public class renderer extends JPanel{
             if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
                 output = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             } else {
-                clear();
+                //clear();
             }
             
             gb = output.createGraphics();
             gb.setRenderingHint(
                     RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            gb.setColor(Color.BLACK);
+            gb.fillRect(0, 0, w, h);
         }
         
         errors = 0;
@@ -137,7 +139,8 @@ public class renderer extends JPanel{
             drawnFaces = 0;
             drawnLines = 0;
             
-            
+            LinkedList<Polygon> facesToDraw = new LinkedList<>();
+            LinkedList<Color> faceColorsToDraw = new LinkedList<>();
             
             if (drawLines) {
             for (int i : new Range(lines.size())) {
@@ -268,9 +271,11 @@ public class renderer extends JPanel{
                             //g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             //Rectangle r = new Rectangle();
                             if (usePixelRendering) {
-                                gb.setColor(c);
-                                gb.fillPolygon(new Polygon(xpoints, ypoints, npoints));
-                                //drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
+                                faceColorsToDraw.add(c);
+                                facesToDraw.add(new Polygon(xpoints, ypoints, npoints));
+                                //gb.setColor(c);
+                                //gb.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                                ////drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
                             } else {
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
@@ -293,6 +298,10 @@ public class renderer extends JPanel{
             
         
         if (usePixelRendering) {
+            for(int i : new Range(facesToDraw.size())){
+                gb.setColor(faceColorsToDraw.get(i));
+                gb.fillPolygon(facesToDraw.get(i));
+            }
             g.drawImage(output, 0, 0, this);
         }
             
