@@ -24,12 +24,7 @@ public class Utils {
         o.identifier = source.identifier;
         return o;
     }
-    public static Point3D dToP2(dVector3 source){
-        Point3D o = new Point3D(source.x, source.y, source.z);
-        o.identifier = source.identifier;
-        return o;
-    }
-    public static Point2D p3to2(Point3D source){
+    public static Point2D P3ToP2(Point3D source){
         Point2D o = new Point2D(source.x, source.y);
         o.identifier = source.identifier;
         return o;

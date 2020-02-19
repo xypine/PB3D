@@ -9,7 +9,7 @@ package codenameprojection;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
-import static codenameprojection.Utils.p3to2;
+import static codenameprojection.Utils.P3ToP2;
 import static codenameprojection.Utils.vToP2;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -28,6 +28,13 @@ public class modelParser {
     IDManager ids = new IDManager();
     
     public String filename = "models/viper";
+
+    public modelParser() {
+    }
+    
+    public modelParser(String filename) {
+        this.filename = filename;
+    }
     
     final float size = 50;
     public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
@@ -95,10 +102,8 @@ public class modelParser {
 
              while(!Objects.isNull(line))
              {
-                    try {
                      String curr = "";
                      //System.out.println(line);
-                     line = in.readLine();
                      int place = 0;
                      int[] coord = new int[2];
                         try {
@@ -132,8 +137,7 @@ public class modelParser {
                                 //ez.printStackTrace();
                             }
                         }
-                 } catch (IOException | NumberFormatException iOException) {
-                 }
+                     line = in.readLine();
                  
              }
 
@@ -150,10 +154,9 @@ public class modelParser {
 
              while(!Objects.isNull(line))
              {
-                    try {
                      String curr = "";
                      //System.out.println(line);
-                     line = in.readLine();
+                     
                      int place = 0;
                      int[] coord = new int[3];
                         try {
@@ -172,17 +175,17 @@ public class modelParser {
                         }
                      try {
                         out.add(new Point2D[]{
-                            p3to2(points.get(coord[0]+1)),
-                            p3to2(points.get(coord[1]+1)),
-                            p3to2(points.get(coord[2]+1))
+                            P3ToP2(points.get(coord[0]+1)),
+                            P3ToP2(points.get(coord[1]+1)),
+                            P3ToP2(points.get(coord[2]+1))
                         });
                      }
                      catch(Exception e){
                             try {
                                 out.add(new Point2D[]{
-                                p3to2(points.get(coord[0])),
-                                p3to2(points.get(coord[1])),
-                                p3to2(points.get(coord[2]))
+                                P3ToP2(points.get(coord[0])),
+                                P3ToP2(points.get(coord[1])),
+                                P3ToP2(points.get(coord[2]))
                             });
                             } catch (Exception ez) {
                                 
@@ -190,8 +193,8 @@ public class modelParser {
                                 //ez.printStackTrace();
                             }
                         }
-                 } catch (IOException | NumberFormatException iOException) {
-                 }
+                
+                    line = in.readLine();
              }
 
              System.out.println(line);

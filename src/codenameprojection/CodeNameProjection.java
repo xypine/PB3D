@@ -23,33 +23,7 @@
  */
 package codenameprojection;
 
-import JFUtils.Input;
-import JFUtils.InputActivated;
-import JFUtils.Range;
-import JFUtils.point.Point2D;
-import JFUtils.point.Point3D;
-import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import JFUtils.vector.dVector3;
-import JFUtils.point.Point3F;
-import PBEngine.Supervisor;
-import static codenameprojection.Utils.p3to2;
-import static codenameprojection.Utils.vToP2;
-import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -70,7 +44,7 @@ public class CodeNameProjection {
         
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
-        Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
+        /*Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
         Thread a = new Thread(supervisor);
         //a.start();
         /*while (!supervisor.ready) {
@@ -78,11 +52,15 @@ public class CodeNameProjection {
         Thread.sleep(10);
         } catch (InterruptedException ex) {
         Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
-        }
         }*/
         driver driver = new driver(null);
         driver.run();
+        }
+        //supervisor.objectManager.addObject(new gameObject(new Point2D(10, 0), 1, 1, renderType.box, supervisor, supervisor.objectManager.getUsableID()));
+        //supervisor.engine_gravity = new Point2D(0, 0.1);*/
+        //new driver(null);
+        
         
     }
     
-}
+

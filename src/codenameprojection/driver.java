@@ -141,7 +141,8 @@ public class driver{
             
             //faces.add(new Integer[]{dld), drd), drd)});
         }
-        CONTINUE FROM HERE, ADD THE CUBE TO THE MODELS MAP
+        //CONTINUE FROM HERE, ADD THE CUBE TO THE MODELS MAP
+        return 0;
     }
     public void addCube(dVector3 center, double size){
         addCube(center, size, true, true);
