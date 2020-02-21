@@ -595,7 +595,7 @@ public class driver{
                 }
                 
                 if(!Objects.isNull(point)){
-                    int distP = (int) (float) (255 - dist.get(point.identifier) * 25);
+                    int distP = (int) (float)(255 - dist.get(point.identifier) * 7);
                     
                     //System.out.println(distP);
                     if(distP > 255){

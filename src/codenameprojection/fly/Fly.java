@@ -55,7 +55,7 @@ public class Fly {
         Driver.an_pause = true;
         //Driver.zero();
         
-        Driver.s.r.usePixelRendering = false;
+        Driver.s.r.usePixelRendering = true;
         Driver.s.r.drawFaces = true;
         Driver.s.r.drawPoints = true;
         Driver.s.r.drawLines = false;
@@ -79,6 +79,7 @@ public class Fly {
         float x = 0;
         float y = 0;
         int l_f = 0;
+        //Driver.models.clear();
         LinkedList<model> points = constructCloud();
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
@@ -87,18 +88,28 @@ public class Fly {
             handles.add(handle);
         }
         while (true) {            
-            
+            for(Integer handle : handles){
+                model m = Driver.models.get(handle);
+                if(m.getFrame(0).points.getFirst().x < size){
+                    m.getFrame(0).points.getFirst().x = m.getFrame(0).points.getFirst().x + 0.3;
+                }
+                else{
+                    m.getFrame(0).points.getFirst().x = -size;
+                }
+            }
             
             //Sleep
             try {
-                Thread.sleep((long) 0.1);
+                Thread.sleep((long) 1);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Fly.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    int rx = 10;
+    int size = 600;
+    
+    int rx = 3;
     int ry = 10;
     int rz = 10;
     LinkedList<model> constructCloud(){
@@ -112,9 +123,9 @@ public class Fly {
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point2D[]> faces = new LinkedList<>();
                     
-                    int rndX = rnd.nextInt(200) - 100;
-                    int rndY = rnd.nextInt(200) - 100;
-                    int rndZ = rnd.nextInt(200) - 100;
+                    int rndX = rnd.nextInt(size*2) - size;
+                    int rndY = rnd.nextInt(size*2) - size;
+                    int rndZ = rnd.nextInt(size*2) - size;
                     
                     boolean hasConnections = rnd.nextBoolean();
                     if(hasConnections){
@@ -134,7 +145,7 @@ public class Fly {
                     points.add(new Point3D(rndX, rndY, rndZ));
                     
                     if(hasConnections && out.size() > 2){
-                        lines.add(new Integer[]{points.getFirst().identifier, out.get(rnd.nextInt(out.size()-1)).getFrame(0).points.getFirst().identifier});
+                        //lines.add(new Integer[]{points.getFirst().identifier, out.get(rnd.nextInt(out.size()-1)).getFrame(0).points.getFirst().identifier});
                     }
                     
                     
