@@ -1,7 +1,7 @@
 # PB3D
 PB3D is an attempt at simple 3D rendering on java
 
-# Downloads / Binaries
+# Downloads (and) Binaries:
 See the releases tab, make sure you have java installed.
 ---
 # How to set up
