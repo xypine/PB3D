@@ -13,7 +13,7 @@ See the releases tab, make sure you have java installed.
 
 If you do not use netbeans:
 
--make sure that the java classpath includes the lib-directory and all of it's packages.
+-make sure that java classpath includes the lib-directory and all of it's packages.
 
 # Dependencies
 [JFUtils](https://github.com/jonnelafin/JFUtils)
