@@ -10,7 +10,7 @@
 <project name="codeNameProjection" default="default" basedir=".">
     <description>Builds, tests, and runs the project codeNameProjection.</description>
     <import file="nbproject/build-impl.xml"/>
-    <target name="javadocs" depends="init,set-driver-sources">
+    <target name="javadocs" depends="init">
     <mkdir dir="${build.docs}"/>
     <javadoc destdir="${build.docs}"
              author="true"
