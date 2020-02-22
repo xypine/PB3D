@@ -55,10 +55,11 @@ public class Fly {
         Driver.an_pause = true;
         //Driver.zero();
         
-        Driver.s.r.usePixelRendering = true;
+        Driver.s.r.usePixelRendering = false;
         Driver.s.r.drawFaces = true;
         Driver.s.r.drawPoints = true;
-        Driver.s.r.drawLines = false;
+        Driver.s.r.drawLines = true;
+        Driver.s.r.shading = false;
         System.out.println("Init complete!");
         
         frame = new JFrame("\"PB3D\" Fly simulator :)");
@@ -138,14 +139,14 @@ public class Fly {
                         hasConnections = rnd.nextBoolean();
                     }
                     if(hasConnections){
-                        hasConnections = rnd.nextBoolean();
+                        //hasConnections = rnd.nextBoolean();
                     }
                     
                     
                     points.add(new Point3D(rndX, rndY, rndZ));
                     
                     if(hasConnections && out.size() > 2){
-                        //lines.add(new Integer[]{points.getFirst().identifier, out.get(rnd.nextInt(out.size()-1)).getFrame(0).points.getFirst().identifier});
+                        lines.add(new Integer[]{points.getFirst().identifier, out.get(rnd.nextInt(out.size()-1)).getFrame(0).points.getFirst().identifier});
                     }
                     
                     
