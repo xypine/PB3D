@@ -79,6 +79,8 @@ public class driver{
     public boolean an_pause = false;
     
     
+    public Point3D camera = new Point3D(0, 0, 0);
+    
     public ConcurrentHashMap<Integer, model> models = new ConcurrentHashMap<>();
     public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
         LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();

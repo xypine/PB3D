@@ -9,8 +9,6 @@ package codenameprojection.fly;
 import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
-import JFUtils.vector.dVector3;
-import codenameprojection.CodeNameProjection;
 import codenameprojection.driver;
 import codenameprojection.model;
 import codenameprojection.model_frame;
@@ -80,7 +78,7 @@ public class Fly {
         float x = 0;
         float y = 0;
         int l_f = 0;
-        //Driver.models.clear();
+        Driver.models.clear();
         LinkedList<model> points = constructCloud();
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
@@ -92,7 +90,7 @@ public class Fly {
             for(Integer handle : handles){
                 model m = Driver.models.get(handle);
                 if(m.getFrame(0).points.getFirst().x < size){
-                    m.getFrame(0).points.getFirst().x = m.getFrame(0).points.getFirst().x + 0.3;
+                    m.getFrame(0).points.getFirst().x = m.getFrame(0).points.getFirst().x + 0.03;
                 }
                 else{
                     m.getFrame(0).points.getFirst().x = -size;
@@ -108,7 +106,7 @@ public class Fly {
         }
     }
     
-    int size = 600;
+    int size = 100;
     
     int rx = 3;
     int ry = 10;

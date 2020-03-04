@@ -14,9 +14,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,7 +63,12 @@ public class renderer extends JPanel{
     public int received = 0;
     public int errors = 0;
     
-    public boolean usePixelRendering = false;
+    private GraphicsConfiguration config =
+            GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice()
+                .getDefaultConfiguration();
+    
+    public boolean usePixelRendering = true;
     
     private void drawPolygon(Polygon p, Color c){
         for(int x : new Range( output.getWidth()) ) {
@@ -87,6 +95,11 @@ public class renderer extends JPanel{
         output.setRGB(point.x, point.y, c.getRGB());
     }
     
+    public final BufferedImage create(final int width, final int height,
+            final boolean alpha) {
+        return config.createCompatibleImage(width, height, alpha
+                ? Transparency.TRANSLUCENT : Transparency.OPAQUE);
+    }
     
     private void clear(){
     //    for(int x : new Range( output.getWidth()) ) {
@@ -107,6 +120,7 @@ public class renderer extends JPanel{
     
     @Override
     public void paintComponent(Graphics g) {
+        
         Dimension currentSize = getParent().getSize();
         w = currentSize.width;
         h = currentSize.height;
@@ -115,17 +129,19 @@ public class renderer extends JPanel{
         Graphics2D gb = null;
         if (usePixelRendering) {
             if (Objects.isNull(output) || !(output.getWidth() == w && output.getHeight() == h)) {
-                output = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                output = create(w, h, false);
             } else {
                 //clear();
             }
-            
-            gb = output.createGraphics();
+            gb = (Graphics2D) output.getGraphics();
+            if(Objects.isNull(gb)){
+                gb = output.createGraphics();
+            }
             gb.setRenderingHint(
                     RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            gb.setColor(Color.BLACK);
-            gb.fillRect(0, 0, w, h);
+            //gb.setColor(Color.BLACK);
+            //gb.fillRect(0, 0, w, h);
         }
         
         errors = 0;
@@ -141,6 +157,9 @@ public class renderer extends JPanel{
             
             LinkedList<Polygon> facesToDraw = new LinkedList<>();
             LinkedList<Color> faceColorsToDraw = new LinkedList<>();
+            
+            LinkedList<Integer[][]> linesToDraw = new LinkedList<>();
+            LinkedList<Color> lineColorsToDraw = new LinkedList<>();
             
             if (drawLines) {
             for (int i : new Range(lines.size())) {
@@ -172,8 +191,12 @@ public class renderer extends JPanel{
                             //
                             if (usePixelRendering) {
                                 //drawLine(new Point2Int(x1, y1), new Point2Int(x2, y2), c);
-                                gb.setColor(c);
-                                gb.drawLine(x1, y1, x2, y2);
+                                //gb.setColor(c);
+                                //gb.drawLine(x1, y1, x2, y2);
+                                linesToDraw.add(new Integer[][]{
+                                    {x1, y1}, {x2, y2} 
+                                });
+                                lineColorsToDraw.add(c);
                             } else {
                                 g.drawLine(x1, y1, x2, y2);
                             }
@@ -245,7 +268,7 @@ public class renderer extends JPanel{
                             y3 = a.get(faces.get(i).points[2].identifier).y;
                         } catch (Exception e) {
                             draw = false;
-                            throw e;
+                            //throw e;
                         }
                         
                         Color c = Color.blue;
@@ -298,6 +321,17 @@ public class renderer extends JPanel{
             
         
         if (usePixelRendering) {
+            gb.setColor(Color.BLACK);
+            gb.fillRect(0, 0, w, h);
+            for(int i : new Range(linesToDraw.size())){
+                gb.setColor(lineColorsToDraw.get(i));
+                Integer[][] coords = linesToDraw.get(i);
+                //int x1 = coords[0][0];
+                //int y1 = coords[0][1];
+                //int x2 = coords[1][0];
+                //int y2 = coords[1][1];
+                gb.drawLine(coords[0][0], coords[0][1], coords[1][0], coords[1][1]);
+            }
             for(int i : new Range(facesToDraw.size())){
                 gb.setColor(faceColorsToDraw.get(i));
                 gb.fillPolygon(facesToDraw.get(i));
