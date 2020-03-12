@@ -13,6 +13,7 @@ import codenameprojection.driver;
 import codenameprojection.model;
 import codenameprojection.model_frame;
 import java.awt.FlowLayout;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.logging.Level;
@@ -78,6 +79,19 @@ public class Fly {
         float x = 0;
         float y = 0;
         int l_f = 0;
+        Driver.inp.verbodose = true;
+        Integer[] defaultKeys = new Integer[]{
+            74, 
+            76, 
+            //73, 
+            //75,
+        };
+        for(int i : new Range(1000)){
+            Driver.ingoredInputs.add(i);
+        }
+        for(int i : defaultKeys){
+            Driver.ingoredInputs.removeAll(Arrays.asList(defaultKeys));
+        }
         Driver.models.clear();
         LinkedList<model> points = constructCloud();
         LinkedList<Integer> handles = new LinkedList<>();
@@ -86,11 +100,29 @@ public class Fly {
             Driver.models.put(handle, m);
             handles.add(handle);
         }
-        while (true) {            
+        LinkedList<model_frame> frames2 = new LinkedList<>();
+        LinkedList<Point3D> points2 = new LinkedList<>();
+        LinkedList<Integer[]> lines2 = new LinkedList<>();
+        LinkedList<Point2D[]> faces2 = new LinkedList<>();
+        points2.add(new Point3D(0, 0, 0));
+        frames2.add(new model_frame(points2 , lines2, faces2));
+        model cursor = new model(frames2, true);
+        int cursorHandle = cursor.hashCode();
+        Driver.models.put(cursorHandle, cursor);
+        while (true) {
+            if(Driver.inp.keys[32]){
+                //JFUtils.quickTools.alert("Space!");
+                model m = Driver.models.get(cursorHandle);
+                Driver.screenPosition_org = new Point3D(0, 0, 0);
+                //m.getFrame(0).points.getFirst().x = 10;
+               // m.getFrame(0).points.getFirst().y = 10;
+                //m.getFrame(0).points.getFirst().z = 10;
+                Driver.inp.keys[32] = false;
+            }
             for(Integer handle : handles){
                 model m = Driver.models.get(handle);
                 if(m.getFrame(0).points.getFirst().x < size){
-                    m.getFrame(0).points.getFirst().x = m.getFrame(0).points.getFirst().x + 0.03;
+                    m.getFrame(0).points.getFirst().x = m.getFrame(0).points.getFirst().x + 0.03*50;
                 }
                 else{
                     m.getFrame(0).points.getFirst().x = -size;
@@ -106,11 +138,11 @@ public class Fly {
         }
     }
     
-    int size = 100;
+    int size = 1400;
     
-    int rx = 3;
-    int ry = 10;
-    int rz = 10;
+    int rx = 15;
+    int ry = 15;
+    int rz = 15;
     LinkedList<model> constructCloud(){
         Random rnd = new Random();
         LinkedList<model> out = new LinkedList<model>();
@@ -137,7 +169,10 @@ public class Fly {
                         hasConnections = rnd.nextBoolean();
                     }
                     if(hasConnections){
-                        //hasConnections = rnd.nextBoolean();
+                        hasConnections = rnd.nextBoolean();
+                    }
+                    if(hasConnections){
+                        hasConnections = rnd.nextBoolean();
                     }
                     
                     

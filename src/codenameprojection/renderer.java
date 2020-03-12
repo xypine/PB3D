@@ -23,6 +23,8 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -68,7 +70,7 @@ public class renderer extends JPanel{
                 .getDefaultScreenDevice()
                 .getDefaultConfiguration();
     
-    public boolean usePixelRendering = true;
+    public boolean usePixelRendering = false;
     
     private void drawPolygon(Polygon p, Color c){
         for(int x : new Range( output.getWidth()) ) {
@@ -120,7 +122,7 @@ public class renderer extends JPanel{
     
     @Override
     public void paintComponent(Graphics g) {
-        
+        Instant beginTime = Instant.now();
         Dimension currentSize = getParent().getSize();
         w = currentSize.width;
         h = currentSize.height;
@@ -133,10 +135,10 @@ public class renderer extends JPanel{
             } else {
                 //clear();
             }
-            gb = (Graphics2D) output.getGraphics();
-            if(Objects.isNull(gb)){
+            //gb = (Graphics2D) output.getGraphics();
+            //if(Objects.isNull(gb)){
                 gb = output.createGraphics();
-            }
+            //}
             gb.setRenderingHint(
                     RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -164,11 +166,25 @@ public class renderer extends JPanel{
             if (drawLines) {
             for (int i : new Range(lines.size())) {
                 try {
-                    if (!(Objects.isNull(a.get(lines.get(i)[0]))) && !(Objects.isNull(a.get(lines.get(i)[1])))) {
-                        int x1 = a.get(lines.get(i)[0]).intX();
-                        int x2 = a.get(lines.get(i)[1]).intX();
-                        int y1 = a.get(lines.get(i)[0]).intY();
-                        int y2 = a.get(lines.get(i)[1]).intY();
+                    boolean gotFine = false;
+                    try {
+                        gotFine = !(Objects.isNull(a.get(lines.get(i)[0]))) && !(Objects.isNull(a.get(lines.get(i)[1])));
+                    } catch (Exception e) {
+                        errors++;
+                    }
+                    if (gotFine) {
+                        int x1 = 0;
+                        int y1 = 0;
+                        int x2 = 0;
+                        int y2 = 0;
+                        try {
+                            x1 = a.get(lines.get(i)[0]).intX();
+                            x2 = a.get(lines.get(i)[1]).intX();
+                            y1 = a.get(lines.get(i)[0]).intY();
+                            y2 = a.get(lines.get(i)[1]).intY();
+                        } catch (Exception e) {
+                            errors++;
+                        }
                         
                         
                         boolean draw = true;
@@ -340,14 +356,15 @@ public class renderer extends JPanel{
         }
             
             
-            
+        Duration deltaTime = Duration.between(beginTime, Instant.now());
         g.setColor(Color.white);
         g.drawString("frame " + frame, w/10, h/7);
         g.drawString("" + errors + " errors while drawing", w/10, h/5);
         g.drawString("" + received + " faces received", w/10, h/6);
         g.drawString("" + points.size() + " Points, " + drawnLines + " Lines and " + drawnFaces + " faces drawn", w/10, h/10);
         g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
-        g.drawString("" + (int) (nano * 1000000000) + " FPS", w - w/5, h/7);
+        g.drawString("" + (int) (nano * 1000000000) + " FPS (Calc)", w - w/5, h/3);
+        g.drawString("" + (int) (JFUtils.math.Conversions.toCPNS(deltaTime.getNano()) * 1000000000) + " FPS (Draw)", w - w/5, h/2);
         g.drawString("speed: " + speed + "", w - w/5, h/6);
         g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w/5, h/5);
     }

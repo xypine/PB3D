@@ -9,6 +9,7 @@ package codenameprojection;
 import JFUtils.Input;
 import JFUtils.InputActivated;
 import JFUtils.Range;
+import JFUtils.graphing.Graph;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
@@ -25,18 +26,14 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
@@ -78,6 +75,7 @@ public class driver{
     
     public boolean an_pause = false;
     
+    public final Graph grapher = new Graph();
     
     public Point3D camera = new Point3D(0, 0, 0);
     
@@ -220,6 +218,7 @@ public class driver{
     public boolean running = false;
     public boolean init = false;
     
+    public LinkedList<Integer> ingoredInputs = new LinkedList<>();
     
     public void loadFrame(int f){
         //LinkedList<LinkedList<Point3D>> frames2 = new LinkedList<>();
@@ -381,60 +380,72 @@ public class driver{
             }
             
             //t
-            if(inp.keys[84] == true){
+            if(inp.keys[84] == true && !ingoredInputs.contains(84)){
                 s.r.drawLines = true;
                 s.r.drawFaces = false;
             }
             //g
-            if(inp.keys[71] == true){
+            if(inp.keys[71] == true && !ingoredInputs.contains(71)){
                 s.r.drawLines = false;
                 s.r.drawFaces = true;
             }
+            //b
+            if(inp.keys[66] == true && !ingoredInputs.contains(66)){
+                s.r.drawLines = false;
+                s.r.drawFaces = false;
+            }
             
-            if(inp.keys[68] == true){
+            //d
+            if(inp.keys[68] == true && !ingoredInputs.contains(68)){
                 screenPosition_org.x = screenPosition_org.x + factor;
             }
-            if(inp.keys[65] == true){
+            //a
+            if(inp.keys[65] == true && !ingoredInputs.contains(65)){
                 screenPosition_org.x = screenPosition_org.x - factor;
             }
             //' tai *
             if(inp.keys[222] == true){
-                if(inp.keys[87] == true){
+                //w
+                if(inp.keys[87] == true && !ingoredInputs.contains(87)){
                     //screenPosition_org.y = screenPosition_org.y + factor;
                     screenPosition_org = Point3D.add(Point3D.multiply(viewAngle, new Point3D(0.0001D, 0.0001D, 0.0001D)), screenPosition_org);
                     //screenPosition_org = JFUtils.vector.dVector3.add(screenPosition_org, screenPosition_org);
                 }
             }
             else{
-                if(inp.keys[87] == true){
+                //w
+                if(inp.keys[87] == true  && !ingoredInputs.contains(87)){
                     screenPosition_org.y = screenPosition_org.y + factor;
                 }
             }
-            if(inp.keys[83] == true){
+            //s
+            if(inp.keys[83] == true && !ingoredInputs.contains(83)){
                 screenPosition_org.y = screenPosition_org.y - factor;
             }
-            if(inp.keys[81] == true){
+            //q
+            if(inp.keys[81] == true && !ingoredInputs.contains(81)){
                 screenPosition_org.z = screenPosition_org.z - factor*5;
             }
-            if(inp.keys[69] == true){
+            //e
+            if(inp.keys[69] == true && !ingoredInputs.contains(69)){
                 screenPosition_org.z = screenPosition_org.z + factor*5;
             }
             //c
-            if(inp.keys[67] == true){
+            if(inp.keys[67] == true && !ingoredInputs.contains(67)){
                 viewAngle.z += factor_rotation*15;
             }
             //z
-            if(inp.keys[90] == true){
+            if(inp.keys[90] == true && !ingoredInputs.contains(90)){
                 viewAngle.z -= factor_rotation*15;
             }
             
             //z
-            if(inp.keys[88] == true){
+            if(inp.keys[88] == true && !ingoredInputs.contains(88)){
                 //viewAngle.y -= factor*15;
             }
             
-            //z
-            if(inp.keys[66] == true){
+            //n
+            if(inp.keys[78] == true && !ingoredInputs.contains(78)){
                 System.out.print("Saving face lists to file...");
                 listToFile(s.r.faces);
                 listToFile(s.r.faces_unsorted);
@@ -442,38 +453,38 @@ public class driver{
             }
             
             //j
-            if(inp.keys[74] == true){
+            if(inp.keys[74] == true && !ingoredInputs.contains(74)){
                 angleXM = angleXM - 0.0004D * 0.3 * boost;
             }
             //l
-            if(inp.keys[76] == true){
+            if(inp.keys[76] == true && !ingoredInputs.contains(76)){
                 angleXM = angleXM + 0.0004D * 0.3 * boost;
             }
             //i
-            if(inp.keys[73] == true){
+            if(inp.keys[73] == true && !ingoredInputs.contains(73)){
                 angleYM = angleYM + 0.0004D * 0.3 * boost;
             }
             //k
-            if(inp.keys[75] == true){
+            if(inp.keys[75] == true && !ingoredInputs.contains(75)){
                 angleYM = angleYM - 0.0004D * 0.3 * boost;
             }
             //p
-            if(inp.keys[80] == true){
+            if(inp.keys[80] == true && !ingoredInputs.contains(80)){
                 an_pause = !an_pause;
             }
-            if(inp.keys[86] == true){
+            if(inp.keys[86] == true && !ingoredInputs.contains(86)){
                 inp.verbodose = !inp.verbodose;
             }
             //R
-            if(inp.keys[82] == true){
+            if(inp.keys[82] == true && !ingoredInputs.contains(82)){
                 rotation = !rotation;
             }
             //1
-            if(inp.keys[49] == true){
+            if(inp.keys[49] == true && !ingoredInputs.contains(49)){
                 rotation_mode = false;
             }
             //2
-            if(inp.keys[50] == true){
+            if(inp.keys[50] == true && !ingoredInputs.contains(50)){
                 rotation_mode = true;
             }
             else{
@@ -721,6 +732,16 @@ public class driver{
             angleX = (float) (angleX + angleXM);
             deltaTime = Duration.between(beginTime, Instant.now());
             s.r.nano = JFUtils.math.Conversions.toCPNS(deltaTime.getNano());
+            final int d = (int) JFUtils.math.Conversions.toFPS(deltaTime.getNano());
+            final int tc = tickC;
+            /*new Thread(){
+                @Override
+                public void run() {
+                    super.run(); //To change body of generated methods, choose Tools | Templates.
+                    grapher.update(d, tc);
+                }
+                
+            }.start();*/
             int value = (int) (JFUtils.math.Conversions.toFPS(deltaTime.getNano()));
             if(value < 0) {
                 value = 0;
