@@ -34,7 +34,7 @@ public class Utils {
         int index = 0;
         LinkedList<face> out = new LinkedList<>();
         for(Point2D[] i : origin){
-            float z = Float.MAX_VALUE;
+            float z = 0;
             try {
                 z = faces_dist.get(index);
                 last_z = z;
