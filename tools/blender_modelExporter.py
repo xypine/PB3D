@@ -81,6 +81,13 @@ def exp(self):
     global lines
     global faces
     global filename
+    global obj, scn, frame, end, frames
+    obj = bpy.context.active_object
+    scn = bpy.context.scene
+
+    frame = bpy.context.scene.frame_current
+    end = scn.frame_end
+    frames = range(end)
     updateMesh()
     #print(plain_verts)
     st = ""
@@ -103,7 +110,9 @@ def exp(self):
             st = st + "\n"
         st = st + "\n"
     print("DONE")
+    self.report({'INFO'}, "DONE")
     print("Reading edges...",end="")
+    self.report({'INFO'}, "Reading edges...")
     for i in lines:
         #print("LINE: " + str(i))
         p1 = i[0]
@@ -112,7 +121,9 @@ def exp(self):
         st2 = st2 + "\n"
     st2 = st2 + "\n"
     print("DONE")
+    self.report({'INFO'}, "DONE")
     print("Reading faces...",end="")
+    self.report({'INFO'}, "Reading faces...")
     for i in faces:
         #print("LINE: " + str(i))
         p1 = i[0]
@@ -122,7 +133,9 @@ def exp(self):
         st3 = st3 + "\n"
     st3 = st3 + "\n"
     print("DONE")
+    self.report({'INFO'}, "DONE")
     print("Saving...")
+    self.report({'INFO'}, "Saving...")
     f = bpy.data.texts.new(filename + filetype)
     f.from_string(st)
     f = bpy.data.texts.new(filename + "_lines" + filetype)
@@ -130,6 +143,7 @@ def exp(self):
     f = bpy.data.texts.new(filename + "_faces" + filetype)
     f.from_string(st3)
     print("Everything done, have a good day.")
+    self.report({'INFO'}, "Done, Have A Good Day!")
 def init():
     updateMesh()
     #print(plain_verts)

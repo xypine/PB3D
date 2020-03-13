@@ -10,7 +10,6 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import static codenameprojection.Utils.P3ToP2;
-import static codenameprojection.Utils.vToP2;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -27,7 +26,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public String filename = "models/viper";
+    public String filename = "models/viper3";
 
     public modelParser() {
     }
