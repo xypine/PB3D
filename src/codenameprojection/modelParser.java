@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public String filename = "models/viper3";
+    public String filename = "models/Viper3";
 
     public modelParser() {
     }
