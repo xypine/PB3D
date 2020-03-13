@@ -111,8 +111,8 @@ public class Fly {
     int size = 600;
     
     int rx = 3;
-    int ry = 10;
-    int rz = 10;
+    int ry = 2;
+    int rz = 2;
     LinkedList<model> constructCloud(){
         Random rnd = new Random();
         LinkedList<model> out = new LinkedList<model>();
