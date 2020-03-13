@@ -80,6 +80,7 @@ public class driver{
     public Point3D camera = new Point3D(0, 0, 0);
     
     public ConcurrentHashMap<Integer, model> models = new ConcurrentHashMap<>();
+    public float shadingMultiplier = 1;
     public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
         LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();
         LinkedList<LinkedList<Point3D>> ref = (LinkedList<LinkedList<Point3D>>) frames.clone();
@@ -209,9 +210,11 @@ public class driver{
         s = new Screen();
         inp = new Input(refI);
         inp.verbodose = false;
-        s.addKeyListener(inp);
-        s.addMouseListener(inp);
-        
+        s.r.addKeyListener(inp);
+        s.r.addMouseListener(inp);
+        s.r.addMouseMotionListener(inp);
+        //s.r.addMouseWheelListener(inp);
+        s.r.requestFocusInWindow();
         
     }
     
@@ -234,7 +237,10 @@ public class driver{
         this.lines = lines2;
         this.faces = faces2;
     }
-    
+    public double angleX = 0;
+    public double angleXM = 0;
+    public double angleY = 0;
+    public double angleYM = 0;
     public void run(){
         points = new LinkedList<>();
         lines = new LinkedList<>();
@@ -276,10 +282,7 @@ public class driver{
         
         
         
-        double angleY = 0;
-        double angleYM = 0;
-        double angleX = 0;
-        double angleXM = 0;
+        
         int sleep = 0;
         
         //Graph grapher = new Graph();
@@ -360,8 +363,8 @@ public class driver{
             screenPosition = screenPosition_org.clone();
             
             if(!rotation_mode){
-                screenPosition = matmul(RX((float) -angleY), screenPosition.toFVector3()).toDVector3();
-                screenPosition = matmul(RY((float) -angleX), screenPosition.clone().toFVector3()).toDVector3();
+                screenPosition = matmul(RX((float) -angleX), screenPosition.toFVector3() ).toDVector3();
+                screenPosition = matmul(RY((float) -angleY), screenPosition.clone().toFVector3()).toDVector3();
                 //screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
                 //screenPosition = JFUtils.math.General.average(screenPosition, matmul(RY((float) -angleX), screenPosition_org.toFVector3()).toDVector3(), screenPosition.identifier);
             }
@@ -371,7 +374,7 @@ public class driver{
             double factor = -0.025D*0.05*4 * deltaTime.getNano() * 0.000001;
             double boost = 1 * deltaTime.getNano() * 0.000002;
             //space
-            if(inp.keys[32] == true){
+            if(inp.keys[32] == true && !ingoredInputs.contains(32)){
                 //viewAngle.y += factor*15;
                 factor = factor * 7;
                 factor_rotation = factor_rotation * 15;
@@ -454,19 +457,19 @@ public class driver{
             
             //j
             if(inp.keys[74] == true && !ingoredInputs.contains(74)){
-                angleXM = angleXM - 0.0004D * 0.3 * boost;
+                angleYM = angleYM - 0.0004D * 0.3 * boost;
             }
             //l
             if(inp.keys[76] == true && !ingoredInputs.contains(76)){
-                angleXM = angleXM + 0.0004D * 0.3 * boost;
+                angleYM = angleYM + 0.0004D * 0.3 * boost;
             }
             //i
             if(inp.keys[73] == true && !ingoredInputs.contains(73)){
-                angleYM = angleYM + 0.0004D * 0.3 * boost;
+                angleXM = angleXM + 0.0004D * 0.3 * boost;
             }
             //k
             if(inp.keys[75] == true && !ingoredInputs.contains(75)){
-                angleYM = angleYM - 0.0004D * 0.3 * boost;
+                angleXM = angleXM - 0.0004D * 0.3 * boost;
             }
             //p
             if(inp.keys[80] == true && !ingoredInputs.contains(80)){
@@ -520,9 +523,9 @@ public class driver{
                 
                 if(rotation){
                     Point3F rotated_org = rotated.clone();
-                    rotated = matmul(RX((float) angleY ), rotated);
+                    rotated = matmul(RX((float) angleX ), rotated);
                     //rotated.z = rotated.z - rotated.x;
-                    rotated = matmul(RY((float) angleX ), rotated);
+                    rotated = matmul(RY((float) angleY ), rotated);
                     //rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
                     //rotated = JFUtils.math.General.average(rotated.toDVector3(), matmul(RY((float) angleX ), rotated_org).toDVector3(), rotated.identifier).toFVector3();
                 }
@@ -689,7 +692,7 @@ public class driver{
                         //face_dists.add(index, lastZ);
                         //System.out.println("List too small, inflating...");
                     }
-                    
+                    distP = distP * shadingMultiplier;
                     //System.out.println(distP);
                     if(distP > 255){
                         distP = 255;
@@ -726,10 +729,10 @@ public class driver{
             //System.out.println("orighinal: ");
             //System.out.println("projected: " + point2);
             
-            angleYM = angleYM * 0.95D;
-            angleY = (float) (angleY + angleYM);
             angleXM = angleXM * 0.95D;
             angleX = (float) (angleX + angleXM);
+            angleYM = angleYM * 0.95D;
+            angleY = (float) (angleY + angleYM);
             deltaTime = Duration.between(beginTime, Instant.now());
             s.r.nano = JFUtils.math.Conversions.toCPNS(deltaTime.getNano());
             final int d = (int) JFUtils.math.Conversions.toFPS(deltaTime.getNano());
@@ -854,11 +857,11 @@ public class driver{
         }
         return v;
       }
-    Point3F matmul(float[][] a, Point3F b) {
+    public Point3F matmul(float[][] a, Point3F b) {
         float[][] m = vecToMatrix(b);
         return matrixToVec(matmul(a,m));
     }
-    float[][] matmul(float[][] a, float[][] b) {
+    public float[][] matmul(float[][] a, float[][] b) {
         int colsA = a[0].length;
         int rowsA = a.length;
         int colsB = b[0].length;
