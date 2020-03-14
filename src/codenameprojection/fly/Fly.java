@@ -58,7 +58,7 @@ public class Fly {
         Driver.s.r.usePixelRendering = false;
         Driver.s.r.drawFaces = true;
         Driver.s.r.drawPoints = true;
-        Driver.s.r.drawLines = false;
+        Driver.s.r.drawLines = true;
         Driver.s.r.shading = false;
         Driver.rotation_mode = false;
         System.out.println("Init complete!");
@@ -87,6 +87,10 @@ public class Fly {
             //76, 
             //73, 
             //75,
+            87,
+            65,
+            83,
+            68,
         };
         for(int i : new Range(1000)){
             Driver.ingoredInputs.add(i);
@@ -96,7 +100,9 @@ public class Fly {
         }
         //Driver.models.clear();
         int ship = (int) Driver.models.keySet().toArray()[0];
-        LinkedList<model> points = constructCloud(); //new LinkedList<>(); //
+        model shipM = Driver.models.get(ship);
+        shipM.getFrame(0).lines = new LinkedList<>();
+        LinkedList<model> points = new LinkedList<>(); //constructCloud(); // //
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
             Integer handle = m.hashCode();
@@ -104,28 +110,48 @@ public class Fly {
             handles.add(handle);
         }
         Driver.shadingMultiplier = 0.5F;
-        LinkedList<model_frame> frames2 = new LinkedList<>();
-        LinkedList<Point3D> points2 = new LinkedList<>();
-        LinkedList<Integer[]> lines2 = new LinkedList<>();
-        LinkedList<Point2D[]> faces2 = new LinkedList<>();
-        points2.add(new Point3D(0, 0, 0));
-        frames2.add(new model_frame(points2 , lines2, faces2));
-        model cursor = new model(frames2, true);
-        int cursorHandle = cursor.hashCode();
-        Driver.models.put(cursorHandle, cursor);
+        LinkedList<Integer> boltHandles = new LinkedList<>();
         float speed = 0.4F;
         Driver.screenPosition_org = new Point3D(0, 0, 0);
         Point3D last_sp = Driver.screenPosition_org.clone();
+        int boltCooldown = 0;
+        float side = 9.4F;
+        float shipRotX = 0;
+        //float shipRotX = 0;
         while (true) {
             Driver.angleYM = Driver.angleYM + Driver.inp.cX * 0.0002;
             Driver.inp.cX = (int) (Driver.inp.cX * 0.5);
             Driver.angleXM = Driver.angleXM + Driver.inp.cY * 0.0002;
             Driver.inp.cY = (int) (Driver.inp.cY * 0.5);
             //System.out.println(Driver.inp.mouseX());
+            for(Integer bolt : boltHandles){
+                model cursor = Driver.models.get(bolt);
+                cursor.getFrame(0).points.get(0).z = cursor.getFrame(0).points.get(0).z - 0.1;
+                cursor.getFrame(0).points.get(1).z = cursor.getFrame(0).points.get(1).z - 0.1;
+            }
+            //space
+            if(Driver.inp.keys[32] && boltCooldown < 1){
+                LinkedList<model_frame> frames2 = new LinkedList<>();
+                LinkedList<Point3D> points2 = new LinkedList<>();
+                LinkedList<Integer[]> lines2 = new LinkedList<>();
+                LinkedList<Point2D[]> faces2 = new LinkedList<>();
+                Point3D c1 = new Point3D(side, -2, 0);
+                Point3D c2 = new Point3D(side, -2, 4);
+                points2.add(c1);
+                points2.add(c2);
+                lines2.add(new Integer[]{c1.identifier, c2.identifier});
+                frames2.add(new model_frame(points2 , lines2, faces2));
+                model cursor = new model(frames2, true);
+                int cursorHandle = cursor.hashCode();
+                Driver.models.put(cursorHandle, cursor);
+                boltHandles.add(cursorHandle);
+                boltCooldown = boltCooldown + 100;
+                side = side * -1;
+            }
+            boltCooldown--;
             //w
             if(Driver.inp.keys[87] && false){
                 //JFUtils.quickTools.alert("Space!");
-                model m = Driver.models.get(cursorHandle);
                 //Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, Point3D.multiply(Driver.viewAngle, new Point3D(1, 1, 1)));
                 Point3D rot = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(0, 0, -speed)).toDVector3();
                 rot = Driver.matmul(Driver.RY((float)Driver.angleY), rot.toFVector3()).toDVector3();
@@ -139,36 +165,45 @@ public class Fly {
             }
             //s
             if(Driver.inp.keys[83] && false){
-                model m = Driver.models.get(cursorHandle);
                 Point3D rot = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(0, 0, speed)).toDVector3();
                 rot = Driver.matmul(Driver.RY((float)Driver.angleY), rot.toFVector3()).toDVector3();
                 Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
             }
             //a
-            if(Driver.inp.keys[65] && false){
-                model m = Driver.models.get(cursorHandle);
+            /*if(Driver.inp.keys[65] && false){
                 Point3D rot = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(speed, 0, 0)).toDVector3();
                 rot = Driver.matmul(Driver.RY((float)Driver.angleY), rot.toFVector3()).toDVector3();
                 Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
+            }*/
+            if(Driver.inp.keys[65]){
+                shipRotX++;
+                
             }
             //d
-            if(Driver.inp.keys[68] && false){
-                model m = Driver.models.get(cursorHandle);
+            /*if(Driver.inp.keys[68] && false){
                 Point3D rot = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(-speed, 0, 0)).toDVector3();
                 rot = Driver.matmul(Driver.RY((float)Driver.angleY), rot.toFVector3()).toDVector3();
                 Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
+            }*/
+            if(Driver.inp.keys[68]){
+                shipRotX--;
             }
             model shipModel = Driver.models.get(ship);
+            //Driver.viewAngle.x = Driver.viewAngle.x + shipRotX;
+            shipRotX = shipRotX * 0.01F;
             for(Point3D i : shipModel.getFrame(0).points){
                 Point3D newLoc = Point3D.add(Driver.screenPosition_org, Point3D.subtract(i, last_sp));
-                i.x = newLoc.x;
-                i.y = newLoc.y;
-                i.z = newLoc.z;
+                //newLoc = Driver.matmul(Driver.RX(shipRotX), newLoc.toFVector3()).toDVector3();
+                
+                //i.x = newLoc.x;
+                //i.y = newLoc.y;
+                //i.z = newLoc.z;
+                
             }
             for(Integer handle : handles){
                 model m = Driver.models.get(handle);
                 if(m.getFrame(0).points.getFirst().z < size){
-                    m.getFrame(0).points.getFirst().z = m.getFrame(0).points.getFirst().z + 0.03*50;
+                    m.getFrame(0).points.getFirst().z = m.getFrame(0).points.getFirst().z + 0.03*100;
                 }
                 else{
                     m.getFrame(0).points.getFirst().z = -size;

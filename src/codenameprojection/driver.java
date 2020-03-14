@@ -363,8 +363,10 @@ public class driver{
             screenPosition = screenPosition_org.clone();
             
             if(!rotation_mode){
+                screenPosition = matmul(RY((float) -angleY), screenPosition.toFVector3() ).toDVector3();
                 screenPosition = matmul(RX((float) -angleX), screenPosition.toFVector3() ).toDVector3();
-                screenPosition = matmul(RY((float) -angleY), screenPosition.clone().toFVector3()).toDVector3();
+                Point3D screenPosition2 = matmul(RY((float) -angleY), screenPosition_org.clone().toFVector3()).toDVector3();
+                //screenPosition = Point3D.divide(Point3D.multiply(screenPosition, screenPosition2), new Point3D(2, 2, 2));
                 //screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
                 //screenPosition = JFUtils.math.General.average(screenPosition, matmul(RY((float) -angleX), screenPosition_org.toFVector3()).toDVector3(), screenPosition.identifier);
             }
@@ -523,9 +525,9 @@ public class driver{
                 
                 if(rotation){
                     Point3F rotated_org = rotated.clone();
+                    rotated = matmul(RY((float) angleY ), rotated);
                     rotated = matmul(RX((float) angleX ), rotated);
                     //rotated.z = rotated.z - rotated.x;
-                    rotated = matmul(RY((float) angleY ), rotated);
                     //rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
                     //rotated = JFUtils.math.General.average(rotated.toDVector3(), matmul(RY((float) angleX ), rotated_org).toDVector3(), rotated.identifier).toFVector3();
                 }
