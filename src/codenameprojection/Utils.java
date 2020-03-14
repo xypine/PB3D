@@ -54,4 +54,24 @@ public class Utils {
         }
         return out;
     }
+    public static Point3D average(Point3D one, Point3D two, Point3D three){
+        double x = (one.x + two.x + three.x) / 3D;
+        double y = (one.y + two.y + three.y) / 3D;
+        double z = (one.z + two.z + three.z) / 3D;
+        return new Point3D(x, y, z);
+    }
+    public static Point3D average(LinkedList<Point3D> set){
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for(Point3D i : set){
+            x = x + i.x;
+            y = y + i.y;
+            z = z + i.z;
+        }
+        x = x / set.size();
+        y = y / set.size();
+        z = z / set.size();
+        return new Point3D(x, y, z);
+    }
 }

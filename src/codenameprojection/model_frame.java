@@ -23,5 +23,11 @@ public class model_frame {
         this.lines = l;
         this.faces = f;
     }
+
+    @Override
+    protected Object clone(){
+        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone());
+    }
+    
     
 }

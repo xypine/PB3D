@@ -2,31 +2,7 @@
 
 package codenameprojection;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.util.LinkedList;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import JFUtils.Range;
-import JFUtils.point.Point2D;
-import JFUtils.point.Point2Int;
-import codenameprojection.drawables.Face;
-import codenameprojection.drawables.Line;
-import codenameprojection.drawables.point;
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import javax.imageio.ImageIO;
 
 /**
  *

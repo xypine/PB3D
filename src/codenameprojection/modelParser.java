@@ -35,7 +35,7 @@ public class modelParser {
         this.filename = filename;
     }
     
-    final float size = 50;
+    final float size = 500;
     public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
         LinkedList<Point3D> buffer = new LinkedList<>();
         LinkedList<LinkedList<Point3D>> out = new LinkedList<>();

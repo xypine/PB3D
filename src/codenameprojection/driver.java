@@ -241,6 +241,8 @@ public class driver{
     public double angleXM = 0;
     public double angleY = 0;
     public double angleYM = 0;
+    public double angleZ = 0;
+    public double angleZM = 0;
     public void run(){
         points = new LinkedList<>();
         lines = new LinkedList<>();
@@ -364,6 +366,7 @@ public class driver{
             
             if(!rotation_mode){
                 screenPosition = matmul(RY((float) -angleY), screenPosition.toFVector3() ).toDVector3();
+                //screenPosition = matmul(RZ((float) -angleZ), screenPosition.toFVector3() ).toDVector3();
                 screenPosition = matmul(RX((float) -angleX), screenPosition.toFVector3() ).toDVector3();
                 Point3D screenPosition2 = matmul(RY((float) -angleY), screenPosition_org.clone().toFVector3()).toDVector3();
                 //screenPosition = Point3D.divide(Point3D.multiply(screenPosition, screenPosition2), new Point3D(2, 2, 2));
@@ -526,6 +529,7 @@ public class driver{
                 if(rotation){
                     Point3F rotated_org = rotated.clone();
                     rotated = matmul(RY((float) angleY ), rotated);
+                    //rotated = matmul(RZ((float) angleZ ), rotated);
                     rotated = matmul(RX((float) angleX ), rotated);
                     //rotated.z = rotated.z - rotated.x;
                     //rotated = JFUtils.point.Point3F.multiply(rotated, matmul(RY((float) angleX ), rotated_org));
@@ -674,11 +678,16 @@ public class driver{
                     }
                 }
                 
+                Point2D point1 = face[0];
+                Point2D point2 = face[1];
+                Point2D point3 = face[2];
                 
+                float dist2 = (dist.get(point1.identifier) + dist.get(point2.identifier) + dist.get(point3.identifier))/3F;
                 //System.out.println(face_dists.size());
                 if(!Objects.isNull(point)){
                     boolean change = true;
-                    float distP = (255 - dist.get(point.identifier) * 7);
+                  //float distP = (255 - dist.get(point.identifier) * 7);
+                    float distP = (255 - dist2 * 7);
                     if(distP == 0.0F){
                         //System.out.println("F2");
                         change = false;
@@ -735,6 +744,8 @@ public class driver{
             angleX = (float) (angleX + angleXM);
             angleYM = angleYM * 0.95D;
             angleY = (float) (angleY + angleYM);
+            angleZM = angleZM * 0.95D;
+            angleZ = (float) (angleZ + angleZM);
             deltaTime = Duration.between(beginTime, Instant.now());
             s.r.nano = JFUtils.math.Conversions.toCPNS(deltaTime.getNano());
             final int d = (int) JFUtils.math.Conversions.toFPS(deltaTime.getNano());
@@ -842,7 +853,7 @@ public class driver{
     
     //The following is copied (edited to suit JFTools) from Daniel Shiffmans code, at: https://github.com/CodingTrain/website/blob/master/CodingChallenges/CC_112_3D_Rendering/Processing/CC_112_3D_Rendering/matrix.pde#L50
     //Why? becouse i do not know how multiplication matricies work! :P
-    float[][] vecToMatrix(Point3F v) {
+    static float[][] vecToMatrix(Point3F v) {
         float[][] m = new float[3][1];
         m[0][0] = (float) v.x;
         m[1][0] = (float) v.y;
@@ -850,7 +861,7 @@ public class driver{
         return m;
       }
 
-    Point3F matrixToVec(float[][] m) {
+    static Point3F matrixToVec(float[][] m) {
         Point3F v = new Point3F(0,0,0);
         v.x = m[0][0];
         v.y = m[1][0];
@@ -859,11 +870,11 @@ public class driver{
         }
         return v;
       }
-    public Point3F matmul(float[][] a, Point3F b) {
+    public static Point3F matmul(float[][] a, Point3F b) {
         float[][] m = vecToMatrix(b);
         return matrixToVec(matmul(a,m));
     }
-    public float[][] matmul(float[][] a, float[][] b) {
+    public static float[][] matmul(float[][] a, float[][] b) {
         int colsA = a[0].length;
         int rowsA = a.length;
         int colsB = b[0].length;
