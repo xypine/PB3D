@@ -368,6 +368,10 @@ public class driver{
             xScreenCenter = s.r.w / 2;
             yScreenCenter = s.r.h / 2;
             
+            models.values().forEach((m) -> {
+                m.executeLogic();
+            });
+            
             screenPosition = screenPosition_org.clone();
             
             if(!rotation_mode){

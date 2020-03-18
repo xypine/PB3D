@@ -8,7 +8,6 @@ package codenameprojection;
 
 import JFUtils.Range;
 import JFUtils.point.Point3D;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -43,6 +42,12 @@ public class model {
     
     public model_frame getFrame(int index){
         return getFrame(index, false);
+    }
+    
+    public String name = "unnamed_model";
+    
+    public void executeLogic(){
+        //Please replace in order to execute custom logic
     }
     
     public model_frame getFrame(int index, boolean skipCache){
