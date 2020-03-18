@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codenameprojection.fly;
+package alldots;
 
 import JFUtils.Range;
 import JFUtils.point.Point2D;
@@ -13,6 +13,7 @@ import JFUtils.point.Point3F;
 import codenameprojection.Utils;
 import codenameprojection.driver;
 import codenameprojection.model;
+import codenameprojection.modelParser;
 import codenameprojection.model_frame;
 import java.awt.FlowLayout;
 import java.util.Arrays;
@@ -27,15 +28,16 @@ import javax.swing.JSlider;
  *
  * @author Jonnelafin
  */
-public class Fly {
+public class alldots {
     public static void main(String[] args) {
-        new Fly();
+        new alldots();
     }
 
     codenameprojection.driver Driver;
     JFrame frame;
-    public Fly() {
+    public alldots() {
         Driver = new driver(null);
+        modelParser.filename = "models/alldots/Viper3";
         Thread t = new Thread(){
             @Override
             public void run() {
@@ -50,7 +52,7 @@ public class Fly {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Fly.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(alldots.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         Driver.an_pause = true;
@@ -104,8 +106,9 @@ public class Fly {
         //Driver.models.clear();
         int ship = (int) Driver.models.keySet().toArray()[0];
         model shipM = Driver.models.get(ship);
-        shipM.frames.getFirst().lines = new LinkedList<>();
-        LinkedList<model> points = constructCloud(); // //new LinkedList<>();
+        shipM.getFrame(0).lines = new LinkedList<>();
+        shipM.getFrame(0).faces = new LinkedList<>();
+        LinkedList<model> points = new LinkedList<>();//constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
             Integer handle = m.hashCode();
@@ -131,17 +134,17 @@ public class Fly {
         int c4i = c4.identifier + 0;
         
         shipM = Driver.models.get(ship);
-        shipM.frames.get(0).points.add(c1);
-        shipM.frames.get(0).points.add(c2);
-        shipM.frames.get(0).points.add(c3);
-        shipM.frames.get(0).points.add(c4);
+        shipM.getFrame(0).points.add(c1);
+        shipM.getFrame(0).points.add(c2);
+        shipM.getFrame(0).points.add(c3);
+        shipM.getFrame(0).points.add(c4);
         
         System.out.println(shipM.getFrame(0).points.indexOf(c1));
         
         
         //float shipRotX = 0;
         while (true) {
-            shipM = Driver.models.get(ship);
+            
             if(shipM.getFrame(0).points.indexOf(c1) == -1){
             //    shipM.getFrame(0).points.add(c1);
             }
@@ -155,7 +158,7 @@ public class Fly {
             //    shipM.getFrame(0).points.add(c4);
             }
             
-            //shipM = Driver.models.get(ship);
+            shipM = Driver.models.get(ship);
             Driver.angleYM = Driver.angleYM + Driver.inp.cX * 0.0002;
             Driver.inp.cX = (int) (Driver.inp.cX * 0.5);
             Driver.angleXM = Driver.angleXM + Driver.inp.cY * 0.0002;
@@ -261,34 +264,32 @@ public class Fly {
                 shipRotY = shipRotY - 0.0004F;;
             }
             //q
-            if(Driver.inp.keys[81]){
+            if(Driver.inp.keys[81] && false){
                 shipRotZ = shipRotZ + 0.0004F;;
             }
             //e
-            if(Driver.inp.keys[69]){
+            if(Driver.inp.keys[69] && false){
                 shipRotZ = shipRotZ - 0.0004F;;
             }
-            //System.out.println(shipM.rotation_X);
-            shipM.rotation_X = shipRotZ * 20;
             //Driver.viewAngle.x = Driver.viewAngle.x + shipRotX;
             shipRotY = shipRotY * 0.992F;
             shipRotZ = shipRotZ * 0.992F;
             //Driver.screenPosition_org = shipCenter;
             //Driver.screenPosition_org = Utils.average(shipModel.getFrame(0).points);
-            //Driver.screenPosition_org.x = shipModel.getFrame(0).points.get(0).clone().x;
-            //Driver.screenPosition_org.y = shipModel.getFrame(0).points.get(0).clone().y;
-            //Driver.screenPosition_org.z = shipModel.getFrame(0).points.get(0).clone().z;
-            //Driver.screenPosition.x = shipModel.getFrame(0).points.get(0).clone().x;
-            //Driver.screenPosition.y = shipModel.getFrame(0).points.get(0).clone().y;
-            //Driver.screenPosition.z = shipModel.getFrame(0).points.get(0).clone().z;
+            Driver.screenPosition_org.x = shipModel.getFrame(0).points.get(0).clone().x;
+            Driver.screenPosition_org.y = shipModel.getFrame(0).points.get(0).clone().y;
+            Driver.screenPosition_org.z = shipModel.getFrame(0).points.get(0).clone().z;
+            Driver.screenPosition.x = shipModel.getFrame(0).points.get(0).clone().x;
+            Driver.screenPosition.y = shipModel.getFrame(0).points.get(0).clone().y;
+            Driver.screenPosition.z = shipModel.getFrame(0).points.get(0).clone().z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
             Driver.angleY = Driver.angleY - shipRotY;
             //Driver.angleX = Driver.angleX - shipRotZ;
             Driver.angleZ = Driver.angleZ - shipRotZ;
             for(Point3D i : shipModel.getFrame(0).points){
                 //Point3D newLoc = Point3D.add(Driver.screenPosition_org, Point3D.subtract(i, last_sp));
-                //Point3D newLoc = i.clone();
-               // newLoc = Driver.matmul(driver.RY(shipRotY), newLoc.toFVector3()).toDVector3();
+                Point3D newLoc = i.clone();
+                //newLoc = Driver.matmul(driver.RY(shipRotY), newLoc.toFVector3()).toDVector3();
                 //newLoc = Driver.matmul(driver.RZ(shipRotZ), newLoc.toFVector3()).toDVector3();
                 
 //                i.x = newLoc.x + vel.x;
@@ -296,19 +297,17 @@ public class Fly {
 //                i.z = newLoc.z + vel.z;
                 
             }
-            //System.out.println(shipM.rotation_Y);
-            shipM.rotation_Y = shipM.rotation_Y + shipRotY;
-            //System.out.println(shipRotY);
-            //shipModel.x = shipModel.x + vel.x;
-            //shipModel.y = shipModel.y + vel.y;
-            //shipModel.z = shipModel.z + vel.z;
+            shipM.rotation_Y = shipRotY / (10D);
+            shipModel.x = shipModel.x + vel.x;
+            shipModel.y = shipModel.y + vel.y;
+            shipModel.z = shipModel.z + vel.z;
             for(Integer handle : handles){
                 model m = Driver.models.get(handle);
                 if(m.getFrame(0).points.getFirst().z < size){
                     //m.getFrame(0).points.getFirst().z = m.getFrame(0).points.getFirst().z + 0.03*100;
                 }
                 else{
-                   // m.getFrame(0).points.getFirst().z = -size;
+                    m.getFrame(0).points.getFirst().z = -size;
                 }
             }
             last_sp = Driver.screenPosition_org.clone();
@@ -316,7 +315,7 @@ public class Fly {
             try {
                 Thread.sleep((long) 1);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Fly.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(alldots.class.getName()).log(Level.SEVERE, null, ex);
             }
             
         }

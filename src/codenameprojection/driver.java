@@ -102,7 +102,7 @@ public class driver{
         LinkedList<Point2D[]> faces2 = new modelParser("Cube").parseFaces(points2);
         
         model m = new model(new LinkedList<model_frame>(), true);
-        points2.forEach(l -> m.frames.getFirst().points.add(l));
+        points2.forEach(l -> m.getFrame(0).points.add(l));
         int id = points2.hashCode();
         models.put(id, m);
         
@@ -229,6 +229,9 @@ public class driver{
         LinkedList<Integer[]> lines2 = new LinkedList<>();
         LinkedList<Point2D[]> faces2 = new LinkedList<>();
         for(model m : models.values()){
+            //m.x = m.x + 0.03;
+            //m.rotation_Y = m.rotation_Y + 0.00001;
+            //System.out.println(m.rotation_Y);
             points2.addAll(m.getFrame(f).points);
             lines2.addAll(m.getFrame(f).lines);
             faces2.addAll(m.getFrame(f).faces);
@@ -296,6 +299,9 @@ public class driver{
             //frame = 10;
             beginTime = Instant.now();
             //Init
+            model model0 = (model) models.values().toArray()[0];
+            //model0.y = Math.sin(tickC/100)/100;
+            //model0.rotation_Y++;
             
             s.r.cx = screenPosition_org.intX();
             s.r.cy = screenPosition_org.intY();
@@ -520,7 +526,7 @@ public class driver{
                     //continue;
                 }
                 //System.out.println("Original[" +i.hashCode() + "] :" + i);
-                Point3F rotated = i.toFVector3();
+                Point3F rotated = i.toFVector3().clone();
                 
                 if(rotation){
                     
@@ -575,7 +581,7 @@ public class driver{
                 int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
                 float distP;
                 //distP = (float) (screenPosition.z - rotated.z);
-                distP = (float) Utils.getDistance(rotated.toDVector3(), screenPosition);
+                distP = (float) Utils.getDistance(rotated.toDVector3(), screenPosition_org);
                 dist.put(i.identifier, distP);
                 if(size < 0){
                     size = 0;
