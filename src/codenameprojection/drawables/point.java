@@ -7,7 +7,7 @@ package codenameprojection.drawables;
 
 /**
  *
- * @author Elias Eskelinen <elias.eskelinen@protonmail.com>
+ * @author Elias Eskelinen (Jonnelafin)
  */
 public class point {
     public int x = 0;

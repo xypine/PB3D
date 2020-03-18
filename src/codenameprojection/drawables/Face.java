@@ -11,7 +11,7 @@ import java.awt.Polygon;
 
 /**
  *
- * @author Elias Eskelinen <elias.eskelinen@protonmail.com>
+ * @author Elias Eskelinen (Jonnelafin)
  */
 public class Face {
     public Polygon p;

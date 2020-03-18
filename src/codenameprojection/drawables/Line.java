@@ -10,7 +10,7 @@ import java.awt.Color;
 
 /**
  *
- * @author Elias Eskelinen <elias.eskelinen@protonmail.com>
+ * @author Elias Eskelinen (Jonnelafin)
  */
 public class Line {
     public Point2Int start;

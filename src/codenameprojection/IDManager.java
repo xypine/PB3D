@@ -10,7 +10,7 @@ import JFUtils.vector.dVector2;
 
 /**
  *
- * @author Elias Eskelinen <elias.eskelinen@protonmail.com>
+ * @author Elias Eskelinen (Jonnelafin)
  */
 public class IDManager {
    int free = 0;
