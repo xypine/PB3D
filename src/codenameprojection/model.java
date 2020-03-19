@@ -32,6 +32,8 @@ public class model {
     
     public LinkedList<model_frame> frames_cache = new LinkedList<>();
     
+    public driver parent;
+    
     void updatecache(){
         LinkedList<model_frame> newCache = new LinkedList<>();
         for(int i : new Range(frames.size())){
@@ -46,7 +48,8 @@ public class model {
     
     public String name = "unnamed_model";
     
-    public void executeLogic(){
+    public void executeLogic(driver parent_){
+        this.parent = parent_;
         //Please replace in order to execute custom logic
     }
     

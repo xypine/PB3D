@@ -6,6 +6,7 @@
 
 package codenameprojection.fly;
 
+import codenameprojection.driver;
 import codenameprojection.model;
 import codenameprojection.model_frame;
 import java.util.LinkedList;
@@ -21,9 +22,19 @@ public class cyclone extends model{
     }
 
     @Override
-    public void executeLogic() {
-        super.executeLogic(); //To change body of generated methods, choose Tools | Templates.
-        x--;
+    public void executeLogic(driver parent_) {
+        super.executeLogic(parent_);
+        try {
+            model player = (model) parent.models.values().toArray()[0];
+            z = player.z -10;
+            y = player.y;
+            x = player.x;
+            rotation_X = player.rotation_X;
+            rotation_Y = player.rotation_Y;
+            rotation_Z = player.rotation_Z;
+        } catch (Exception e) {
+        }
+        z--;
     }
 
     

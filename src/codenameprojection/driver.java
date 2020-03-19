@@ -369,7 +369,7 @@ public class driver{
             yScreenCenter = s.r.h / 2;
             
             models.values().forEach((m) -> {
-                m.executeLogic();
+                m.executeLogic(this);
             });
             
             screenPosition = screenPosition_org.clone();
