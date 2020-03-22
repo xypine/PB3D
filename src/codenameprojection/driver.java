@@ -313,6 +313,7 @@ public class driver{
         
         int frame = 0;
         running = true;
+        boolean oldP = !(!s.r.drawPoints);
         while(running){
             //frame = 10;
             beginTime = Instant.now();
@@ -419,16 +420,19 @@ public class driver{
             if(inp.keys[84] == true && !ingoredInputs.contains(84)){
                 s.r.drawLines = true;
                 s.r.drawFaces = false;
+                s.r.drawPoints = oldP;
             }
             //g
             if(inp.keys[71] == true && !ingoredInputs.contains(71)){
                 s.r.drawLines = false;
                 s.r.drawFaces = true;
+                s.r.drawPoints = oldP;
             }
             //b
             if(inp.keys[66] == true && !ingoredInputs.contains(66)){
                 s.r.drawLines = false;
                 s.r.drawFaces = false;
+                s.r.drawPoints = true;
             }
             
             //d

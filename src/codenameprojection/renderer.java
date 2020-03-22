@@ -95,7 +95,7 @@ public class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = true;
-    public boolean shading = false;
+    public boolean shading = true;
     public boolean drawLines = false;
     public boolean drawFaces = true;
     public boolean drawErrors = false;
@@ -290,7 +290,8 @@ public class renderer extends JPanel{
                     
                     //g.setColor(new Color(cS, cS, cS));
                     if (usePixelRendering) {
-                        drawPoint(pos, Color.red);
+                        //drawPoint(pos, Color.red);
+                        gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                     } else {
                         g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                     }
@@ -354,7 +355,25 @@ public class renderer extends JPanel{
                                 ////drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
                             } else {
                                 //IMAGES???
-                                
+                                float wb = 0;
+                                for(int x : xpoints){
+                                    wb = wb + x;
+                                }
+                                wb = wb / xpoints.length;
+                                float hb = 0;
+                                for(int y : ypoints){
+                                    hb = hb + y;
+                                }
+                                hb = hb / ypoints.length;
+                                //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
+                                //gb.setPaint(tex);
+                                //gb.fillPolygon(facesToDraw.get(i));
+                                g.setClip(new Polygon(xpoints, ypoints, npoints));
+                                g.drawImage(base, w/2-(int)wb, h/2-(int)hb, w, h, this);
+                                g.setClip(0, 0, w, h);
+                                Color c2 = c;
+                                c2 = new Color(c2.getRed(), c2.getGreen(), c2.getBlue(), 133);
+                                g.setColor(c2);
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
                             //g.drawPolygon(xpoints, ypoints, npoints);
@@ -399,9 +418,9 @@ public class renderer extends JPanel{
                         hb = hb + y;
                     }
                     hb = hb / facesToDraw.get(i).ypoints.length;
-                    TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
-                    gb.setPaint(tex);
-                    gb.fillPolygon(facesToDraw.get(i));
+                    //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
+                    //gb.setPaint(tex);
+                    //gb.fillPolygon(facesToDraw.get(i));
                     Color c = faceColorsToDraw.get(i);
                     c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 133);
                     gb.setColor(c);
