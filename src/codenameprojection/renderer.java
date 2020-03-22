@@ -1,14 +1,34 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License
+ *
+ * Copyright 2019 Elias Eskelinen.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package codenameprojection;
 
 import JFUtils.Range;
+import JFUtils.dirs;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
+import PBEngine.directory;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -19,15 +39,22 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.Transparency;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
@@ -42,6 +69,13 @@ public class renderer extends JPanel{
     public int cz;
     
     public renderer(Component parent){
+        try {
+            this.base = ImageIO.read(new File(new dirs().textures + "/walls/walls0.png"));
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(renderer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(renderer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //output = new BufferedImage(parent.getWidth(), parent.getWidth(), BufferedImage.TYPE_INT_RGB);
         setIgnoreRepaint(true);
     }
@@ -51,6 +85,9 @@ public class renderer extends JPanel{
     private LinkedList<Point2D> points_sizes = new LinkedList<>();
     private LinkedList<Integer[]> lines = new LinkedList<>();
     private LinkedList<Color> lines_color = new LinkedList<>();
+    private HashMap<Integer, BufferedImage> images = new HashMap<>();
+    
+    BufferedImage base;
     public int w;
     public int h;
     public int drawnLines;
@@ -316,6 +353,8 @@ public class renderer extends JPanel{
                                 //gb.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                                 ////drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
                             } else {
+                                //IMAGES???
+                                
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
                             //g.drawPolygon(xpoints, ypoints, npoints);
@@ -337,22 +376,39 @@ public class renderer extends JPanel{
             
         
         if (usePixelRendering) {
-            gb.setColor(Color.BLACK);
-            gb.fillRect(0, 0, w, h);
-            for(int i : new Range(linesToDraw.size())){
-                gb.setColor(lineColorsToDraw.get(i));
-                Integer[][] coords = linesToDraw.get(i);
-                //int x1 = coords[0][0];
-                //int y1 = coords[0][1];
-                //int x2 = coords[1][0];
-                //int y2 = coords[1][1];
-                gb.drawLine(coords[0][0], coords[0][1], coords[1][0], coords[1][1]);
+            if(!Objects.isNull(gb)){
+                gb.setColor(Color.BLACK);
+                gb.fillRect(0, 0, w, h);
+                for(int i : new Range(linesToDraw.size())){
+                    gb.setColor(lineColorsToDraw.get(i));
+                    Integer[][] coords = linesToDraw.get(i);
+                    //int x1 = coords[0][0];
+                    //int y1 = coords[0][1];
+                    //int x2 = coords[1][0];
+                    //int y2 = coords[1][1];
+                    gb.drawLine(coords[0][0], coords[0][1], coords[1][0], coords[1][1]);
+                }
+                for(int i : new Range(facesToDraw.size())){
+                    float wb = 0;
+                    for(int x : facesToDraw.get(i).xpoints){
+                        wb = wb + x;
+                    }
+                    wb = wb / facesToDraw.get(i).xpoints.length;
+                    float hb = 0;
+                    for(int y : facesToDraw.get(i).ypoints){
+                        hb = hb + y;
+                    }
+                    hb = hb / facesToDraw.get(i).ypoints.length;
+                    TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
+                    gb.setPaint(tex);
+                    gb.fillPolygon(facesToDraw.get(i));
+                    Color c = faceColorsToDraw.get(i);
+                    c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 133);
+                    gb.setColor(c);
+                    gb.fillPolygon(facesToDraw.get(i));
+                }
+                g.drawImage(output, 0, 0, this);
             }
-            for(int i : new Range(facesToDraw.size())){
-                gb.setColor(faceColorsToDraw.get(i));
-                gb.fillPolygon(facesToDraw.get(i));
-            }
-            g.drawImage(output, 0, 0, this);
         }
             
             
