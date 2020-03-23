@@ -158,7 +158,8 @@ public class renderer extends JPanel{
     }
     
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics gd) {
+        Graphics2D g = (Graphics2D) gd;
         Instant beginTime = Instant.now();
         Dimension currentSize = getParent().getSize();
         w = currentSize.width;
@@ -368,13 +369,17 @@ public class renderer extends JPanel{
                                 //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
                                 //gb.setPaint(tex);
                                 //gb.fillPolygon(facesToDraw.get(i));
-                                g.setClip(new Polygon(xpoints, ypoints, npoints));
-                                g.drawImage(base, w/2-(int)wb, h/2-(int)hb, w, h, this);
-                                g.setClip(0, 0, w, h);
-                                Color c2 = c;
-                                c2 = new Color(c2.getRed(), c2.getGreen(), c2.getBlue(), 133);
-                                g.setColor(c2);
+                                //g.setClip(new Polygon(xpoints, ypoints, npoints));
+                                //BufferedImage shaded = JFUtils.quickTools.
+                                TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth()*4, base.getHeight()*4));
+                                g.setPaint(tex);
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                                //g.drawImage(base, w/2-(int)wb, h/2-(int)hb, w, h, this);
+                                //g.setClip(0, 0, w, h);
+                                //Color c2 = c;
+                                //c2 = new Color(c2.getRed(), c2.getGreen(), c2.getBlue(), 133);
+                                //g.setColor(c2);
+                                //g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
                             //g.drawPolygon(xpoints, ypoints, npoints);
                             //g.drawLine(x1, y1, x2, y2);
@@ -418,9 +423,9 @@ public class renderer extends JPanel{
                         hb = hb + y;
                     }
                     hb = hb / facesToDraw.get(i).ypoints.length;
-                    //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
-                    //gb.setPaint(tex);
-                    //gb.fillPolygon(facesToDraw.get(i));
+                    TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
+                    gb.setPaint(tex);
+                    gb.fillPolygon(facesToDraw.get(i));
                     Color c = faceColorsToDraw.get(i);
                     c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 133);
                     gb.setColor(c);
