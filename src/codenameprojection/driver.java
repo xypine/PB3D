@@ -612,12 +612,13 @@ public class driver{
                 projected = dVector3.add(projected, new dVector3(200, 200, 20));*/
                 Point2D point2D = new Point2D(projected.x, projected.y);
                 point2D.identifier = i.identifier;
-                int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
+                //int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
+                int size = (int) (screenPosition.z - rotated.z);
                 float distP;
                 //distP = (float) (screenPosition.z - rotated.z);
                 distP = (float) Utils.getDistance(rotated.toDVector3(), screenPosition_org);
                 dist.put(i.identifier, distP);
-                if(size < 0){
+                if(size < 0 && false){
                     size = 0;
                 }
                 //System.out.println("Projected: " + point2);
