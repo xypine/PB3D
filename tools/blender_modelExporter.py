@@ -1,12 +1,31 @@
 #Made by Elias Arno "Jonnelafin" Eskelinen
 #Licensed under the MIT Licence
 #Open and run this file inside blender's text editor
-import bpy, bmesh
-obj = bpy.context.active_object
-scn = bpy.context.scene
 
-frame = bpy.context.scene.frame_current
-end = scn.frame_end
+bl_info = {
+    "name": "PB3D Exporter",
+    "description": "Exports the selected object into an .pb3d",
+    "author": "Elias Eskelinen aka Jonnelafin",
+    "version": (1, 0),
+    "blender": (2, 80, 0),
+    "location": "Object Properties > Export to .PB3D",
+    "warning": "", # used for warning icon and text in addons panel
+    "wiki_url": "https://github.com/jonnelafin/PB3D",
+    "tracker_url": "https://developer.blender.org",
+    "support": "COMMUNITY",
+    "category": "Import-Export",
+}
+
+import bpy, bmesh
+#obj = bpy.context.active_object
+obj = ""
+#scn = bpy.context.scene
+scn = ""
+
+#frame = bpy.context.scene.frame_current
+frame = 0
+#end = scn.frame_end
+end = 1
 frames = range(end)
 
 from bpy.props import (StringProperty,
@@ -366,6 +385,8 @@ class pbPanel(bpy.types.Panel):
         
         self.layout.prop(my_tool, "my_bool")
         self.layout.operator("object.pb_3d_exporter")
+        self.layout.label(text="You can always cancel exporting by pressing esc or mouse 2")
+        self.layout.label(text="Animation range will be set to scene frame range")
         useExternalOut = bpy.context.scene.my_tool.my_bool
         filename = bpy.context.scene.my_tool.my_path + "/" + bpy.context.scene.my_tool.my_string
 def register():
