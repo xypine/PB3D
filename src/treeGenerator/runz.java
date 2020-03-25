@@ -9,6 +9,7 @@ package treeGenerator;
 import JFUtils.Range;
 import JFUtils.vector.dVector3;
 import codenameprojection.CodeNameProjection;
+import codenameprojection.drawables.Vertex;
 import codenameprojection.driver;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
@@ -82,7 +83,7 @@ public class runz {
                 x = x / 2;
                 y = y / 2;
                 
-                Driver.points.add(new dVector3(0, 0, 0));
+                Driver.points.add(new Vertex(0, 0, 0));
                 for(int i : new Range(a)){
                     z = z + p;
                     if(r.nextInt(5) == 1){
@@ -93,7 +94,7 @@ public class runz {
                             x = x - 0.1F;
                         }
                     }
-                    Driver.points.add(new dVector3(x, z, y));
+                    Driver.points.add(new Vertex(x, z, y));
                     Driver.lines.add(new Integer[]{Driver.points.getLast().identifier, Driver.points.getFirst().identifier});
                 }
             }

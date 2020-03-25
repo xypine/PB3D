@@ -26,6 +26,7 @@ package codenameprojection;
 
 import JFUtils.Range;
 import JFUtils.point.Point3D;
+import codenameprojection.drawables.Vertex;
 import java.util.LinkedList;
 
 /**
@@ -88,16 +89,16 @@ public class model {
             out = (model_frame) frames.getFirst().clone();
         }
         int ind = 0;
-        for(Point3D i : (LinkedList<Point3D>)(out.points.clone())){
+        for(Vertex i : (LinkedList<Vertex>)(out.points.clone())){
             int oldID = i.identifier;
-            Point3D i2 = i.clone();
+            Vertex i2 = i.clone();
             //i2 = i;
-            i2 = driver.matmul(driver.RY((float) rotation_Y), i2.toFVector3()).toDVector3();
+            Point3D i3 = driver.matmul(driver.RY((float) rotation_Y), i2.toFVector3()).toDVector3();
             //i = driver.matmul(driver.RZ((float) rotation_Z), i.toFVector3()).toDVector3();
-            i2 = driver.matmul(driver.RX((float) rotation_X), i2.toFVector3()).toDVector3();
+            i3 = driver.matmul(driver.RX((float) rotation_X), i3.toFVector3()).toDVector3();
             
             Point3D global = new Point3D(x, y, z);
-            i2 = Point3D.add(global, i2);
+            i2 = Vertex.fromP3D(Point3D.add(global, i3));
             i2.identifier = oldID;
             out.points.set(ind, i2);
             ind++;
