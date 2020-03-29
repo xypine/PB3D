@@ -55,7 +55,7 @@ public class CodeNameProjection {
         System.out.println("Hashcode: " + h);
         try {
             System.out.println("Trying to download hashcode...");
-            String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt");
+            String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt").replaceAll("\n", "");
             System.out.println("Downloaded hash: " + h2);
             if(h.equals(h2)){
                 secure = true;
@@ -94,11 +94,13 @@ public class CodeNameProjection {
         classes.add(driver.class);
         classes.add(modelParser.class);
         classes.add(renderer.class);
+        classes.add(CodeNameProjection.class);
         String h = "";
+        int hc = 0;
         for(Class c : classes){
-            h = h + c.hashCode();
+            hc = hc + c.hashCode();
         }
-        return h;
+        return hc + "";
     }
 
 }
