@@ -264,7 +264,9 @@ public class driver{
     public double angleYM = 0;
     public double angleZ = 0;
     public double angleZM = 0;
+    long a, b, c, d;
     public void run(){
+        CodeNameProjection.validate();
         points = new LinkedList<>();
         lines = new LinkedList<>();
         try {
@@ -317,6 +319,7 @@ public class driver{
         while(running){
             //frame = 10;
             beginTime = Instant.now();
+            a = System.currentTimeMillis();
             //Init
             model model0 = (model) models.values().toArray()[0];
             //model0.y = Math.sin(tickC/100)/100;
@@ -402,7 +405,6 @@ public class driver{
                 //screenPosition = JFUtils.point.Point3F.multiply(screenPosition.toFVector3(), matmul(RY((float) -angleX), screenPosition_org.clone().toFVector3())).toDVector3();
                 //screenPosition = JFUtils.math.General.average(screenPosition, matmul(RY((float) -angleX), screenPosition_org.toFVector3()).toDVector3(), screenPosition.identifier);
             }
-            
             //Check input   -0.025D*0.05
             double factor_rotation = -0.025D*0.05 * deltaTime.getNano();
             double factor = -0.025D*0.05*4 * deltaTime.getNano() * 0.000001;
@@ -638,6 +640,7 @@ public class driver{
             e.printStackTrace();
             }
             }*/
+            
             LinkedList<Integer[]> lines2 = new LinkedList<>();
             try {
                 lines2.addAll(lines);
@@ -674,6 +677,7 @@ public class driver{
             
             //face_dists = new LinkedList<>();
             //faces_color = new LinkedList<>();
+            
             float lastZ = 0;
             int index = 0;
             final Color def = new Color(0, 0, 0);
@@ -689,6 +693,8 @@ public class driver{
                     faces_color.add(new Color(0, 0, 0));
                 }
             }
+            
+            b = System.currentTimeMillis();
             for(Point2D[] face : faces){
                 boolean cont = false;
                 if(face.length == 3){
@@ -728,7 +734,7 @@ public class driver{
                 if(!Objects.isNull(point)){
                     boolean change = true;
                   //float distP = (255 - dist.get(point.identifier) * 7);
-                    float distP = (255 - dist2 * 7);
+                  float distP = (255 - dist2 * 7);
                     if(distP == 0.0F){
                         //System.out.println("F2");
                         change = false;
@@ -768,6 +774,7 @@ public class driver{
                 index++;
             }
             
+            c = System.currentTimeMillis();
             //Rendering
             s.r.updatePoints(set, sizes);
             s.r.updateLines(lines, lines_color);
@@ -789,7 +796,7 @@ public class driver{
             angleZ = (float) (angleZ + angleZM);
             deltaTime = Duration.between(beginTime, Instant.now());
             s.r.nano = JFUtils.math.Conversions.toCPNS(deltaTime.getNano());
-            final int d = (int) JFUtils.math.Conversions.toFPS(deltaTime.getNano());
+            final int d2 = (int) JFUtils.math.Conversions.toFPS(deltaTime.getNano());
             final int tc = tickC;
             /*new Thread(){
                 @Override
@@ -817,10 +824,14 @@ public class driver{
             } catch (InterruptedException ex) {
                 Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
             }
+            d = System.currentTimeMillis();
             //point.x = point.x + 0.1;
             //point.z--;
             //points.get(0).x = points.get(0).x + 0.1;
             //points.get(0).z--;
+//            System.out.println("Some code 1 took "+(b-a)+"mil to execute. ("+((b-a)/1000)+" seconds)");
+//            System.out.println("Calculating faces took "+(c-b)+"mil to execute. ("+((c-b)/1000)+" seconds)");
+//            System.out.println("Some code 3 took "+(d-c)+"mil to execute. ("+((d-c)/1000)+" seconds)");
         }
     }
     

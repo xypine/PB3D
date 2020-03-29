@@ -23,10 +23,8 @@
  */
 package codenameprojection;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -48,31 +46,6 @@ public class CodeNameProjection {
     
     public static void main(String[] args) {
         
-        
-        String h = getHash();
-        System.out.println("Hashcode: " + h);
-        try {
-            System.out.println("Trying to download hashcode...");
-            String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt").replaceAll("\n", "");
-            System.out.println("Downloaded hash: " + h2);
-            if(h.equals(h2)){
-                secure = true;
-                System.out.println("Hash validated succesfully");
-            }
-            else{
-                throw new SecurityException("HASHES DO NOT MATCH: " + h + " != " + h2);
-            }
-        } catch (Exception ex) {
-            //System.out.println("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
-            Logger.getGlobal().warning("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
-        }
-        
-        if(JFUtils.versionCheck.version != minUtilsVer){
-            throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
-        }
-        
-        HashMap<String, String> param = new HashMap<>();
-        param.put("nowindows", "");
         /*Supervisor supervisor = new PBEngine.Supervisor(0, true, new Point2D(0, 0), param);
         Thread a = new Thread(supervisor);
         //a.start();
@@ -90,7 +63,29 @@ public class CodeNameProjection {
         //new driver(null);
         
         
-
+    public static void validate(){
+        if(JFUtils.versionCheck.version != minUtilsVer){
+            //throw new UnsupportedClassVersionError("pb3d needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
+            Logger.getGlobal().warning("pb3d needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
+        }
+        String h = getHash();
+        System.out.println("Hashcode: " + h);
+        try {
+            System.out.println("Trying to download hashcode...");
+            String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt").replaceAll("\n", "");
+            System.out.println("Downloaded hash: " + h2);
+            if(h.equals(h2)){
+                secure = true;
+                System.out.println("Hash validated succesfully");
+            }
+            else{
+                throw new SecurityException("HASHES DO NOT MATCH: " + h + " != " + h2);
+            }
+        } catch (Exception ex) {
+            //System.out.println("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
+            Logger.getGlobal().warning("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
+        }
+    }
     public static String getHash(){
         LinkedList<Class> classes = new LinkedList<>();
         classes.add(driver.class);

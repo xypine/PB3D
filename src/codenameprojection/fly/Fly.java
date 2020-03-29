@@ -78,7 +78,7 @@ public class Fly {
         
         Driver.s.r.usePixelRendering = false;
         Driver.s.r.drawFaces = true;
-        Driver.s.r.drawPoints = true;
+        Driver.s.r.drawPoints = false;
         Driver.s.r.drawLines = true;
         Driver.s.r.shading = false;
         Driver.rotation_mode = false;
@@ -124,7 +124,8 @@ public class Fly {
         //Driver.models.clear();
         int ship = (int) Driver.models.keySet().toArray()[0];
         model shipM = Driver.models.get(ship);
-        shipM.frames.getFirst().lines = new LinkedList<>();
+        //shipM.frames.getFirst().lines = new LinkedList<>();
+        shipM.frames.getFirst().faces = new LinkedList<>();
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
@@ -138,13 +139,16 @@ public class Fly {
         Driver.screenPosition_org = new Point3D(0, 0, 0);
         Point3D last_sp = Driver.screenPosition_org.clone();
         int boltCooldown = 0;
-        float side = 9.4F;
+        float side = 2F;
+        float up = -2F;
+        float front = 0;
+        float front2 = 8;
         float shipRotY = 0;
         float shipRotZ = 0;
-        Point3D c1 = new Point3D(side, -2, 0);
-        Point3D c2 = new Point3D(side, -2, 8);
-        Point3D c3 = new Point3D(-side, -2, 0);
-        Point3D c4 = new Point3D(-side, -2, 8);
+        Point3D c1 = new Point3D(side, up, front);
+        Point3D c2 = new Point3D(side, up, front2);
+        Point3D c3 = new Point3D(-side, up, front);
+        Point3D c4 = new Point3D(-side, up, front2);
         int c1i = c1.identifier + 0;
         int c2i = c2.identifier + 0;
         int c3i = c3.identifier + 0;

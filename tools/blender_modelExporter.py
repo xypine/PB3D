@@ -417,7 +417,7 @@ class pbPanel(bpy.types.Panel):
         #self.layout.label(text="You can export to .pb3d here:")
         self.layout.prop(my_tool, "my_path")
         self.layout.prop(my_tool, "my_string")
-        self.layout.prop(my_tool, "my_enum")
+        #self.layout.prop(my_tool, "my_enum")
         
         self.layout.prop(my_tool, "my_bool")
         self.layout.operator("object.pb_3d_exporter")
@@ -427,12 +427,12 @@ class pbPanel(bpy.types.Panel):
         filename = bpy.context.scene.my_tool.my_path + "/" + bpy.context.scene.my_tool.my_string
         
         ax = bpy.context.scene.my_tool.my_enum
-        if(ax == 'z'):
-            axis = up_z
-        if(ax == 'y'):
-            axis = up_y
-        if(ax == 'x'):
-            axis = up_x
+        #if(ax == 'z'):
+        #    axis = up_z
+        #if(ax == 'y'):
+        #    axis = up_y
+        #if(ax == 'x'):
+        #    axis = up_x
 def register():
     bpy.utils.register_class(exporter)
     bpy.utils.register_class(pbPanel)
