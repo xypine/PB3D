@@ -24,6 +24,7 @@
 package codenameprojection;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
@@ -41,6 +42,9 @@ public class CodeNameProjection {
         if(JFUtils.versionCheck.version != minUtilsVer){
             throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
         }
+        
+        String h = getHash();
+        System.out.println("Hashcode: " + h);
         
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
@@ -61,6 +65,17 @@ public class CodeNameProjection {
         //new driver(null);
         
         
-    }
-    
 
+    public static String getHash(){
+        LinkedList<Class> classes = new LinkedList<>();
+        classes.add(driver.class);
+        classes.add(modelParser.class);
+        classes.add(renderer.class);
+        String h = "";
+        for(Class c : classes){
+            h = h + c.hashCode();
+        }
+        return h;
+    }
+
+}
