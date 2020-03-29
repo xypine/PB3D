@@ -28,7 +28,6 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import static codenameprojection.Utils.P3ToP2;
-import codenameprojection.drawables.Vertex;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -46,7 +45,8 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public static String filename = "models/Viper3";
+    public static String filename = "assets/models/Viper3";
+
     public modelParser() {
     }
     
@@ -55,15 +55,17 @@ public class modelParser {
     }
     
     final float size = 500;
-    public LinkedList<LinkedList<Vertex>> parse() throws FileNotFoundException, IOException{
-        LinkedList<Vertex> buffer = new LinkedList<>();
-        LinkedList<LinkedList<Vertex>> out = new LinkedList<>();
+    public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
+        LinkedList<Point3D> buffer = new LinkedList<>();
+        LinkedList<LinkedList<Point3D>> out = new LinkedList<>();
         int frames = 0;
         int points = 0;
         int index = 0;
         String line;
         String lineC;
         BufferedReader in;
+        
+        
         boolean useColor = true;
         LinkedList<Color> color = new LinkedList<>();
         
@@ -99,6 +101,7 @@ public class modelParser {
             //e.printStackTrace();
         }
         
+        
         in = new BufferedReader(new FileReader(filename + ".pb3d"));
              line = in.readLine();
 
@@ -128,11 +131,7 @@ public class modelParser {
                              curr = curr + i;
                          }
                      }
-                     Color c = Color.WHITE;
-                     if (useColor) {
-                         c = color.get(index);
-                     }
-                     Vertex tmp = new Vertex(coord[0]/size, coord[1]/size, coord[2]/size, c);
+                     dVector3 tmp = new dVector3(coord[0]/size, coord[1]/size, coord[2]/size);
                      points++;
                      tmp.identifier = index;
                      index++;
@@ -151,7 +150,7 @@ public class modelParser {
         System.out.println(points + " points in " + frames + " frames loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Integer[]> parseLines(LinkedList<Vertex> points) throws FileNotFoundException, IOException{
+    public LinkedList<Integer[]> parseLines(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
@@ -203,7 +202,7 @@ public class modelParser {
         System.out.println(out.size() + " lines loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Point2D[]> parseFaces(LinkedList<Vertex> points) throws FileNotFoundException, IOException{
+    public LinkedList<Point2D[]> parseFaces(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
         LinkedList<Point2D[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
@@ -248,7 +247,7 @@ public class modelParser {
                             } catch (Exception ez) {
                                 
                                 System.out.println("Error parsing face: " + ez);
-                                ez.printStackTrace();
+                                //ez.printStackTrace();
                             }
                         }
                 
@@ -260,12 +259,9 @@ public class modelParser {
         return out;
     }
     public static void main(String[] args) {
-        
         try {
-            LinkedList<LinkedList<Vertex>> parse = new modelParser().parse();
-            System.out.println(parse.size());
+            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             new modelParser().parseLines(parse.getFirst());
-            new modelParser().parseFaces(parse.getFirst());
         } catch (IOException ex) {
             Logger.getLogger(modelParser.class.getName()).log(Level.SEVERE, null, ex);
         }

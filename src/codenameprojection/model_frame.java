@@ -25,19 +25,18 @@ package codenameprojection;
 
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
-import codenameprojection.drawables.Vertex;
 import java.util.LinkedList;
 
 /**
  *
- * @author guest-pecpvn
+ * @author Elias Eskelinen
  */
 public class model_frame {
-    public LinkedList<Vertex> points;
+    public LinkedList<Point3D> points;
     public LinkedList<Integer[]> lines;
     public LinkedList<Point2D[]> faces = new LinkedList<>();
 
-    public model_frame(LinkedList<Vertex> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f) {
+    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f) {
         this.points = p;
         this.lines = l;
         this.faces = f;
@@ -45,7 +44,7 @@ public class model_frame {
 
     @Override
     protected Object clone(){
-        return new model_frame((LinkedList<Vertex>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone());
+        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone());
     }
     
     

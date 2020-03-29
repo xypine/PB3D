@@ -29,7 +29,6 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
 import codenameprojection.Utils;
-import codenameprojection.drawables.Vertex;
 import codenameprojection.driver;
 import codenameprojection.model;
 import codenameprojection.modelParser;
@@ -142,10 +141,10 @@ public class Fly {
         float side = 9.4F;
         float shipRotY = 0;
         float shipRotZ = 0;
-        Vertex c1 = new Vertex(side, -2, 0);
-        Vertex c2 = new Vertex(side, -2, 8);
-        Vertex c3 = new Vertex(-side, -2, 0);
-        Vertex c4 = new Vertex(-side, -2, 8);
+        Point3D c1 = new Point3D(side, -2, 0);
+        Point3D c2 = new Point3D(side, -2, 8);
+        Point3D c3 = new Point3D(-side, -2, 0);
+        Point3D c4 = new Point3D(-side, -2, 8);
         int c1i = c1.identifier + 0;
         int c2i = c2.identifier + 0;
         int c3i = c3.identifier + 0;
@@ -186,7 +185,7 @@ public class Fly {
             Driver.inp.cY = (int) (Driver.inp.cY * 0.5);
             
             model shipModel = Driver.models.get(ship);
-            Vertex shipCenter = Utils.averageVer(shipModel.getFrame(0).points);
+            Point3D shipCenter = Utils.average(shipModel.getFrame(0).points);
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
             for(Integer bolt : boltHandles){
@@ -227,11 +226,11 @@ public class Fly {
             if(Driver.inp.keys[32] && boltCooldown < 1){
                 
                 LinkedList<model_frame> frames2 = new LinkedList<>();
-                LinkedList<Vertex> points2 = new LinkedList<>();
+                LinkedList<Point3D> points2 = new LinkedList<>();
                 LinkedList<Integer[]> lines2 = new LinkedList<>();
                 LinkedList<Point2D[]> faces2 = new LinkedList<>();
-                Vertex c5 = shipM.getFrame(0).points.get(c1i).clone();
-                Vertex c6 = shipM.getFrame(0).points.get(c2i).clone();
+                Point3D c5 = shipM.getFrame(0).points.get(c1i).clone();
+                Point3D c6 = shipM.getFrame(0).points.get(c2i).clone();
                 if(side > 0){
                     c5 = shipM.getFrame(0).points.get(c3i).clone();
                     c6 = shipM.getFrame(0).points.get(c4i).clone();
@@ -262,7 +261,7 @@ public class Fly {
                 
                 try {
                     modelParser.filename = "models/old/Cube";
-                    LinkedList<LinkedList<Vertex>> parse = new modelParser().parse();
+                    LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
                     LinkedList<model_frame> cf = new LinkedList<>();
                     cf.add(new model_frame(parse.get(0), new LinkedList<Integer[]>(), new LinkedList<Point2D[]>()));
                     cyclone c = new cyclone(cf, true);
@@ -383,7 +382,7 @@ public class Fly {
             for (int y : new Range(ry)) {
                 for (int z : new Range(rz)){
                     LinkedList<model_frame> frames = new LinkedList<>();
-                    LinkedList<Vertex> points = new LinkedList<>();
+                    LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point2D[]> faces = new LinkedList<>();
                     
@@ -409,7 +408,7 @@ public class Fly {
                     }
                     
                     
-                    points.add(new Vertex(rndX, rndY, rndZ));
+                    points.add(new Point3D(rndX, rndY, rndZ));
                     
                     if(hasConnections && out.size() > 2){
                         //lines.add(new Integer[]{points.getFirst().identifier, out.get(rnd.nextInt(out.size()-1)).getFrame(0).points.getFirst().identifier});

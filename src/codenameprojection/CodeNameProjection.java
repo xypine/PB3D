@@ -47,9 +47,7 @@ public class CodeNameProjection {
     
     
     public static void main(String[] args) {
-        if(JFUtils.versionCheck.version != minUtilsVer){
-            throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
-        }
+        
         
         String h = getHash();
         System.out.println("Hashcode: " + h);
@@ -67,6 +65,10 @@ public class CodeNameProjection {
         } catch (Exception ex) {
             //System.out.println("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
             Logger.getGlobal().warning("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
+        }
+        
+        if(JFUtils.versionCheck.version != minUtilsVer){
+            throw new UnsupportedClassVersionError("cnprojection needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
         }
         
         HashMap<String, String> param = new HashMap<>();
