@@ -23,19 +23,27 @@
  */
 package codenameprojection;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 2.58;
+    public static double minUtilsVer = 3.2;
 
     /**
      * @param args the command line arguments
      */
+    
+    private static boolean secure = false;
+    public static boolean isSecure(){
+        return !(!secure);
+    }
     
     
     public static void main(String[] args) {
@@ -45,6 +53,21 @@ public class CodeNameProjection {
         
         String h = getHash();
         System.out.println("Hashcode: " + h);
+        try {
+            System.out.println("Trying to download hashcode...");
+            String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt");
+            System.out.println("Downloaded hash: " + h2);
+            if(h.equals(h2)){
+                secure = true;
+                System.out.println("Hash validated succesfully");
+            }
+            else{
+                throw new SecurityException("HASHES DO NOT MATCH: " + h + " != " + h2);
+            }
+        } catch (Exception ex) {
+            //System.out.println("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
+            Logger.getGlobal().warning("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
+        }
         
         HashMap<String, String> param = new HashMap<>();
         param.put("nowindows", "");
