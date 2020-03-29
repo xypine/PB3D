@@ -28,6 +28,7 @@ import JFUtils.Range;
 import JFUtils.dirs;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
+import JFUtils.quickTools;
 import PBEngine.directory;
 import java.awt.Color;
 import java.awt.Component;
@@ -157,6 +158,8 @@ public class renderer extends JPanel{
         }
     }
     
+    quickTools qT = new quickTools();
+    
     @Override
     public void paintComponent(Graphics gd) {
         Graphics2D g = (Graphics2D) gd;
@@ -278,23 +281,25 @@ public class renderer extends JPanel{
                     
                     Point2D pos = points.get(i);
                     Point2D s = points_sizes.get(i);
-                    int xOff = s.intX() / 2;
-                    int yOff = s.intY() / 2;
                     
-                    int cS = (int) (s.x * 1000);
-                    if(cS > 255){
-                        cS = 255;
-                    }
+                    int cS = (int) (25 - (s.x*2));
+                    //cS = (int) (cS * 1000);
+            //        if(cS > 255){
+            //            cS = 255;
+            //        }
                     if(cS < 0){
                         cS = 0;
                     }
                     
                     //g.setColor(new Color(cS, cS, cS));
+                    
+                    int xOff = cS / 2;
+                    int yOff = cS / 2;
                     if (usePixelRendering) {
                         //drawPoint(pos, Color.red);
-                        gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                        gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                     } else {
-                        g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                        g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                     }
                     //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                 } catch (Exception e) {
@@ -312,15 +317,27 @@ public class renderer extends JPanel{
                         double y1 = 0;
                         double y2 = 0;
                         double y3 = 0;
+                        Point2D o = new Point2D(0, 0);
+                        Point2D t = new Point2D(0, 0);
+                        Point2D r = new Point2D(0, 0);
+                        int oi = 0;
+                        int ti = 0;
+                        int ri = 0;
                         boolean draw = true;
                         try {
                             //face name = (face) (getIDMap().get(i));
-                            x1 = a.get(faces.get(i).points[0].identifier).x;
-                            x2 = a.get(faces.get(i).points[1].identifier).x;
-                            x3 = a.get(faces.get(i).points[2].identifier).x;
-                            y1 = a.get(faces.get(i).points[0].identifier).y;
-                            y2 = a.get(faces.get(i).points[1].identifier).y;
-                            y3 = a.get(faces.get(i).points[2].identifier).y;
+                            oi = faces.get(i).points[0].identifier;
+                            ti = faces.get(i).points[1].identifier;
+                            ri = faces.get(i).points[2].identifier;
+                            o = a.get(oi);
+                            t = a.get(ti);
+                            r = a.get(ri);
+                            x1 = o.x;
+                            x2 = t.x;
+                            x3 = r.x;
+                            y1 = o.y;
+                            y2 = t.y;
+                            y3 = r.y;
                         } catch (Exception e) {
                             draw = false;
                             //throw e;
@@ -357,29 +374,74 @@ public class renderer extends JPanel{
                             } else {
                                 //IMAGES???
                                 float wb = 0;
+                                int wc = 0;
                                 for(int x : xpoints){
-                                    wb = wb + x;
+                                    if(x < w && x > 0){
+                                        wb = wb + x;
+                                        wc++;
+                                    }
                                 }
-                                wb = wb / xpoints.length;
+                                wb = wb / wc;
                                 float hb = 0;
+                                int hc = 0;
                                 for(int y : ypoints){
-                                    hb = hb + y;
+                                    if(y < h && y > 0){
+                                        hb = hb + y;
+                                        hc++;
+                                    }
                                 }
-                                hb = hb / ypoints.length;
+                                hb = hb / hc;
                                 //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
                                 //gb.setPaint(tex);
                                 //gb.fillPolygon(facesToDraw.get(i));
                                 //g.setClip(new Polygon(xpoints, ypoints, npoints));
-                                //BufferedImage shaded = JFUtils.quickTools.
-                                TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth()*4, base.getHeight()*4));
+                                //BufferedImage shaded = qT.colorImage(base, c.getRed(), c.getGreen(), c.getBlue(), 1);
+                                
+                                int multiplier = 4;
+                                
+                                LinkedList<Integer> dists = new LinkedList<Integer>();
+                                try {
+                                    int d1 = (int) points_sizes.get(points.indexOf(o)).x;dists.add(d1);
+                                    int d2 = (int) points_sizes.get(points.indexOf(t)).x;dists.add(d2);
+                                    int d3 = (int) points_sizes.get(points.indexOf(r)).x;dists.add(d3);
+                                    
+                                } catch (Exception e) {
+                                    errors++;
+                                }
+                                int sum = 0;
+                                for(Integer dist : dists){
+                                    sum = sum + dist;
+                                }
+                                try {
+                                    sum = sum / dists.size();
+                                    multiplier = 4-sum;
+                                } catch (Exception e) {
+                                }
+                                TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth()*multiplier, base.getHeight()*multiplier));
                                 g.setPaint(tex);
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                                 //g.drawImage(base, w/2-(int)wb, h/2-(int)hb, w, h, this);
                                 //g.setClip(0, 0, w, h);
-                                //Color c2 = c;
-                                //c2 = new Color(c2.getRed(), c2.getGreen(), c2.getBlue(), 133);
-                                //g.setColor(c2);
-                                //g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+                                int middle = 255 / 2;
+                                Color c2 = c;
+                                int rc = (c.getRed() - middle);
+                                int gc = (c.getGreen() - middle);
+                                int bc = (c.getBlue() - middle);
+                                
+                                
+                                
+                                if(rc < 0){
+                                    rc = 0;
+                                }
+                                if(gc < 0){
+                                    gc = 0;
+                                }
+                                if(bc < 0){
+                                    bc = 0;
+                                }
+                                c2 = new Color(rc, gc, bc, 133);
+                                g.setColor(c2);
+                                g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
                             //g.drawPolygon(xpoints, ypoints, npoints);
                             //g.drawLine(x1, y1, x2, y2);

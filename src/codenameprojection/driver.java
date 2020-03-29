@@ -33,7 +33,9 @@ import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
 import JFUtils.vector.dVector3;
 import PBEngine.Supervisor;
+import static codenameprojection.Utils.VeToP2;
 import static codenameprojection.Utils.vToP2;
+import codenameprojection.drawables.Vertex;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -87,7 +89,7 @@ public class driver{
     //False: "gloabal"
     //True: "local"
     public boolean rotation_mode = true;
-    public LinkedList<LinkedList<Point3D>> frames = new LinkedList<>();
+    public LinkedList<LinkedList<Vertex>> frames = new LinkedList<>();
     
     public float tickDelta = 0F;
     
@@ -100,22 +102,25 @@ public class driver{
     public ConcurrentHashMap<Integer, model> models = new ConcurrentHashMap<>();
     public float shadingMultiplier = 1;
     public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
-        LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();
-        LinkedList<LinkedList<Point3D>> ref = (LinkedList<LinkedList<Point3D>>) frames.clone();
+        LinkedList<LinkedList<Vertex>> frames2 = new modelParser("Cube").parse();
+        LinkedList<LinkedList<Vertex>> ref = (LinkedList<LinkedList<Vertex>>) frames.clone();
         int iz = 0;
-        for(LinkedList<Point3D> i: frames){
-            LinkedList<Point3D> i2 = new LinkedList<>();
-            for(Point3D d : i){
+        for(LinkedList<Vertex> i: frames){
+            LinkedList<Vertex> i2 = new LinkedList<>();
+            for(Vertex d : i){
                 int id = d.identifier;
-                d =  dVector3.multiply(d, new dVector3(size, size, size));
-                d =  dVector3.add(d, center);
+                Point3D d2 =  dVector3.multiply(d, new dVector3(size, size, size));
+                d2 =  dVector3.add(d, center);
                 d.identifier = id;
-                i2.add(d);
+                Vertex outV = Vertex.fromP3D(d);
+                outV.c = d.c;
+                outV.identifier = id;
+                i2.add(outV);
             }
             ref.add(i2);
             iz++;
         }
-        LinkedList<Point3D> points2 = frames2.getFirst();
+        LinkedList<Vertex> points2 = frames2.getFirst();
         LinkedList<Integer[]> lines2 = new modelParser("Cube").parseLines(points2);
         LinkedList<Point2D[]> faces2 = new modelParser("Cube").parseFaces(points2);
         
@@ -144,17 +149,17 @@ public class driver{
      * @param addFaces
      * @return The handle of the added object
      */
-    public int addCubeOLD(dVector3 center, double size, boolean Addlines, boolean addFaces){
+    public int addCubeOLD(Vertex center, double size, boolean Addlines, boolean addFaces){
         double s = size;
         //zxy
-        dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
-        dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
-        dVector3 dru = new dVector3(center.x -s, center.y +s, center.z -s);
-        dVector3 drd = new dVector3(center.x -s, center.y -s, center.z -s);
-        dVector3 ulu = new dVector3(center.x +s, center.y +s, center.z +s);
-        dVector3 uld = new dVector3(center.x +s, center.y -s, center.z +s);
-        dVector3 uru = new dVector3(center.x -s, center.y +s, center.z +s);
-        dVector3 urd = new dVector3(center.x -s, center.y -s, center.z +s);
+        Vertex dlu = new Vertex(center.x +s, center.y +s, center.z -s);
+        Vertex dld = new Vertex(center.x +s, center.y -s, center.z -s);
+        Vertex dru = new Vertex(center.x -s, center.y +s, center.z -s);
+        Vertex drd = new Vertex(center.x -s, center.y -s, center.z -s);
+        Vertex ulu = new Vertex(center.x +s, center.y +s, center.z +s);
+        Vertex uld = new Vertex(center.x +s, center.y -s, center.z +s);
+        Vertex uru = new Vertex(center.x -s, center.y +s, center.z +s);
+        Vertex urd = new Vertex(center.x -s, center.y -s, center.z +s);
         points.add(dlu);
         points.add(dld);
         points.add(dru);
@@ -180,17 +185,17 @@ public class driver{
             lines.add(new Integer[]{drd.identifier, urd.identifier});
         }
         if(addFaces){
-            faces.add(new Point2D[]{vToP2(dlu), vToP2(dld), vToP2(dru)});
-            faces.add(new Point2D[]{vToP2(dld), vToP2(drd), vToP2(dru)});
-            faces.add(new Point2D[]{vToP2(ulu), vToP2(uld), vToP2(uru)});
-            faces.add(new Point2D[]{vToP2(uld), vToP2(urd), vToP2(uru)});
+            faces.add(new Point2D[]{VeToP2(dlu), VeToP2(dld), VeToP2(dru)});
+            faces.add(new Point2D[]{VeToP2(dld), VeToP2(drd), VeToP2(dru)});
+            faces.add(new Point2D[]{VeToP2(ulu), VeToP2(uld), VeToP2(uru)});
+            faces.add(new Point2D[]{VeToP2(uld), VeToP2(urd), VeToP2(uru)});
             
-            faces.add(new Point2D[]{vToP2(dlu), vToP2(dld), vToP2(ulu)});
-            faces.add(new Point2D[]{vToP2(ulu), vToP2(uld), vToP2(dld)});
-            faces.add(new Point2D[]{vToP2(dru), vToP2(drd), vToP2(uru)});
-            faces.add(new Point2D[]{vToP2(uru), vToP2(urd), vToP2(drd)});
+            faces.add(new Point2D[]{VeToP2(dlu), VeToP2(dld), VeToP2(ulu)});
+            faces.add(new Point2D[]{VeToP2(ulu), VeToP2(uld), VeToP2(dld)});
+            faces.add(new Point2D[]{VeToP2(dru), VeToP2(drd), VeToP2(uru)});
+            faces.add(new Point2D[]{VeToP2(uru), VeToP2(urd), VeToP2(drd)});
             
-            faces.add(new Point2D[]{vToP2(dlu), vToP2(dru), vToP2(dru)});
+            faces.add(new Point2D[]{VeToP2(dlu), VeToP2(dru), VeToP2(dru)});
             
             //faces.add(new Integer[]{urd), drd), dru)});
             
@@ -207,7 +212,7 @@ public class driver{
     public void addCube(dVector3 center, double size) throws IOException{
         addCube(center, size, true, true);
     }
-    public LinkedList<Point3D> points;
+    public LinkedList<Vertex> points;
     public LinkedList<Integer[]> lines;
     public LinkedList<Point2D[]> faces = new LinkedList<>();
     
@@ -243,7 +248,7 @@ public class driver{
     
     public void loadFrame(int f){
         //LinkedList<LinkedList<Point3D>> frames2 = new LinkedList<>();
-        LinkedList<Point3D> points2 = new LinkedList<>();
+        LinkedList<Vertex> points2 = new LinkedList<>();
         LinkedList<Integer[]> lines2 = new LinkedList<>();
         LinkedList<Point2D[]> faces2 = new LinkedList<>();
         for(model m : models.values()){
@@ -271,12 +276,12 @@ public class driver{
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
             //throw new Exception();
-            LinkedList<LinkedList<Point3D>> frames2 = new modelParser().parse();
-            LinkedList<Point3D> points2 = frames2.getFirst();
+            LinkedList<LinkedList<Vertex>> frames2 = new modelParser().parse();
+            LinkedList<Vertex> points2 = frames2.getFirst();
             LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
             LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
             model m = new model(new LinkedList<model_frame>(), false);
-            for(LinkedList<Point3D> list : frames2){
+            for(LinkedList<Vertex> list : frames2){
                 m.frames.add(new model_frame(list, lines2, faces2));
             }
             models.put(m.hashCode(), m);
@@ -612,12 +617,13 @@ public class driver{
                 projected = dVector3.add(projected, new dVector3(200, 200, 20));*/
                 Point2D point2D = new Point2D(projected.x, projected.y);
                 point2D.identifier = i.identifier;
-                int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
+                //int size = (int) (25 - (screenPosition.z - rotated.z) * 2);
+                int size = (int) (screenPosition.z - rotated.z);
                 float distP;
                 //distP = (float) (screenPosition.z - rotated.z);
                 distP = (float) Utils.getDistance(rotated.toDVector3(), screenPosition_org);
                 dist.put(i.identifier, distP);
-                if(size < 0){
+                if(size < 0 && false){
                     size = 0;
                 }
                 //System.out.println("Projected: " + point2);

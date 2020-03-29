@@ -27,6 +27,7 @@ package codenameprojection;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point2D;
+import codenameprojection.drawables.Vertex;
 import java.util.LinkedList;
 
 /**
@@ -38,6 +39,11 @@ public class Utils {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2));
     }
     public static Point2D vToP2(dVector3 source){
+        Point2D o = new Point2D(source.x, source.y);
+        o.identifier = source.identifier;
+        return o;
+    }
+    public static Point2D VeToP2(Vertex source){
         Point2D o = new Point2D(source.x, source.y);
         o.identifier = source.identifier;
         return o;
@@ -91,5 +97,19 @@ public class Utils {
         y = y / set.size();
         z = z / set.size();
         return new Point3D(x, y, z);
+    }
+    public static Vertex averageVer(LinkedList<Vertex> set){
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for(Point3D i : set){
+            x = x + i.x;
+            y = y + i.y;
+            z = z + i.z;
+        }
+        x = x / set.size();
+        y = y / set.size();
+        z = z / set.size();
+        return new Vertex(x, y, z);
     }
 }
