@@ -241,11 +241,13 @@ public class driver{
     
     public LinkedList<Integer> ingoredInputs = new LinkedList<>();
     
+    public LinkedList<Integer> pointsToHide = new LinkedList<>();
     public void loadFrame(int f){
         //LinkedList<LinkedList<Point3D>> frames2 = new LinkedList<>();
         LinkedList<Point3D> points2 = new LinkedList<>();
         LinkedList<Integer[]> lines2 = new LinkedList<>();
         LinkedList<Point2D[]> faces2 = new LinkedList<>();
+        LinkedList<Integer> hidden = new LinkedList<>();
         for(model m : models.values()){
             //m.x = m.x + 0.03;
             //m.rotation_Y = m.rotation_Y + 0.00001;
@@ -253,10 +255,14 @@ public class driver{
             points2.addAll(m.getFrame(f).points);
             lines2.addAll(m.getFrame(f).lines);
             faces2.addAll(m.getFrame(f).faces);
+            if(m.hidePoints){
+                m.getFrame(f).points.forEach(l -> {hidden.add(l.identifier);});
+            }
         }
         this.points = points2;
         this.lines = lines2;
         this.faces = faces2;
+        this.pointsToHide = hidden;
     }
     public double angleX = 0;
     public double angleXM = 0;
@@ -557,6 +563,7 @@ public class driver{
                     //points_bak = points;
                 }
             }
+            int ind = 0;
             for(Point3D i : points_bak){
                 if(i.z > screenPosition.z){
                     //continue;
@@ -627,6 +634,7 @@ public class driver{
                 if(rotated.z < screenPosition.z){
                     sizes.add(new Point2D(size, size));
                     set.add(point2D);
+                    ind++;
                 }
             }
             /*for(Integer[] l : lines){
@@ -776,7 +784,7 @@ public class driver{
             
             c = System.currentTimeMillis();
             //Rendering
-            s.r.updatePoints(set, sizes);
+            s.r.updatePoints(set, sizes, pointsToHide);
             s.r.updateLines(lines, lines_color);
             
             

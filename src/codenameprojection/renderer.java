@@ -83,7 +83,9 @@ public class renderer extends JPanel{
     
     public float nano = 0;
     private LinkedList<Point2D> points = new LinkedList<>();
+    private LinkedList<Integer> pointsToHide = new LinkedList<>();
     private LinkedList<Point2D> points_sizes = new LinkedList<>();
+    
     private LinkedList<Integer[]> lines = new LinkedList<>();
     private LinkedList<Color> lines_color = new LinkedList<>();
     private HashMap<Integer, BufferedImage> images = new HashMap<>();
@@ -274,36 +276,37 @@ public class renderer extends JPanel{
             
             if (drawPoints) {
             for (int i : new Range(points.size())) {
-                try {
-                    //int value2 = new Random().nextInt(255) / 2;
-                    //int value3 = new Random().nextInt(255) / 2;
-                    //g.setColor(new Color(value2, value, value3));
-                    
-                    Point2D pos = points.get(i);
-                    Point2D s = points_sizes.get(i);
-                    
-                    int cS = (int) (25 - (s.x*2));
-                    //cS = (int) (cS * 1000);
-            //        if(cS > 255){
-            //            cS = 255;
-            //        }
-                    if(cS < 0){
-                        cS = 0;
+                Point2D pos = points.get(i);
+                if (!pointsToHide.contains(pos.identifier)) {
+                    try {
+                        //int value2 = new Random().nextInt(255) / 2;
+                        //int value3 = new Random().nextInt(255) / 2;
+                        //g.setColor(new Color(value2, value, value3));
+                        
+                        Point2D s = points_sizes.get(i);
+                        
+                        int cS = (int) (25 - (s.x * 2));
+                        //cS = (int) (cS * 1000);
+                        //        if(cS > 255){
+                        //            cS = 255;
+                        //        }
+                        if (cS < 0) {
+                            cS = 0;
+                        }
+
+                        //g.setColor(new Color(cS, cS, cS));
+                        int xOff = cS / 2;
+                        int yOff = cS / 2;
+                        if (usePixelRendering) {
+                            //drawPoint(pos, Color.red);
+                            gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                        } else {
+                            g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                        }
+                        //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                    } catch (Exception e) {
+                        //throw e;
                     }
-                    
-                    //g.setColor(new Color(cS, cS, cS));
-                    
-                    int xOff = cS / 2;
-                    int yOff = cS / 2;
-                    if (usePixelRendering) {
-                        //drawPoint(pos, Color.red);
-                        gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
-                    } else {
-                        g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
-                    }
-                    //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
-                } catch (Exception e) {
-                    //throw e;
                 }
             }
         }
@@ -511,9 +514,10 @@ public class renderer extends JPanel{
         g.drawString("speed: " + speed + "", w - w/5, h/6);
         g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w/5, h/5);
     }
-    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes){
+    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide){
         this.points = newSet;
         this.points_sizes = newSizes;
+        this.pointsToHide = pointsToHide;
     }
     public void updateLines(LinkedList<Integer[]> newSet, LinkedList<Color> color){
         this.lines = newSet;

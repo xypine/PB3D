@@ -42,6 +42,8 @@ public class model {
     public double y = 0;
     public double z = 0;
     
+    public boolean hidePoints = true;
+    
     boolean single_frame;
     public model(LinkedList<model_frame> frames, boolean singleFrame) {
         this.frames = frames;

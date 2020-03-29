@@ -78,7 +78,7 @@ public class Fly {
         
         Driver.s.r.usePixelRendering = false;
         Driver.s.r.drawFaces = true;
-        Driver.s.r.drawPoints = false;
+        Driver.s.r.drawPoints = true;
         Driver.s.r.drawLines = true;
         Driver.s.r.shading = false;
         Driver.rotation_mode = false;
@@ -141,8 +141,8 @@ public class Fly {
         int boltCooldown = 0;
         float side = 2F;
         float up = -2F;
-        float front = 0;
-        float front2 = 8;
+        float front = -8;
+        float front2 = 0;
         float shipRotY = 0;
         float shipRotZ = 0;
         Point3D c1 = new Point3D(side, up, front);
@@ -376,9 +376,9 @@ public class Fly {
     
     int size = 1400;
     
-    int rx = 16;
-    int ry = 15;
-    int rz = 15;
+    int rx = 5;
+    int ry = 5;
+    int rz = 5;
     LinkedList<model> constructCloud(){
         Random rnd = new Random();
         LinkedList<model> out = new LinkedList<model>();
@@ -422,6 +422,7 @@ public class Fly {
                     
                     frames.add(new model_frame(points , lines, faces));
                     model m = new model(frames, true);
+                    m.hidePoints = false;
                     out.add(m);
                 }
             }
