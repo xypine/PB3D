@@ -507,19 +507,22 @@ public class renderer extends JPanel{
         }
             
         Duration deltaTime = Duration.between(beginTime, Instant.now());
-        g.setColor(Color.white);
-        g.drawString("frame " + frame, w/10, h/7);
-        g.drawString("" + errors + " errors while drawing", w/10, h/5);
-        g.drawString("" + received + " faces received", w/10, h/6);
-        g.drawString("" + points.size() + " Points, " + drawnLines + " Lines and " + drawnFaces + " faces drawn", w/10, h/10);
-        g.drawString("" + nano + " frames per nanosecond", w - w/5, h/10);
-        g.drawString("" + (int) (nano * 1000000000) + " FPS (Calc)", w - w/5, h/3);
-        g.drawString("" + (int) (JFUtils.math.Conversions.toCPNS(deltaTime.getNano()) * 1000000000) + " FPS (Draw)", w - w/5, h/2);
-        g.drawString("speed: " + speed + "", w - w/5, h/6);
-        g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w/5, h/5);
+        if (debug) {
+            g.setColor(Color.white);
+            g.drawString("frame " + frame, w / 10, h / 7);
+            g.drawString("" + errors + " errors while drawing", w / 10, h / 5);
+            g.drawString("" + received + " faces received", w / 10, h / 6);
+            g.drawString("" + points.size() + " Points, " + drawnLines + " Lines and " + drawnFaces + " faces drawn", w / 10, h / 10);
+            g.drawString("" + nano + " frames per nanosecond", w - w / 5, h / 10);
+            g.drawString("" + (int) (nano * 1000000000) + " FPS (Calc)", w - w / 5, h / 3);
+            g.drawString("" + (int) (JFUtils.math.Conversions.toCPNS(deltaTime.getNano()) * 1000000000) + " FPS (Draw)", w - w / 5, h / 2);
+            g.drawString("speed: " + speed + "", w - w / 5, h / 6);
+            g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w / 5, h / 5);
+        }
         
     }
     public driver Logic;
+    public boolean debug = true;
     public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide, driver Logic){
         this.points = newSet;
         this.points_sizes = newSizes;

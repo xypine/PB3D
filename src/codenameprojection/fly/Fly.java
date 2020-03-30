@@ -77,6 +77,7 @@ public class Fly {
         
         map Map = new map();
         Driver.s.r.extraDrawables.add(Map);
+        Driver.s.r.debug = false;
         
         Driver.an_pause = false;
         //Driver.zero();
@@ -130,7 +131,11 @@ public class Fly {
         int ship = (int) Driver.models.keySet().toArray()[0];
         model shipM = Driver.models.get(ship);
         //shipM.frames.getFirst().lines = new LinkedList<>();
-        shipM.frames.getFirst().faces = new LinkedList<>();
+        //shipM.frames.getFirst().faces = new LinkedList<>();
+        
+        shipM.hideLines = false;
+        shipM.hideFaces = true;
+        
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
@@ -336,6 +341,12 @@ public class Fly {
             if(Driver.inp.keys[69]){
                 shipRotZ = shipRotZ - 0.0004F;;
             }
+            //b
+            if(Driver.inp.keys[66]){
+                Driver.s.r.debug = !Driver.s.r.debug;
+                Driver.inp.keys[66] = false;
+            }
+            
             //System.out.println(shipM.rotation_X);
             shipM.rotation_X = shipRotZ * 20;
             //Driver.viewAngle.x = Driver.viewAngle.x + shipRotX;

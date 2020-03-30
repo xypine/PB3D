@@ -39,7 +39,8 @@ public class map implements UI.drawable{
         int scale = 7;
         int box_w = w / scale;
         int box_h = h / scale;
-        g.setColor(Color.blue);
+        Color bg = new Color(0.2F, 0.25F, 0.3F, 0.4F);
+        g.setColor(bg);
         g.fillRect(w - w/scale/2 - box_w / 2, h - h / scale/2 - box_h / 2, box_w, box_h);
     }
 
