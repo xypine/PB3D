@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Elias Eskelinen.
+ * Copyright 2020 Elias Eskelinen.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package codenameprojection;
 
-import JFUtils.point.Point2D;
-import JFUtils.point.Point3D;
-import codenameprojection.drawables.vertexGroup;
-import java.util.LinkedList;
+package codenameprojection.drawables;
 
 /**
  *
- * @author Elias Eskelinen
+ * @author Jonnelafin
  */
-public class model_frame {
-    public LinkedList<Point3D> points;
-    public LinkedList<Integer[]> lines;
-    public LinkedList<Point2D[]> faces = new LinkedList<>();
-    public LinkedList<vertexGroup> color = new LinkedList<>();
+public class vertexGroup {
 
-    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f) {
-        this.points = p;
-        this.lines = l;
-        this.faces = f;
+    public vertexGroup(float r, float g, float b) {
     }
-
-    @Override
-    protected Object clone(){
-        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone());
-    }
-    
     
 }

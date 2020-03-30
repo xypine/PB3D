@@ -28,6 +28,7 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import static codenameprojection.Utils.P3ToP2;
+import codenameprojection.drawables.vertexGroup;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -55,20 +56,10 @@ public class modelParser {
     }
     
     final float size = 500;
-    public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
-        LinkedList<Point3D> buffer = new LinkedList<>();
-        LinkedList<LinkedList<Point3D>> out = new LinkedList<>();
-        int frames = 0;
-        int points = 0;
-        int index = 0;
-        String line;
+    
+    public LinkedList<vertexGroup> parseColor(){
+        LinkedList<vertexGroup> color = new LinkedList<>();
         String lineC;
-        BufferedReader in;
-        
-        
-        boolean useColor = true;
-        LinkedList<Color> color = new LinkedList<>();
-        
         try {
             BufferedReader c = new BufferedReader(new FileReader(filename + "_color.pb3d"));
             lineC = c.readLine();
@@ -88,7 +79,7 @@ public class modelParser {
                             curr = curr + i;
                         }
                     }
-                    color.add(new Color(coord[0], 
+                    color.add(new vertexGroup(coord[0], 
                             coord[1], 
                             coord[2]));
                 } catch (Exception e) {
@@ -96,12 +87,23 @@ public class modelParser {
                 }
             }
         } catch (Exception e) {
-            useColor = false;
             System.out.println("COULD NOT READ COLOR DATA PROPERLY, ERROR: " + e);
             //e.printStackTrace();
         }
+        return color;
+    }
+    
+    public LinkedList<LinkedList<Point3D>> parse() throws FileNotFoundException, IOException{
+        LinkedList<Point3D> buffer = new LinkedList<>();
+        LinkedList<LinkedList<Point3D>> out = new LinkedList<>();
+        int frames = 0;
+        int points = 0;
+        int index = 0;
+        String line;
+        BufferedReader in;
         
         
+        boolean useColor = true;
         in = new BufferedReader(new FileReader(filename + ".pb3d"));
              line = in.readLine();
 
