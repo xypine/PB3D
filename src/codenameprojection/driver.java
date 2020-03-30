@@ -565,7 +565,7 @@ public class driver{
             }
             int ind = 0;
             for(Point3D i : points_bak){
-                if(i.z > screenPosition.z){
+                if(i.z > (screenPosition.z) ){
                     //continue;
                 }
                 //System.out.println("Original[" +i.hashCode() + "] :" + i);
@@ -631,7 +631,7 @@ public class driver{
                     size = 0;
                 }
                 //System.out.println("Projected: " + point2);
-                if(rotated.z < screenPosition.z){
+                if(rotated.z < (screenPosition.z) ){
                     sizes.add(new Point2D(size, size));
                     set.add(point2D);
                     ind++;

@@ -277,37 +277,40 @@ public class renderer extends JPanel{
             
             if (drawPoints) {
             for (int i : new Range(points.size())) {
-                Point2D pos = points.get(i);
-                if (!pointsToHide.contains(pos.identifier)) {
-                    try {
-                        //int value2 = new Random().nextInt(255) / 2;
-                        //int value3 = new Random().nextInt(255) / 2;
-                        //g.setColor(new Color(value2, value, value3));
-                        
-                        Point2D s = points_sizes.get(i);
-                        
-                        int cS = (int) (25 - (s.x * 2));
-                        //cS = (int) (cS * 1000);
-                        //        if(cS > 255){
-                        //            cS = 255;
-                        //        }
-                        if (cS < 0) {
-                            cS = 0;
-                        }
+                try {
+                    Point2D pos = points.get(i);
+                    if (!pointsToHide.contains(pos.identifier)) {
+                        try {
+                            //int value2 = new Random().nextInt(255) / 2;
+                            //int value3 = new Random().nextInt(255) / 2;
+                            //g.setColor(new Color(value2, value, value3));
+                            
+                            Point2D s = points_sizes.get(i);
+                            
+                            int cS = (int) (25 - (s.x * 2));
+                            //cS = (int) (cS * 1000);
+                            //        if(cS > 255){
+                            //            cS = 255;
+                            //        }
+                            if (cS < 0) {
+                                cS = 0;
+                            }
 
-                        //g.setColor(new Color(cS, cS, cS));
-                        int xOff = cS / 2;
-                        int yOff = cS / 2;
-                        if (usePixelRendering) {
-                            //drawPoint(pos, Color.red);
-                            gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
-                        } else {
-                            g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                            //g.setColor(new Color(cS, cS, cS));
+                            int xOff = cS / 2;
+                            int yOff = cS / 2;
+                            if (usePixelRendering) {
+                                //drawPoint(pos, Color.red);
+                                gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                            } else {
+                                g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                            }
+                            //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
+                        } catch (Exception e) {
+                            //throw e;
                         }
-                        //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
-                    } catch (Exception e) {
-                        //throw e;
                     }
+                } catch (Exception e) {
                 }
             }
         }

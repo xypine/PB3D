@@ -29,8 +29,13 @@ package codenameprojection.drawables;
  * @author Jonnelafin
  */
 public class vertexGroup {
-
-    public vertexGroup(float r, float g, float b) {
+    public int vertexID;
+    public float r, g, b;
+    public vertexGroup(float r, float g, float b, int id) {
+        vertexID = id;
+        this.r = r;
+        this.g = g;
+        this.b = b;
     }
     
 }

@@ -57,9 +57,10 @@ public class modelParser {
     
     final float size = 500;
     
-    public LinkedList<vertexGroup> parseColor(){
+    public LinkedList<vertexGroup> parseColor(LinkedList<Point3D> points){
         LinkedList<vertexGroup> color = new LinkedList<>();
         String lineC;
+        int ind = 0;
         try {
             BufferedReader c = new BufferedReader(new FileReader(filename + "_color.pb3d"));
             lineC = c.readLine();
@@ -79,9 +80,18 @@ public class modelParser {
                             curr = curr + i;
                         }
                     }
-                    color.add(new vertexGroup(coord[0], 
+                    int id = -1;
+                    try {
+                        id = points.get(ind).identifier;
+                    } catch (Exception e) {
+                    }
+                    color.add(new vertexGroup(
+                            coord[0], 
                             coord[1], 
-                            coord[2]));
+                            coord[2],
+                            id
+                    ));
+                    ind++;
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }
@@ -90,6 +100,7 @@ public class modelParser {
             System.out.println("COULD NOT READ COLOR DATA PROPERLY, ERROR: " + e);
             //e.printStackTrace();
         }
+        System.out.println(color.size() + " color points loaded and parsed succesfully!");
         return color;
     }
     
@@ -264,6 +275,8 @@ public class modelParser {
         try {
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             new modelParser().parseLines(parse.getFirst());
+            new modelParser().parseFaces(parse.getFirst());
+            new modelParser().parseColor(parse.getFirst());
         } catch (IOException ex) {
             Logger.getLogger(modelParser.class.getName()).log(Level.SEVERE, null, ex);
         }
