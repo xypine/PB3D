@@ -57,13 +57,17 @@ public class model {
     void updatecache(){
         LinkedList<model_frame> newCache = new LinkedList<>();
         for(int i : new Range(frames.size())){
-            newCache.add(getFrame(i, true));
+            newCache.add(getFrame(i, true, true, true));
         }
         frames_cache = newCache;
     }
     
     public model_frame getFrame(int index){
-        return getFrame(index, false);
+        return getFrame(index, false, true, true);
+    }
+    
+    public model_frame getFrame(int index, boolean rotate, boolean translate){
+        return getFrame(index, false, rotate, translate);
     }
     
     public String name = "unnamed_model";
@@ -73,7 +77,7 @@ public class model {
         //Please replace in order to execute custom logic
     }
     
-    public model_frame getFrame(int index, boolean skipCache){
+    public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate){
         if(frames.hashCode() == frames_cache.hashCode() && !skipCache){
         //if(false){
             return frames_cache.get(index);
@@ -84,6 +88,9 @@ public class model {
         }
         model_frame out;
         if(!single_frame){
+            if(index > frames.size()){
+                index = - frames.size() - index - 1;
+            }
             out = (model_frame) frames.get(index).clone();
         }
         else{
@@ -94,12 +101,15 @@ public class model {
             int oldID = i.identifier;
             Point3D i2 = i.clone();
             //i2 = i;
-            i2 = driver.matmul(driver.RY((float) rotation_Y), i2.toFVector3()).toDVector3();
-            //i = driver.matmul(driver.RZ((float) rotation_Z), i.toFVector3()).toDVector3();
-            i2 = driver.matmul(driver.RX((float) rotation_X), i2.toFVector3()).toDVector3();
-            
+            if(rotate){
+                i2 = driver.matmul(driver.RY((float) rotation_Y), i2.toFVector3()).toDVector3();
+                //i = driver.matmul(driver.RZ((float) rotation_Z), i.toFVector3()).toDVector3();
+                i2 = driver.matmul(driver.RX((float) rotation_X), i2.toFVector3()).toDVector3();
+            }
             Point3D global = new Point3D(x, y, z);
-            i2 = Point3D.add(global, i2);
+            if (translate) {
+                i2 = Point3D.add(global, i2);
+            }
             i2.identifier = oldID;
             out.points.set(ind, i2);
             ind++;

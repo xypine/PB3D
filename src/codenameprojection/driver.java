@@ -252,7 +252,7 @@ public class driver{
             //m.x = m.x + 0.03;
             //m.rotation_Y = m.rotation_Y + 0.00001;
             //System.out.println(m.rotation_Y);
-            points2.addAll(m.getFrame(f).points);
+            points2.addAll(m.getFrame(f, true, true).points);
             lines2.addAll(m.getFrame(f).lines);
             faces2.addAll(m.getFrame(f).faces);
             if(m.hidePoints){
@@ -358,8 +358,8 @@ public class driver{
             }
             if (!usePB) {
 //System.out.println(zep);
-                if (tickC % 15 == 0 && !an_pause) {
-                    if (frame < frames.size() - 1) {
+                if (tickC % 1 == 0 && !an_pause) {
+                    if (frame < frames.size() - 1 || true) {
                         frame++;
                     } else {
                         //System.out.println("frame was " + frame + " before reset");

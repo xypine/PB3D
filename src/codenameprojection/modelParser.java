@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
     
-    public static String filename = "assets/models/Viper5";
+    public static String filename = "assets/models/misc/beat";
 
     public modelParser() {
     }
