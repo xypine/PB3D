@@ -390,7 +390,7 @@ public class Fly {
             Point3D camPoint = shipM.getFrame(0, false, true).points.get(camIndex).clone();
                                             //-shipM.getFrame(0, false, true).points.get(0).clone().x;
             Driver.screenPosition_org.x = -camPoint.x;
-            Driver.screenPosition_org.y = camPoint.y;
+            Driver.screenPosition_org.y = -camPoint.y;
             Driver.screenPosition_org.z = camPoint.z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
             Driver.angleY = Driver.angleY - shipRotY;
