@@ -116,11 +116,14 @@ def updateMesh():
         faces = [edge.vertices for edge in new_obj.data.polygons]
     
     #GET COLORS
+    doneC = []
     for polygon in mesh.polygons:
         for i, index in enumerate(polygon.vertices):
-            loop_index = polygon.loop_indices[i]
-            colors.append(mesh.vertex_colors.active.data[loop_index].color)
-            print("color: " + str(i) + str(mesh.vertex_colors.active.data[loop_index].color))
+            if(not index in doneC):
+                loop_index = polygon.loop_indices[i]
+                colors.append(mesh.vertex_colors.active.data[loop_index].color)
+                print("color: " + str(i) + str(mesh.vertex_colors.active.data[loop_index].color) + " | " + str(index))
+                doneC.append(index)
     # coordinates as tuples
     plain_verts = [vert.to_tuple() for vert in verts]
     #Delete the new_obj
