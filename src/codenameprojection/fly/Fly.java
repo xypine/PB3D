@@ -134,6 +134,13 @@ public class Fly {
             Driver.models.put(handle, m);
             handles.add(handle);
         }
+        LinkedList<model> grid = constructGrid();
+        LinkedList<Integer> gridHandles = new LinkedList<>();
+        for(model m : grid){
+            Integer handle = m.hashCode();
+            Driver.models.put(handle, m);
+            gridHandles.add(handle);
+        }
         Driver.shadingMultiplier = 0.5F;
         LinkedList<Integer> boltHandles = new LinkedList<>();
         float speed = 0.4F;
@@ -443,6 +450,44 @@ public class Fly {
                     m.hidePoints = false;
                     out.add(m);
                 }
+            }
+        }
+        
+        return out;
+    }
+    
+    int rx2 = 10;
+    int ry2 = 10;
+    LinkedList<model> constructGrid(){
+        int ind = 0;
+        Random rnd = new Random();
+        LinkedList<model> out = new LinkedList<model>();
+        for(int x : new Range(rx2)){
+            for (int y : new Range(ry2)) {
+                LinkedList<model_frame> frames = new LinkedList<>();
+                LinkedList<Point3D> points = new LinkedList<>();
+                LinkedList<Integer[]> lines = new LinkedList<>();
+                LinkedList<Point2D[]> faces = new LinkedList<>();
+
+                int rndX = (x - (rx2 / 2) )*10;
+                int rndY = (y - (ry2 / 2) )*10;
+                int rndZ = Math.abs((int) Math.sin(rndX + rndY)) * 3;
+                
+
+
+                points.add(new Point3D(-rndX, -rndZ, -rndY));
+
+                if(out.size() > 2){
+                    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind-1).getFrame(0).points.getFirst().identifier});
+                }
+
+
+
+                frames.add(new model_frame(points , lines, faces));
+                model m = new model(frames, true);
+                m.hidePoints = false;
+                out.add(m);
+                ind = ind + 1;
             }
         }
         

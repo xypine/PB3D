@@ -646,7 +646,7 @@ public class driver{
             lines_sizes.add(new dVector[]{ sizes.get(points.indexOf(l[0])) , sizes.get(points.indexOf(l[1]))} );
             } catch (Exception e) {
             e.printStackTrace();
-            }
+            }HOME - Head First
             }*/
             
             LinkedList<Integer[]> lines2 = new LinkedList<>();
@@ -742,7 +742,7 @@ public class driver{
                 if(!Objects.isNull(point)){
                     boolean change = true;
                   //float distP = (255 - dist.get(point.identifier) * 7);
-                  float distP = (255 - dist2 * 7);
+                  float distP = (255 - dist2 * 25);
                     if(distP == 0.0F){
                         //System.out.println("F2");
                         change = false;
