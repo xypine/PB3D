@@ -84,6 +84,7 @@ public class modelParser {
                     try {
                         id = points.get(ind).identifier;
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     color.add(new vertexGroup(
                             coord[0], 
@@ -101,6 +102,9 @@ public class modelParser {
             //e.printStackTrace();
         }
         System.out.println(color.size() + " color points loaded and parsed succesfully!");
+        for(vertexGroup i : color){
+            System.out.println("    " + i.r + " " + i.g + " " + i.b + " | ID " + i.vertexID);
+        }
         return color;
     }
     
@@ -273,6 +277,7 @@ public class modelParser {
     }
     public static void main(String[] args) {
         try {
+            filename = "assets/models/Viper7";
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             new modelParser().parseLines(parse.getFirst());
             new modelParser().parseFaces(parse.getFirst());

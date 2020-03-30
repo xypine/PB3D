@@ -381,7 +381,12 @@ public class Fly {
             //Driver.screenPosition_org.x = shipModel.getFrame(0).points.get(0).clone().x;
             //Driver.screenPosition_org.y = shipModel.getFrame(0).points.get(0).clone().y;
             //Driver.screenPosition_org.z = shipModel.getFrame(0).points.get(0).clone().z;
-            int camIndex = shipM.getByColor(0, 1, 0).getFirst();
+            int camIndex = shipM.getByColor(0.0F, 1.0F, 0.0F).getFirst();
+            
+            if(camIndex == -1){
+                camIndex = 0;
+            }
+            
             Point3D camPoint = shipM.getFrame(0, false, true).points.get(camIndex).clone();
                                             //-shipM.getFrame(0, false, true).points.get(0).clone().x;
             Driver.screenPosition_org.x = -camPoint.x;
