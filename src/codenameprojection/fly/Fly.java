@@ -65,7 +65,7 @@ public class Fly {
             }
             
         };
-        modelParser.filename = "assets/models/Viper5";
+        modelParser.filename = "assets/models/Viper7";
         t.start();
         while(!Driver.running){
             try {
