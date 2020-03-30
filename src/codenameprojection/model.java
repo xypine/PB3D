@@ -78,6 +78,16 @@ public class model {
     }
     
     public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate){
+        try {
+            index = index % (frames.size() - 1);
+        } catch (Exception e) {
+        }
+        if(index > frames.size()-1){
+            index = frames.size()-1;
+        }
+        if(index < 0){
+            index = 0;
+        }
         if(frames.hashCode() == frames_cache.hashCode() && !skipCache){
         //if(false){
             return frames_cache.get(index);
@@ -88,9 +98,7 @@ public class model {
         }
         model_frame out;
         if(!single_frame){
-            if(index > frames.size()){
-                index = - frames.size() - index - 1;
-            }
+//            System.out.println(index);
             out = (model_frame) frames.get(index).clone();
         }
         else{
