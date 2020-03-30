@@ -183,6 +183,8 @@ public class Fly {
         float v = 0F;
         Point3D vel = new Point3D(0, 0, 0);
         //float shipRotX = 0;
+        
+        boolean pause = false;
         while (true) {
             shipM = Driver.models.get(ship);
             if(shipM.frames.get(0).points.indexOf(c1) == -1){
@@ -211,35 +213,37 @@ public class Fly {
             Point3D shipCenter = Utils.average(shipModel.getFrame(0).points);
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
-            for(Integer bolt : boltHandles){
-                try {
-                    model cursor = Driver.models.get(bolt);
-                    //Point3D.multiply(Driver.viewAngle, new Point3D(1, 1, 1)
-                    double speeds = 0.5;
-                    Point3D one = cursor.frames.get(0).points.get(0);
-                    Point3D two = cursor.frames.get(0).points.get(1);
-                    //cursor.getFrame(0).points.get(0).z = cursor.getFrame(0).points.get(0).z - 0.5;
-                    //cursor.getFrame(0).points.get(1).z = cursor.getFrame(0).points.get(1).z - 0.5;
-                    Point3D newPo = Point3D.add(one, Point3D.subtract(one, two));
-                    Point3D newPt = Point3D.add(two, Point3D.subtract(one, two));
-                    Point3D velBolt = Point3D.subtract(one, two);
-                    cursor.x = cursor.x + velBolt.x;
-                    cursor.y = cursor.y + velBolt.y;
-                    cursor.z = cursor.z + velBolt.z;
-                    if (Math.abs(Utils.getDistance(new Point3D(cursor.x, cursor.y, cursor.z), new Point3D(0, 0, 0))) > 2000) {
-                        //Driver.models.remove(bolt);
-                        torem.add(bolt);
-                    } else {
-                        //System.out.println(Math.abs(Utils.getDistance(new Point3D(cursor.x, cursor.y, cursor.z), new Point3D(0, 0, 0))));
-                    }
-                    //cursor.getFrame(0).points.get(0).x = newPo.x;
-                    //cursor.getFrame(0).points.get(0).y = newPo.y;
-                    //cursor.getFrame(0).points.get(0).z = newPo.z;
+            if (!pause) {
+                for (Integer bolt : boltHandles) {
+                    try {
+                        model cursor = Driver.models.get(bolt);
+                        //Point3D.multiply(Driver.viewAngle, new Point3D(1, 1, 1)
+                        double speeds = 0.5;
+                        Point3D one = cursor.frames.get(0).points.get(0);
+                        Point3D two = cursor.frames.get(0).points.get(1);
+                        //cursor.getFrame(0).points.get(0).z = cursor.getFrame(0).points.get(0).z - 0.5;
+                        //cursor.getFrame(0).points.get(1).z = cursor.getFrame(0).points.get(1).z - 0.5;
+                        Point3D newPo = Point3D.add(one, Point3D.subtract(one, two));
+                        Point3D newPt = Point3D.add(two, Point3D.subtract(one, two));
+                        Point3D velBolt = Point3D.subtract(one, two);
+                        cursor.x = cursor.x + velBolt.x;
+                        cursor.y = cursor.y + velBolt.y;
+                        cursor.z = cursor.z + velBolt.z;
+                        if (Math.abs(Utils.getDistance(new Point3D(cursor.x, cursor.y, cursor.z), new Point3D(0, 0, 0))) > 2000) {
+                            //Driver.models.remove(bolt);
+                            torem.add(bolt);
+                        } else {
+                            //System.out.println(Math.abs(Utils.getDistance(new Point3D(cursor.x, cursor.y, cursor.z), new Point3D(0, 0, 0))));
+                        }
+                        //cursor.getFrame(0).points.get(0).x = newPo.x;
+                        //cursor.getFrame(0).points.get(0).y = newPo.y;
+                        //cursor.getFrame(0).points.get(0).z = newPo.z;
 
-                    //cursor.getFrame(0).points.get(1).x = newPt.x;
-                    //cursor.getFrame(0).points.get(1).y = newPt.y;
-                    // cursor.getFrame(0).points.get(1).z = newPt.z;
-                } catch (Exception e) {
+                        //cursor.getFrame(0).points.get(1).x = newPt.x;
+                        //cursor.getFrame(0).points.get(1).y = newPt.y;
+                        // cursor.getFrame(0).points.get(1).z = newPt.z;
+                    } catch (Exception e) {
+                    }
                 }
             }
             for(Integer bolt : torem){
@@ -344,6 +348,11 @@ public class Fly {
             //b
             if(Driver.inp.keys[66]){
                 Driver.s.r.debug = !Driver.s.r.debug;
+                Driver.inp.keys[66] = false;
+            }
+            //p
+            if(Driver.inp.keys[80]){
+                pause = !pause;
                 Driver.inp.keys[66] = false;
             }
             
