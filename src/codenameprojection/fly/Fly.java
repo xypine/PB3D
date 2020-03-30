@@ -384,7 +384,7 @@ public class Fly {
             int camIndex = shipM.getByColor(0.0F, 1.0F, 0.0F).getFirst();
             
             if(camIndex == -1){
-                camIndex = 0;
+            //    camIndex = 0;
             }
             
             Point3D camPoint = shipM.getFrame(0, false, true).points.get(camIndex).clone();

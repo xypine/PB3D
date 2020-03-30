@@ -102,9 +102,9 @@ public class modelParser {
             //e.printStackTrace();
         }
         System.out.println(color.size() + " color points loaded and parsed succesfully!");
-        for(vertexGroup i : color){
-            System.out.println("    " + i.r + " " + i.g + " " + i.b + " | ID " + i.vertexID);
-        }
+        //for(vertexGroup i : color){
+        //    System.out.println("    " + i.r + " " + i.g + " " + i.b + " | ID " + i.vertexID);
+        //}
         return color;
     }
     
