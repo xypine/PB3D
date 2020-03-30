@@ -379,9 +379,9 @@ public class Fly {
             //Driver.screenPosition_org.x = shipModel.getFrame(0).points.get(0).clone().x;
             //Driver.screenPosition_org.y = shipModel.getFrame(0).points.get(0).clone().y;
             //Driver.screenPosition_org.z = shipModel.getFrame(0).points.get(0).clone().z;
-//            Driver.screenPosition_org.x = shipM.getFrame(0, false, false).points.get(0).x;
-//            Driver.screenPosition_org.y = shipM.getFrame(0, false, false).points.get(0).y;
-//            Driver.screenPosition_org.z = shipM.getFrame(0, false, false).points.get(0).z;
+            Driver.screenPosition_org.x = shipM.getFrame(0, false, true).points.get(0).x;
+            Driver.screenPosition_org.y = shipM.getFrame(0, false, true).points.get(0).y;
+            Driver.screenPosition_org.z = shipM.getFrame(0, false, true).points.get(0).z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
             Driver.angleY = Driver.angleY - shipRotY;
             //Driver.angleX = Driver.angleX - shipRotZ;
@@ -480,8 +480,8 @@ public class Fly {
         return out;
     }
     
-    int rx2 = 15 * 3;
-    int ry2 = 15 * 3;
+    int rx2 = 15 * 2;
+    int ry2 = 15 * 2;
     LinkedList<model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();
@@ -493,8 +493,8 @@ public class Fly {
                 LinkedList<Integer[]> lines = new LinkedList<>();
                 LinkedList<Point2D[]> faces = new LinkedList<>();
 
-                int rndX = (x - (rx2 / 2) )*2;
-                int rndY = (y - (ry2 / 2) )*2;
+                int rndX = (x - (rx2 / 2) )*3;
+                int rndY = (y - (ry2 / 2) )*3;
                 int rndZ = Math.abs((int) Math.sin(rndX + rndY)) * 3;
                 
 
