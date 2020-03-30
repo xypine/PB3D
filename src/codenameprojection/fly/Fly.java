@@ -136,6 +136,7 @@ public class Fly {
         
         shipM.hideLines = false;
         shipM.hideFaces = true;
+        shipM.hidePoints = true;
         
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
@@ -386,7 +387,7 @@ public class Fly {
             if(camIndex == -1){
             //    camIndex = 0;
             }
-            
+            camIndex = 0;
             Point3D camPoint = shipM.getFrame(0, false, true).points.get(camIndex).clone();
                                             //-shipM.getFrame(0, false, true).points.get(0).clone().x;
             Driver.screenPosition_org.x = -camPoint.x;
