@@ -26,6 +26,7 @@ package codenameprojection;
 
 import JFUtils.Range;
 import JFUtils.point.Point3D;
+import codenameprojection.drawables.vertexGroup;
 import java.util.LinkedList;
 
 /**
@@ -77,6 +78,16 @@ public class model {
     public void executeLogic(driver parent_){
         this.parent = parent_;
         //Please replace in order to execute custom logic
+    }
+    
+    public LinkedList<Integer> getByColor(float r, float g, float b){
+        LinkedList<Integer> out = new LinkedList<>();
+        for(vertexGroup i : frames.getFirst().color){
+            if(i.r == r && i.g == g && i.b == b){
+                out.add(i.vertexID);
+            }
+        }
+        return out;
     }
     
     public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate){
