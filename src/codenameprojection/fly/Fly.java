@@ -29,6 +29,7 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
 import codenameprojection.Utils;
+import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
 import codenameprojection.model;
 import codenameprojection.modelParser;
@@ -256,6 +257,7 @@ public class Fly {
                 LinkedList<Point3D> points2 = new LinkedList<>();
                 LinkedList<Integer[]> lines2 = new LinkedList<>();
                 LinkedList<Point2D[]> faces2 = new LinkedList<>();
+                LinkedList<vertexGroup> color2 = new LinkedList<>();
                 Point3D c5 = shipM.getFrame(0).points.get(c1i).clone();
                 Point3D c6 = shipM.getFrame(0).points.get(c2i).clone();
                 if(side > 0){
@@ -267,7 +269,7 @@ public class Fly {
                 points2.add(c5);
                 points2.add(c6);
                 lines2.add(new Integer[]{c5.identifier, c6.identifier});
-                frames2.add(new model_frame(points2 , lines2, faces2));
+                frames2.add(new model_frame(points2 , lines2, faces2, color2));
                 model cursor = new model(frames2, true);
                 int cursorHandle = cursor.hashCode();
                 Driver.models.put(cursorHandle, cursor);
@@ -438,6 +440,7 @@ public class Fly {
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point2D[]> faces = new LinkedList<>();
+                    LinkedList<vertexGroup> color = new LinkedList<>();
                     
                     int rndX = rnd.nextInt(size*2) - size;
                     int rndY = rnd.nextInt(size*2) - size;
@@ -469,7 +472,7 @@ public class Fly {
                     
                     
                     
-                    frames.add(new model_frame(points , lines, faces));
+                    frames.add(new model_frame(points , lines, faces, color));
                     model m = new model(frames, true);
                     m.hidePoints = false;
                     out.add(m);
@@ -492,6 +495,7 @@ public class Fly {
                 LinkedList<Point3D> points = new LinkedList<>();
                 LinkedList<Integer[]> lines = new LinkedList<>();
                 LinkedList<Point2D[]> faces = new LinkedList<>();
+                LinkedList<vertexGroup> color = new LinkedList<>();
 
                 int rndX = (x - (rx2 / 2) )*3;
                 int rndY = (y - (ry2 / 2) )*3;
@@ -514,7 +518,7 @@ public class Fly {
                 }
                 */
 
-                frames.add(new model_frame(points , lines, faces));
+                frames.add(new model_frame(points , lines, faces, color));
                 model m = new model(frames, true);
                 m.hidePoints = false;
                 m.hideLines = true;

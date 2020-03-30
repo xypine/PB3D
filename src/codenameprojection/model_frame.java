@@ -38,15 +38,16 @@ public class model_frame {
     public LinkedList<Point2D[]> faces = new LinkedList<>();
     public LinkedList<vertexGroup> color = new LinkedList<>();
 
-    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f) {
+    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f, LinkedList<vertexGroup> c) {
         this.points = p;
         this.lines = l;
         this.faces = f;
+        this.color = c;
     }
 
     @Override
     protected Object clone(){
-        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone());
+        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone(), (LinkedList<vertexGroup>) color.clone());
     }
     
     

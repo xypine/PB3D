@@ -34,6 +34,7 @@ import JFUtils.point.Point3F;
 import JFUtils.vector.dVector3;
 import PBEngine.Supervisor;
 import static codenameprojection.Utils.vToP2;
+import codenameprojection.drawables.vertexGroup;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -283,9 +284,10 @@ public class driver{
             LinkedList<Point3D> points2 = frames2.getFirst();
             LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
             LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
+            LinkedList<vertexGroup> color2 = new modelParser().parseColor(points2);
             model m = new model(new LinkedList<model_frame>(), false);
             for(LinkedList<Point3D> list : frames2){
-                m.frames.add(new model_frame(list, lines2, faces2));
+                m.frames.add(new model_frame(list, lines2, faces2, color2));
             }
             models.put(m.hashCode(), m);
             
