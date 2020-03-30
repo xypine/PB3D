@@ -379,9 +379,9 @@ public class Fly {
             //Driver.screenPosition_org.x = shipModel.getFrame(0).points.get(0).clone().x;
             //Driver.screenPosition_org.y = shipModel.getFrame(0).points.get(0).clone().y;
             //Driver.screenPosition_org.z = shipModel.getFrame(0).points.get(0).clone().z;
-            Driver.screenPosition_org.x = shipM.getFrame(0, false, true).points.get(0).x;
-            Driver.screenPosition_org.y = shipM.getFrame(0, false, true).points.get(0).y;
-            Driver.screenPosition_org.z = shipM.getFrame(0, false, true).points.get(0).z;
+            Driver.screenPosition_org.x = -shipM.getFrame(0, false, true).points.get(0).clone().x;
+            Driver.screenPosition_org.y = shipM.getFrame(0, false, true).points.get(0).clone().y;
+            Driver.screenPosition_org.z = shipM.getFrame(0, false, true).points.get(0).clone().z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
             Driver.angleY = Driver.angleY - shipRotY;
             //Driver.angleX = Driver.angleX - shipRotZ;
@@ -423,7 +423,7 @@ public class Fly {
         }
     }
     
-    int size = 1400;
+    int size = 1400*10;
     
     int rx = 5;
     int ry = 5;
