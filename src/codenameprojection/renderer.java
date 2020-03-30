@@ -29,6 +29,7 @@ import JFUtils.dirs;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
 import JFUtils.quickTools;
+import UI.drawable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -102,6 +103,8 @@ public class renderer extends JPanel{
     public boolean drawErrors = false;
     public int received = 0;
     public int errors = 0;
+    
+    public LinkedList<drawable> extraDrawables = new LinkedList<>();
     
     private GraphicsConfiguration config =
             GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -499,6 +502,9 @@ public class renderer extends JPanel{
             }
         }
             
+        for(drawable toDraw : extraDrawables){
+            toDraw.paint(gd, w, h, Logic);
+        }
             
         Duration deltaTime = Duration.between(beginTime, Instant.now());
         g.setColor(Color.white);
@@ -511,11 +517,14 @@ public class renderer extends JPanel{
         g.drawString("" + (int) (JFUtils.math.Conversions.toCPNS(deltaTime.getNano()) * 1000000000) + " FPS (Draw)", w - w/5, h/2);
         g.drawString("speed: " + speed + "", w - w/5, h/6);
         g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w/5, h/5);
+        
     }
-    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide){
+    public driver Logic;
+    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide, driver Logic){
         this.points = newSet;
         this.points_sizes = newSizes;
         this.pointsToHide = pointsToHide;
+        this.Logic = Logic;
     }
     public void updateLines(LinkedList<Integer[]> newSet, LinkedList<Color> color){
         this.lines = newSet;

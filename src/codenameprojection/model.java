@@ -43,6 +43,8 @@ public class model {
     public double z = 0;
     
     public boolean hidePoints = true;
+    public boolean hideLines = false;
+    public boolean hideFaces = false;
     
     boolean single_frame;
     public model(LinkedList<model_frame> frames, boolean singleFrame) {
@@ -121,6 +123,12 @@ public class model {
             i2.identifier = oldID;
             out.points.set(ind, i2);
             ind++;
+        }
+        if(hideLines){
+            out.lines = new LinkedList<>();
+        }
+        if(hideFaces){
+            out.faces = new LinkedList<>();
         }
         return out;
     }

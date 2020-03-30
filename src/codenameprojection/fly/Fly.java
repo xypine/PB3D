@@ -74,7 +74,11 @@ public class Fly {
                 Logger.getLogger(Fly.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        Driver.an_pause = true;
+        
+        map Map = new map();
+        Driver.s.r.extraDrawables.add(Map);
+        
+        Driver.an_pause = false;
         //Driver.zero();
         
         Driver.s.r.usePixelRendering = false;
@@ -312,7 +316,7 @@ public class Fly {
                 Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
             }*/
             if(Driver.inp.keys[65]){
-                shipRotY = shipRotY + 0.0004F;
+                shipRotY = shipRotY + 0.0004F * 0.12F;
                 
             }
             //d
@@ -322,7 +326,7 @@ public class Fly {
                 Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
             }*/
             if(Driver.inp.keys[68]){
-                shipRotY = shipRotY - 0.0004F;;
+                shipRotY = shipRotY - 0.0004F * 0.12F;
             }
             //q
             if(Driver.inp.keys[81]){
@@ -359,9 +363,9 @@ public class Fly {
 //            Driver.screenPosition_org.y = shipM.getFrame(0, false, false).points.get(0).y;
 //            Driver.screenPosition_org.z = shipM.getFrame(0, false, false).points.get(0).z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
-//            Driver.angleY = Driver.angleY - shipRotY;
+            Driver.angleY = Driver.angleY - shipRotY;
             //Driver.angleX = Driver.angleX - shipRotZ;
-//            Driver.angleZ = Driver.angleZ - shipRotZ;
+            Driver.angleZ = Driver.angleZ - shipRotZ;
             for(Point3D i : shipModel.getFrame(0).points){
                 //Point3D newLoc = Point3D.add(Driver.screenPosition_org, Point3D.subtract(i, last_sp));
                 //Point3D newLoc = i.clone();
@@ -456,8 +460,8 @@ public class Fly {
         return out;
     }
     
-    int rx2 = 10;
-    int ry2 = 10;
+    int rx2 = 15 * 3;
+    int ry2 = 15 * 3;
     LinkedList<model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();
@@ -469,23 +473,31 @@ public class Fly {
                 LinkedList<Integer[]> lines = new LinkedList<>();
                 LinkedList<Point2D[]> faces = new LinkedList<>();
 
-                int rndX = (x - (rx2 / 2) )*10;
-                int rndY = (y - (ry2 / 2) )*10;
+                int rndX = (x - (rx2 / 2) )*2;
+                int rndY = (y - (ry2 / 2) )*2;
                 int rndZ = Math.abs((int) Math.sin(rndX + rndY)) * 3;
                 
 
 
-                points.add(new Point3D(-rndX, -rndZ, -rndY));
+                points.add(new Point3D(-rndX, -4, -rndY));
 
+                /*
                 if(out.size() > 2){
-                    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind-1).getFrame(0).points.getFirst().identifier});
+                    try {
+                        lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - 1).getFrame(0).points.getFirst().identifier});
+                        lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                    } catch (Exception e) {
+                    }
                 }
-
-
+                if(y == ry2){
+                    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                }
+                */
 
                 frames.add(new model_frame(points , lines, faces));
                 model m = new model(frames, true);
                 m.hidePoints = false;
+                m.hideLines = true;
                 out.add(m);
                 ind = ind + 1;
             }

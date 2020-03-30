@@ -784,7 +784,7 @@ public class driver{
             
             c = System.currentTimeMillis();
             //Rendering
-            s.r.updatePoints(set, sizes, pointsToHide);
+            s.r.updatePoints(set, sizes, pointsToHide, this);
             s.r.updateLines(lines, lines_color);
             
             
