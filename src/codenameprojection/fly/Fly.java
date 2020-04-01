@@ -137,8 +137,8 @@ public class Fly {
         //shipM.frames.getFirst().lines = new LinkedList<>();
         //shipM.frames.getFirst().faces = new LinkedList<>();
         
-        shipM.hideLines = false;
-        shipM.hideFaces = true;
+        shipM.hideLines = true;
+        shipM.hideFaces = false;
         shipM.hidePoints = true;
         
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
@@ -361,7 +361,7 @@ public class Fly {
             //p
             if(Driver.inp.keys[80]){
                 pause = !pause;
-                Driver.inp.keys[66] = false;
+                Driver.inp.keys[80] = false;
             }
             
             //System.out.println(shipM.rotation_X);
@@ -442,7 +442,7 @@ public class Fly {
             }
             
             deltaTime = Duration.between(beginTime, Instant.now());
-            System.out.println("Fly.java excecution time: " + deltaTime.getNano());
+//            System.out.println("Fly.java excecution time: " + deltaTime.getNano());
         }
     }
     

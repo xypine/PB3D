@@ -75,19 +75,28 @@ public class model {
     
     public driver parent;
     
-    void updatecache(){
+    boolean buffering = false;
+    
+    int latest = 0;
+    
+    synchronized void updatecache(){
+        buffering = true;
+        int token = latest + 1;
         LinkedList<model_frame> newCache = new LinkedList<>();
         for(int i : new Range(frames.size())){
             newCache.add(getFrame(i, true, true, true));
         }
-        frames_cache = newCache;
+//        if(token > latest){
+          frames_cache = newCache;
+//        }
+        buffering = false;
     }
     
-    public model_frame getFrame(int index){
+    synchronized public model_frame getFrame(int index){
         return getFrame(index, false, true, true);
     }
     
-    public model_frame getFrame(int index, boolean rotate, boolean translate){
+    synchronized public model_frame getFrame(int index, boolean rotate, boolean translate){
         return getFrame(index, false, rotate, translate);
     }
     
@@ -108,7 +117,7 @@ public class model {
         return out;
     }
     
-    public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate){
+    synchronized public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate){
         try {
             index = index % (frames.size() - 1);
         } catch (Exception e) {
@@ -124,7 +133,9 @@ public class model {
             return frames_cache.get(index);
         }
         else if(!skipCache){
-            updatecache();
+            if(!buffering){
+                updatecache();
+            }
             return frames_cache.get(index);
         }
         model_frame out;

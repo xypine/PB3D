@@ -425,16 +425,17 @@ public class renderer extends JPanel{
                                 } catch (Exception e) {
                                 }
                                 TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth()*multiplier, base.getHeight()*multiplier));
-                                //g.setPaint(tex);
-                                //g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
+//                                g.setPaint(tex);
+//                                g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                                 //g.drawImage(base, w/2-(int)wb, h/2-(int)hb, w, h, this);
                                 //g.setClip(0, 0, w, h);
                                 int middle = 255 / 2;
                                 Color c2 = c;
-                                int res = 7;
-                                int rc = (int)(c.getRed() / res) * res;
-                                int gc = (int)(c.getGreen() / res) * res;
-                                int bc = (int)(c.getBlue() / res) * res;
+                                c2 = Color.gray;
+                                int res = 1;
+                                int rc = (int)(c2.getRed() / res) * res;
+                                int gc = (int)(c2.getGreen() / res) * res;
+                                int bc = (int)(c2.getBlue() / res) * res;
                                 
                                 
                                 
@@ -447,7 +448,7 @@ public class renderer extends JPanel{
                                 if(bc < 0){
                                     bc = 0;
                                 }
-                                c2 = new Color(rc, gc, bc);
+                                c2 = new Color(rc, gc, bc, middle);
                                 g.setColor(c2);
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
