@@ -73,7 +73,9 @@ public class driver{
     private int xScreenCenter = 320/2;
     private int yScreenCenter = 240/2;
     public Point3D screenPosition = new dVector3( 0, 0, 7 );
-    public Point3D screenPosition_org = screenPosition.clone();
+    private Point3D screenPosition_org = screenPosition.clone();
+    
+    public Point3D screenPosition_org_next = screenPosition_org.clone();
     public dVector3 viewAngle = new dVector3( 0, 90, 90 );
     public Point3D viewAngle_org = viewAngle.clone();
     
@@ -219,6 +221,7 @@ public class driver{
     public Screen s;
     public Input inp;
     public driver(Supervisor sudo){
+        screenPosition_org_next.identifier = -1;
         pbSudo = sudo;
         if(Objects.isNull(pbSudo)){
             usePB = false;
@@ -328,14 +331,23 @@ public class driver{
             //frame = 10;
             beginTime = Instant.now();
             a = System.currentTimeMillis();
+            
+            if(screenPosition_org_next.identifier != -1){
+                int oldID = screenPosition_org.identifier;
+                screenPosition_org = screenPosition_org_next;
+                screenPosition_org.identifier = oldID;
+                screenPosition_org_next.identifier = -1;
+            }
+            
+            
             //Init
             model model0 = (model) models.values().toArray()[0];
             //model0.y = Math.sin(tickC/100)/100;
             //model0.rotation_Y++;
             
-            s.r.cx = screenPosition_org.intX();
-            s.r.cy = screenPosition_org.intY();
-            s.r.cz = screenPosition_org.intZ();
+            s.r.cx = screenPosition_org.x;
+            s.r.cy = screenPosition_org.y;
+            s.r.cz = screenPosition_org.z;
             
             if(usePB){
                 points = new LinkedList<>();

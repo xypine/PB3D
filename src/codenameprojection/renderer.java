@@ -64,9 +64,9 @@ import javax.swing.JPanel;
  */
 public class renderer extends JPanel{
     public BufferedImage output;
-    public int cx;
-    public int cy;
-    public int cz;
+    public double cx;
+    public double cy;
+    public double cz;
     
     public renderer(Component parent){
         try {
@@ -520,7 +520,7 @@ public class renderer extends JPanel{
             g.drawString("" + (int) (nano * 1000000000) + " FPS (Calc)", w - w / 5, h / 3);
             g.drawString("" + (int) (JFUtils.math.Conversions.toCPNS(deltaTime.getNano()) * 1000000000) + " FPS (Draw)", w - w / 5, h / 2);
             g.drawString("speed: " + speed + "", w - w / 5, h / 6);
-            g.drawString("x, y, z: " + cx + ", " + cy + ", " + cz, w - w / 5, h / 5);
+            g.drawString("x, y, z: " + (int)cx + ", " + (int)cy + ", " + (int)cz, w - w / 5, h / 5);
         }
         
     }

@@ -35,6 +35,8 @@ import codenameprojection.model;
 import codenameprojection.modelParser;
 import codenameprojection.model_frame;
 import java.awt.FlowLayout;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
@@ -54,6 +56,8 @@ public class Fly {
 
     codenameprojection.driver Driver;
     JFrame frame;
+    private Instant beginTime;
+    private Duration deltaTime;
     public Fly() {
         Driver = new driver(null);
         Thread t = new Thread(){
@@ -154,8 +158,8 @@ public class Fly {
         Driver.shadingMultiplier = 0.5F;
         LinkedList<Integer> boltHandles = new LinkedList<>();
         float speed = 0.4F;
-        Driver.screenPosition_org = new Point3D(0, 0, 0);
-        Point3D last_sp = Driver.screenPosition_org.clone();
+//        Driver.screenPosition_org = new Point3D(0, 0, 0);
+//        Point3D last_sp = Driver.screenPosition_org.clone();
         int boltCooldown = 0;
         float side = 1.3F;
         float up = -2F;
@@ -187,6 +191,8 @@ public class Fly {
         
         boolean pause = false;
         while (true) {
+            beginTime = Instant.now();
+            
             shipM = Driver.models.get(ship);
             if(shipM.frames.get(0).points.indexOf(c1) == -1){
                 shipM.frames.get(0).points.add(c1);
@@ -381,19 +387,21 @@ public class Fly {
             //Driver.screenPosition_org.x = shipModel.getFrame(0).points.get(0).clone().x;
             //Driver.screenPosition_org.y = shipModel.getFrame(0).points.get(0).clone().y;
             //Driver.screenPosition_org.z = shipModel.getFrame(0).points.get(0).clone().z;
-            int camIndex = shipM.getByColor(0.0F, 1.0F, 0.0F).getFirst();
+            int camIndex = shipM.getByColor(0.0F, 1.0F, 0.0F).get(2);
             
             if(camIndex == -1){
             //    camIndex = 0;
             }
             //camIndex = 0;
-            Point3D camPoint = shipM.getFrame(0, false, true).points.get(camIndex).clone();
+            Point3D camPoint = shipM.getFrame(0, true, true).points.get(camIndex).clone();
                                             //-shipM.getFrame(0, false, true).points.get(0).clone().x;
-            Driver.screenPosition_org.x = -camPoint.x;
+            Driver.screenPosition_org_next.x = -camPoint.x;
 //            Driver.screenPosition.x = -camPoint.x;
-            Driver.screenPosition_org.y = -camPoint.y;
+            Driver.screenPosition_org_next.y = -camPoint.y;
  //           Driver.screenPosition.y = -camPoint.y;
-            Driver.screenPosition_org.z = camPoint.z;
+            Driver.screenPosition_org_next.z = camPoint.z;
+            
+            Driver.screenPosition_org_next.identifier = -2;
 //            Driver.screenPosition.z = camPoint.z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
             Driver.angleY = Driver.angleY - shipRotY;
@@ -425,14 +433,16 @@ public class Fly {
                    // m.getFrame(0).points.getFirst().z = -size;
                 }
             }
-            last_sp = Driver.screenPosition_org.clone();
+//            last_sp = Driver.screenPosition_org.clone();
             //Sleep
             try {
-                Thread.sleep((long) 1);
+                Thread.sleep((long) 0.00001);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Fly.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            deltaTime = Duration.between(beginTime, Instant.now());
+            System.out.println("Fly.java excecution time: " + deltaTime.getNano());
         }
     }
     
