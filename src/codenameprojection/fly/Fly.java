@@ -138,8 +138,8 @@ public class Fly {
         //shipM.frames.getFirst().faces = new LinkedList<>();
         
         shipM.hideLines = true;
-        shipM.hideFaces = false;
-        shipM.hidePoints = true;
+        shipM.hideFaces = true;
+        shipM.hidePoints = false;
         
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
@@ -545,7 +545,7 @@ public class Fly {
                 frames.add(new model_frame(points , lines, faces, color));
                 model m = new model(frames, true);
                 m.hidePoints = false;
-                m.hideLines = true;
+                m.hideLines = false;
                 out.add(m);
                 ind = ind + 1;
             }
