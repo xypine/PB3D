@@ -39,9 +39,27 @@ public class model {
     public double rotation_Y = 0;
     public double rotation_Z = 0;
     
-    public double x = 0;
-    public double y = 0;
-    public double z = 0;
+     double x = 0;
+    public void setX(double x){
+        this.x = x;
+    }
+    public double getX(){
+        return this.x;
+    }
+     double y = 0;
+    public void setY(double y){
+        this.y = y;
+    }
+    public double getY(){
+        return this.y;
+    }
+     double z = 0;
+    public void setZ(double z){
+        this.z = z;
+    }
+    public double getZ(){
+        return this.z;
+    }
     
     public boolean hidePoints = true;
     public boolean hideLines = false;

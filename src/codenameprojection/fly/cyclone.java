@@ -26,15 +26,15 @@ public class cyclone extends model{
         super.executeLogic(parent_);
         try {
             model player = (model) parent.models.values().toArray()[0];
-            z = player.z -10;
-            y = player.y;
-            x = player.x;
+            setZ(player.getZ() -10);
+            setY(player.getY());
+            setX(player.getX());
             rotation_X = player.rotation_X;
             rotation_Y = player.rotation_Y;
             rotation_Z = player.rotation_Z;
         } catch (Exception e) {
         }
-        z--;
+        setZ(getZ()-1);
     }
 
     

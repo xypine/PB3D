@@ -35,7 +35,6 @@ import codenameprojection.model;
 import codenameprojection.modelParser;
 import codenameprojection.model_frame;
 import java.awt.FlowLayout;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
@@ -228,10 +227,10 @@ public class Fly {
                         Point3D newPo = Point3D.add(one, Point3D.subtract(one, two));
                         Point3D newPt = Point3D.add(two, Point3D.subtract(one, two));
                         Point3D velBolt = Point3D.subtract(one, two);
-                        cursor.x = cursor.x + velBolt.x;
-                        cursor.y = cursor.y + velBolt.y;
-                        cursor.z = cursor.z + velBolt.z;
-                        if (Math.abs(Utils.getDistance(new Point3D(cursor.x, cursor.y, cursor.z), new Point3D(0, 0, 0))) > 2000) {
+                        cursor.setX(cursor.getX() + velBolt.x);
+                        cursor.setY(cursor.getY() + velBolt.y);
+                        cursor.setZ(cursor.getZ() + velBolt.z);
+                        if (Math.abs(Utils.getDistance(new Point3D(cursor.getX(), cursor.getY(), cursor.getZ()), new Point3D(0, 0, 0))) > 2000) {
                             //Driver.models.remove(bolt);
                             torem.add(bolt);
                         } else {
@@ -315,8 +314,8 @@ public class Fly {
           //Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
             //vel = rot2;
             //s
-            if(Driver.inp.keys[83] && false){
-                thrust--;
+            if(Driver.inp.keys[83]){
+                vel = Point3D.multiply(vel, new Point3D(0.995, 0.995, 0.995));
             //    Point3D rot3 = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(0, 0, speed)).toDVector3();
             //    rot2 = Driver.matmul(Driver.RY((float)Driver.angleY), rot.toFVector3()).toDVector3();
                 //Driver.screenPosition_org = Point3D.add(Driver.screenPosition_org, rot);
@@ -373,9 +372,9 @@ public class Fly {
             Point3D rotVec = Driver.matmul(Driver.RX((float)shipM.rotation_X), new Point3F(0, 0, -thrust)).toDVector3();
             rotVec = Driver.matmul(Driver.RY((float)shipM.rotation_Y), rotVec.toFVector3()).toDVector3();
             vel = Point3D.add(vel, rotVec);
-            shipM.x = shipM.x + vel.x;
-            shipM.y = shipM.y + vel.y;
-            shipM.z = shipM.z + vel.z;
+            shipM.setX(shipM.getX() + vel.x);
+            shipM.setY(shipM.getY() + vel.y);
+            shipM.setZ(shipM.getZ() + vel.z);
             
             //Driver.screenPosition_org = shipCenter;
             //Driver.screenPosition_org = Utils.average(shipModel.getFrame(0).points);
@@ -387,12 +386,15 @@ public class Fly {
             if(camIndex == -1){
             //    camIndex = 0;
             }
-            camIndex = 0;
+            //camIndex = 0;
             Point3D camPoint = shipM.getFrame(0, false, true).points.get(camIndex).clone();
                                             //-shipM.getFrame(0, false, true).points.get(0).clone().x;
             Driver.screenPosition_org.x = -camPoint.x;
+//            Driver.screenPosition.x = -camPoint.x;
             Driver.screenPosition_org.y = -camPoint.y;
+ //           Driver.screenPosition.y = -camPoint.y;
             Driver.screenPosition_org.z = camPoint.z;
+//            Driver.screenPosition.z = camPoint.z;
             //Driver.screenPosition_org.y = Driver.screenPosition_org.y + 2.5;
             Driver.angleY = Driver.angleY - shipRotY;
             //Driver.angleX = Driver.angleX - shipRotZ;
@@ -514,18 +516,21 @@ public class Fly {
 
                 points.add(new Point3D(-rndX, -4, -rndY));
 
-                /*
+                
                 if(out.size() > 2){
                     try {
                         lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - 1).getFrame(0).points.getFirst().identifier});
                         lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                        //faces.add(new Point2D[]{
+                        
+                        //});
                     } catch (Exception e) {
                     }
                 }
-                if(y == ry2){
-                    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
-                }
-                */
+                //if(y == ry2){
+                //    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                //}
+                
 
                 frames.add(new model_frame(points , lines, faces, color));
                 model m = new model(frames, true);

@@ -40,8 +40,20 @@ public class map implements UI.drawable{
         int box_w = w / scale;
         int box_h = h / scale;
         Color bg = new Color(0.2F, 0.25F, 0.3F, 0.4F);
+        Color fg = new Color(0.6F, 0.2F, 0.2F, 0.7F);
         g.setColor(bg);
-        g.fillRect(w - w/scale/2 - box_w / 2, h - h / scale/2 - box_h / 2, box_w, box_h);
+        int xf = w - w/scale/2 - box_w / 2;
+        int yf = h - h / scale/2 - box_h / 2;
+        g.fillRect(xf, yf, box_w, box_h);
+        g.setColor(fg);
+        int wf = xf + (box_w/2);
+        int hf = yf + (box_h/2);
+        //int wf2 = wf + wf / 10;
+        //int hf2 = hf + hf / 10;
+        //int wt = wf - wf / 10;
+        //int ht = hf - hf / 10;
+        //g.fillRect(wf-wt, hf-ht, wt, ht);
+        g.fillRect(wf, hf, box_w/12, box_h/12);
     }
 
 }
