@@ -314,14 +314,26 @@ public class Cube {
 
                     if(out.size() > 2){
                         try {
-                            lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - 1).getFrame(0).points.getFirst().identifier});
-                            lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                            Point3D last = out.get(ind - 1).getFrame(0).points.getFirst();
+                            if (y !=0) {
+                                lines.add(new Integer[]{points.getFirst().identifier, last.identifier});
+                            }
+                        } catch (Exception e) {
+                        }
+                            
+                            
+                        try {
+                            Point3D pair = out.get(ind - ry2).getFrame(0).points.getFirst();
+                            if (x != 0) {
+                                lines.add(new Integer[]{points.getFirst().identifier, pair.identifier});
+                            }
+                        } catch (Exception e) {
+                        }
+                            //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
                             //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - rz2).getFrame(0).points.getFirst().identifier});
                             //faces.add(new Point2D[]{
 
                             //});
-                        } catch (Exception e) {
-                        }
                     }
                     //if(y == ry2){
                     //    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
