@@ -329,6 +329,14 @@ public class Cube {
                             }
                         } catch (Exception e) {
                         }
+                        
+                        try {
+                            Point3D pair = out.get(ind - rx2 - ry2 - rz2).getFrame(0).points.getFirst();
+                            if (true) {
+                                lines.add(new Integer[]{points.getFirst().identifier, pair.identifier});
+                            }
+                        } catch (Exception e) {
+                        }
                             //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
                             //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - rz2).getFrame(0).points.getFirst().identifier});
                             //faces.add(new Point2D[]{
