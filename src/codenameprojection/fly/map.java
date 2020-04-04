@@ -57,16 +57,16 @@ public class map implements UI.drawable{
         g.setColor(Color.CYAN);
         try {
             logic.points.forEach(l -> {
-                int lx = (int) (logic.getScreenPosition_org().x - l.x);
-                int ly = (int) (logic.getScreenPosition_org().y - l.y);
-                 lx = (int) (logic.screenPosition.x - l.x);
-                 ly = (int) (logic.screenPosition.y - l.y);
-                if (lx < 1000 && ly < 1000 && lx > -1000 && ly > -1000) {
-                    g.fillRect(wf+(int) lx*10, hf+(int) ly*10, 2, 2);
-                }
+                //int lx = (int) (logic.getScreenPosition_org().x - l.x);
+                //int ly = (int) (logic.getScreenPosition_org().y - l.y);
+                // lx = (int) (logic.screenPosition.x - l.x);
+                // ly = (int) (logic.screenPosition.y - l.y);
+                //if (lx < 1000 && ly < 1000 && lx > -1000 && ly > -1000) {
+                //    g.fillRect(wf+(int) lx*10, hf+(int) ly*10, 2, 2);
+                //}
             });
         } catch (Exception e) {
-            e.printStackTrace();
+        //    e.printStackTrace();
         }
     }
 

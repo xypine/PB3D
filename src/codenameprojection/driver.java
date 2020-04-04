@@ -63,7 +63,7 @@ public class driver{
     
     private boolean usePB = true;
     
-    
+    public boolean startWithNoModel = false;
     
     Duration deltaTime = Duration.ZERO;
     Instant beginTime = Instant.now();
@@ -286,16 +286,18 @@ public class driver{
             //addCube(new dVector3(0, 0, 0), 0.5);
             //File err = new File("err.txt");
             //throw new Exception();
-            LinkedList<LinkedList<Point3D>> frames2 = new modelParser().parse();
-            LinkedList<Point3D> points2 = frames2.getFirst();
-            LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
-            LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
-            LinkedList<vertexGroup> color2 = new modelParser().parseColor(points2);
-            model m = new model(new LinkedList<model_frame>(), false);
-            for(LinkedList<Point3D> list : frames2){
-                m.frames.add(new model_frame(list, lines2, faces2, color2));
+            if (!startWithNoModel) {
+                LinkedList<LinkedList<Point3D>> frames2 = new modelParser().parse();
+                LinkedList<Point3D> points2 = frames2.getFirst();
+                LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
+                LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
+                LinkedList<vertexGroup> color2 = new modelParser().parseColor(points2);
+                model m = new model(new LinkedList<model_frame>(), false);
+                for (LinkedList<Point3D> list : frames2) {
+                    m.frames.add(new model_frame(list, lines2, faces2, color2));
+                }
+                models.put(m.hashCode(), m);
             }
-            models.put(m.hashCode(), m);
             
         } catch (Exception ex) {
             ex.printStackTrace();
