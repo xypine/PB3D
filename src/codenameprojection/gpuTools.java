@@ -55,4 +55,9 @@ public class gpuTools {
         }
         return result;
     }
+    
+    public static void main(String[] args) {
+        
+    }
+    
 }
