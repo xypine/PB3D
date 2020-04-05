@@ -55,7 +55,7 @@ public class modelParser {
         this.filename = filename;
     }
     
-    final float size = 500;
+    public static float size = 500;
     
     public LinkedList<vertexGroup> parseColor(LinkedList<Point3D> points){
         LinkedList<vertexGroup> color = new LinkedList<>();

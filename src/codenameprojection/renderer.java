@@ -36,6 +36,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -67,6 +68,10 @@ public class renderer extends JPanel{
     public double cx;
     public double cy;
     public double cz;
+    
+     int resW = -1;
+     int resH = -1;
+    public double resMultiplier = 1;
     
     public renderer(Component parent){
         try {
@@ -163,13 +168,34 @@ public class renderer extends JPanel{
     
     quickTools qT = new quickTools();
     
+    int lw = -1;
+    int lh = -1;
+    
     @Override
     public void paintComponent(Graphics gd) {
-        Graphics2D g = (Graphics2D) gd;
         Instant beginTime = Instant.now();
         Dimension currentSize = getParent().getSize();
         w = currentSize.width;
         h = currentSize.height;
+        Graphics2D g = (Graphics2D) gd;
+        GraphicsDevice graphicsDeviceU = GraphicsEnvironment.getLocalGraphicsEnvironment()
+         .getDefaultScreenDevice();
+        if((resW == -1 || resH == -1)&&false){
+            int w2 = graphicsDeviceU.getDisplayMode().getWidth();
+            int h2 = graphicsDeviceU.getDisplayMode().getWidth();
+            resW = w2;
+            resH = h2;
+            System.out.println("RES_W:" + resW + "\n" + "RES_H:" + resH);
+        }
+        else if((w != lw || h == lh)&&false){
+            int w2 = graphicsDeviceU.getDisplayMode().getWidth();
+            int h2 = graphicsDeviceU.getDisplayMode().getWidth();
+            resW = (int) (w2 * resMultiplier);
+            resH = (int) (h2 * resMultiplier);
+            System.out.println("RES_W:" + resW + "\n" + "RES_H:" + resH);
+        }
+        lw = w;
+        lh = h;
         this.setSize(currentSize);
         super.paintComponent(g);
         Graphics2D gb = null;

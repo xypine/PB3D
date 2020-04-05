@@ -29,7 +29,6 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
-import codenameprojection.fly.map;
 import codenameprojection.model;
 import codenameprojection.modelParser;
 import codenameprojection.model_frame;
@@ -68,8 +67,9 @@ public class Cube {
             }
             
         };
-        modelParser.filename = "assets/models/Viper8";
-        Driver.startWithNoModel = true;
+        modelParser.filename = "assets/models/cube/cube";
+        modelParser.size = 100;
+        Driver.startWithNoModel = false;
         
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
@@ -94,9 +94,9 @@ public class Cube {
                 Logger.getLogger(Cube.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        int cubeHandle = 2;
         
-        map Map = new map();
-        Driver.s.r.extraDrawables.add(Map);
+        
         Driver.s.r.debug = false;
         
         Driver.an_pause = false;
@@ -174,11 +174,18 @@ public class Cube {
         while (true) {
             beginTime = Instant.now();
             
-            //shipM = Driver.models.get(ship);
-            Driver.angleYM = Driver.angleYM + Driver.inp.cX * 0.0002;
-            Driver.inp.cX = (int) (Driver.inp.cX * 0.5);
-            Driver.angleXM = Driver.angleXM + Driver.inp.cY * 0.0002;
-            Driver.inp.cY = (int) (Driver.inp.cY * 0.5);
+            model cubeM = (model) Driver.models.values().toArray()[1];
+            cubeM.hideLines = true;
+            cubeM.hidePoints = true;
+            
+            try {
+                Driver.angleYM = Driver.angleYM + Driver.inp.cX * (deltaTime.getNano() * .0000000003);
+                //System.out.println(Driver.angleYM);
+                Driver.inp.cX = (int) (Driver.inp.cX * 0.5);    //0.0002
+                Driver.angleXM = Driver.angleXM + Driver.inp.cY * (deltaTime.getNano() * .0000000003);
+                Driver.inp.cY = (int) (Driver.inp.cY * 0.5);
+            } catch (Exception e) {
+            }
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
             if (!pause) {
@@ -190,6 +197,9 @@ public class Cube {
             }
             //w
             if(Driver.inp.keys[87]){
+            //    cubeM.setX(cubeM.getX() + 100);
+            cubeM.rotation_X++;
+                //System.out.println("W!");
             }
             if(Driver.inp.keys[83]){
             }
@@ -215,6 +225,10 @@ public class Cube {
             if(Driver.inp.keys[80]){
                 pause = !pause;
                 Driver.inp.keys[80] = false;
+            }
+            //o
+            if(Driver.inp.keys[79]){
+                //Driver.s.r.
             }
 //            last_sp = Driver.screenPosition_org.clone();
             //Sleep
@@ -288,8 +302,8 @@ public class Cube {
     }
     
     int rx2 = 3;
-    int ry2 = 3;
-    int rz2 = 3;
+    int ry2 = rx2;
+    int rz2 = rx2;
     LinkedList<model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();
@@ -303,9 +317,9 @@ public class Cube {
                     LinkedList<Point2D[]> faces = new LinkedList<>();
                     LinkedList<vertexGroup> color = new LinkedList<>();
 
-                    int rndX = (x - (rx2 / 2) )*3;
-                    int rndY = (y - (ry2 / 2) )*3;
-                    int rndZ = (z - (rz2 / 2) )*3;
+                    double rndX = (x +0.5 - (rx2 / 2) )*2;
+                    double rndY = (y +.5- (ry2 / 2) )*2;
+                    double rndZ = (z +.5- (rz2 / 2) )*2;
 
 
 
@@ -331,11 +345,12 @@ public class Cube {
                         }
                         
                         try {
-                            Point3D pair = out.get(ind - rx2 - ry2 - rz2).getFrame(0).points.getFirst();
-                            if (true) {
+                            Point3D pair = out.get(ind - (rx2 * ry2)*rz2).getFrame(0).points.getFirst();
+                            if (false) {
                                 lines.add(new Integer[]{points.getFirst().identifier, pair.identifier});
                             }
                         } catch (Exception e) {
+                            System.out.println(ind - (rx2 * ry2)*rz2);
                         }
                             //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
                             //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - rz2).getFrame(0).points.getFirst().identifier});
