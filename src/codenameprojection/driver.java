@@ -79,7 +79,7 @@ public class driver{
     public dVector3 viewAngle = new dVector3( 0, 90, 90 );
     public Point3D viewAngle_org = viewAngle.clone();
     public Point3D getScreenPosition_org(){
-        return this.screenPosition_org;
+        return this.screenPosition_org.clone();
     }
     
     private static final double DEG_TO_RAD = 0.017453292;
