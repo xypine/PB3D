@@ -28,6 +28,7 @@ import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
+import codenameprojection.Utils;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
 import codenameprojection.model;
@@ -57,6 +58,7 @@ public class FPSTest {
     JFrame frame;
     private Instant beginTime;
     private Duration deltaTime;
+    int boltCooldown = 0;
     public FPSTest() {
         Driver = new driver(null);
         Thread t = new Thread(){
@@ -72,6 +74,18 @@ public class FPSTest {
         modelParser.size = 100;
         Driver.startWithNoModel = false;
         
+        
+        
+        t.start();
+        while(!Driver.running){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        int cubeHandle = 0;
+        
         LinkedList<model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
         for(model m : points){
@@ -86,17 +100,6 @@ public class FPSTest {
             Driver.models.put(handle, m);
             gridHandles.add(handle);
         }
-        
-        t.start();
-        while(!Driver.running){
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        int cubeHandle = 2;
-        
         
         Driver.s.r.debug = false;
         
@@ -215,7 +218,42 @@ public class FPSTest {
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
             if (!pause) {
-                
+                for (Integer bolt : boltHandles) {
+                    try {
+                        model cursor = Driver.models.get(bolt);
+                        //Point3D.multiply(Driver.viewAngle, new Point3D(1, 1, 1)
+                        double speeds = 0.5;
+                        Point3D one = cursor.frames.get(0).points.get(0);
+                        Point3D two = cursor.frames.get(0).points.get(1);
+                        //cursor.getFrame(0).points.get(0).z = cursor.getFrame(0).points.get(0).z - 0.5;
+                        //cursor.getFrame(0).points.get(1).z = cursor.getFrame(0).points.get(1).z - 0.5;
+                        Point3D newPo = Point3D.add(one, Point3D.subtract(one, two));
+                        Point3D newPt = Point3D.add(two, Point3D.subtract(one, two));
+                        Point3D velBolt = Point3D.subtract(one, two);
+                        velBolt = Point3D.multiply(velBolt, new Point3D(.1, .1, .1));
+                        cursor.setX(cursor.getX() + velBolt.x);
+                        cursor.setY(cursor.getY() + velBolt.y);
+                        cursor.setZ(cursor.getZ() + velBolt.z);
+                        if (Math.abs(Utils.getDistance(new Point3D(cursor.getX(), cursor.getY(), cursor.getZ()), new Point3D(0, 0, 0))) > 2000) {
+                            //Driver.models.remove(bolt);
+                            torem.add(bolt);
+                        } else {
+                            //System.out.println(Math.abs(Utils.getDistance(new Point3D(cursor.x, cursor.y, cursor.z), new Point3D(0, 0, 0))));
+                        }
+                        //cursor.getFrame(0).points.get(0).x = newPo.x;
+                        //cursor.getFrame(0).points.get(0).y = newPo.y;
+                        //cursor.getFrame(0).points.get(0).z = newPo.z;
+
+                        //cursor.getFrame(0).points.get(1).x = newPt.x;
+                        //cursor.getFrame(0).points.get(1).y = newPt.y;
+                        // cursor.getFrame(0).points.get(1).z = newPt.z;
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            for(Integer bolt : torem){
+                Driver.models.remove(bolt);
+                boltHandles.remove(bolt);
             }
             //space
             if(Driver.inp.keys[32] && jetleft > 0){
@@ -223,22 +261,39 @@ public class FPSTest {
                 jetleft = jetleft - .5F;
             }
             else if(Driver.inp.keys[32]){
-                jetleft = jetleft - .025F;
+                jetleft = jetleft - .1F;
             }
             if(jetleft < 8000){
                 jetleft = jetleft + 0.1F;
             }
-            System.out.println(jetleft);
+            ////System.out.println(jetleft);
             //f
-            if(Driver.inp.keys[70]){
+            if(Driver.inp.keys[70] && boltCooldown < -4){
                 LinkedList<model_frame> frames2 = new LinkedList<>();
                 LinkedList<Point3D> points2 = new LinkedList<>();
                 LinkedList<Integer[]> lines2 = new LinkedList<>();
                 LinkedList<Point2D[]> faces2 = new LinkedList<>();
                 LinkedList<vertexGroup> color2 = new LinkedList<>();
                 Point3D from = Driver.getScreenPosition_org().clone();
-                Point3D from2 = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(0, 0, 1)).toDVector3();
-                from2 = Driver.matmul(Driver.RY((float)Driver.angleY), rotVec.toFVector3()).toDVector3();
+                from.x = -from.x;
+                from.y = -from.y - 1;
+                from.z = from.z - .1;
+                Point3D from2 = Driver.matmul(Driver.RX((float)-Driver.angleX), new Point3F(0, 0, 3)).toDVector3();
+                from2 = Driver.matmul(Driver.RY((float)-Driver.angleY), from2.toFVector3()).toDVector3();
+                from2 = Point3D.add(from2, from);
+                
+                points2.add(from);
+                points2.add(from2);
+                lines2.add(new Integer[]{from.identifier, from2.identifier});
+                frames2.add(new model_frame(points2 , lines2, faces2, color2));
+                model cursor = new model(frames2, true);
+                int cursorHandle = cursor.hashCode();
+                Driver.models.put(cursorHandle, cursor);
+                boltHandles.add(cursorHandle);
+                boltCooldown = boltCooldown + 250;
+            }
+            else if(boltCooldown > -5){
+                boltCooldown = boltCooldown - 1;
             }
             //w
             if(Driver.inp.keys[87]){
@@ -292,6 +347,8 @@ public class FPSTest {
             
             deltaTime = Duration.between(beginTime, Instant.now());
 //            System.out.println("Fly.java excecution time: " + deltaTime.getNano());
+            Driver.s.r.customStrings_next.put("lol", "FPSDelta: " + deltaTime.getNano());
+            Driver.s.r.customStrings_next.put("lol2", "Bolts: " + boltHandles.size());
         }
     }
     
@@ -418,7 +475,7 @@ public class FPSTest {
                     frames.add(new model_frame(points , lines, faces, color));
                     model m = new model(frames, true);
                     m.hidePoints = false;
-                    m.hideLines = false;
+                    m.hideLines = true;
                     out.add(m);
                     ind = ind + 1;
                 }

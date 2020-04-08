@@ -54,6 +54,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -72,6 +73,7 @@ public class renderer extends JPanel{
      int resW = -1;
      int resH = -1;
     public double resMultiplier = 1;
+    public ConcurrentHashMap<String,String> customStrings_next = new ConcurrentHashMap<>();
     
     public renderer(Component parent){
         try {
@@ -548,6 +550,11 @@ public class renderer extends JPanel{
             g.drawString("" + (int) (JFUtils.math.Conversions.toCPNS(deltaTime.getNano()) * 1000000000) + " FPS (Draw)", w - w / 5, h / 2);
             g.drawString("speed: " + speed + "", w - w / 5, h / 6);
             g.drawString("x, y, z: " + (int)cx + ", " + (int)cy + ", " + (int)cz, w - w / 5, h / 5);
+            int index = 2;
+            for (String s : customStrings_next.values()) {
+                g.drawString(s, w / 10, h / 7 + (h / 20 * index));
+                index++;
+            }
         }
         
     }
