@@ -59,7 +59,7 @@ public class Fly {
     private Instant beginTime;
     private Duration deltaTime;
     public Fly() {
-        Driver = new driver(null);
+        Driver = new driver();
         Thread t = new Thread(){
             @Override
             public void run() {

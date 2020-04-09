@@ -32,7 +32,6 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
 import JFUtils.vector.dVector3;
-import PBEngine.Supervisor;
 import static codenameprojection.Utils.vToP2;
 import codenameprojection.drawables.vertexGroup;
 import java.awt.Color;
@@ -59,7 +58,6 @@ import java.util.logging.Logger;
  * @author Jonnelafin
  */
 public class driver{
-    public Supervisor pbSudo = null;
     
     private boolean usePB = true;
     
@@ -223,12 +221,8 @@ public class driver{
     LinkedList<Color> faces_color = new LinkedList<>();
     public Screen s;
     public Input inp;
-    public driver(Supervisor sudo){
+    public driver(){
         screenPosition_org_next.identifier = -1;
-        pbSudo = sudo;
-        if(Objects.isNull(pbSudo)){
-            usePB = false;
-        }
         usePB = false;
         //dVector3 point = new dVector3(0, 0, 0);
         InputActivated refI = new InputActivated();
@@ -346,7 +340,7 @@ public class driver{
             
             
             //Init
-            model model0 = (model) models.values().toArray()[0];
+            //model model0 = (model) models.values().toArray()[0];
             //model0.y = Math.sin(tickC/100)/100;
             //model0.rotation_Y++;
             

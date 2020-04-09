@@ -7,12 +7,9 @@
 package treeGenerator;
 
 import JFUtils.Range;
-import JFUtils.vector.dVector3;
-import codenameprojection.CodeNameProjection;
 import codenameprojection.drawables.Vertex;
 import codenameprojection.driver;
 import java.awt.FlowLayout;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +28,7 @@ public class runz {
     codenameprojection.driver Driver;
     JFrame frame;
     public runz() {
-        Driver = new driver(null);
+        Driver = new driver();
         Thread t = new Thread(){
             @Override
             public void run() {
@@ -41,6 +38,7 @@ public class runz {
             }
             
         };
+        Driver.startWithNoModel = false;
         t.start();
         while(!Driver.running){
             try {
@@ -51,7 +49,7 @@ public class runz {
         }
         Driver.an_pause = true;
         Driver.zero();
-        
+        Driver.models.clear();
         Driver.s.r.usePixelRendering = false;
         Driver.s.r.drawFaces = false;
         Driver.s.r.drawPoints = true;

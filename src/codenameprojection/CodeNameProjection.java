@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 3.2;
+    public static double minUtilsVer = 3.3;
 
     /**
      * @param args the command line arguments
@@ -55,7 +55,7 @@ public class CodeNameProjection {
         } catch (InterruptedException ex) {
         Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        driver driver = new driver(null);
+        driver driver = new driver();
         driver.run();
         }
         //supervisor.objectManager.addObject(new gameObject(new Point2D(10, 0), 1, 1, renderType.box, supervisor, supervisor.objectManager.getUsableID()));

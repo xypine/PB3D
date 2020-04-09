@@ -57,7 +57,7 @@ public class Cube {
     private Instant beginTime;
     private Duration deltaTime;
     public Cube() {
-        Driver = new driver(null);
+        Driver = new driver();
         Thread t = new Thread(){
             @Override
             public void run() {

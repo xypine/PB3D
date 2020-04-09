@@ -30,6 +30,8 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
 import JFUtils.quickTools;
 import UI.drawable;
+import fps.FPSTest;
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -41,6 +43,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.TexturePaint;
 import java.awt.Transparency;
 import java.awt.geom.Rectangle2D;
@@ -195,6 +198,12 @@ public class renderer extends JPanel{
             resW = (int) (w2 * resMultiplier);
             resH = (int) (h2 * resMultiplier);
             System.out.println("RES_W:" + resW + "\n" + "RES_H:" + resH);
+            
+                try {
+                    new Robot().mouseMove(w/2, h/2);
+                } catch (AWTException ex) {
+                    Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
         }
         lw = w;
         lh = h;
