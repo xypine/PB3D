@@ -60,6 +60,8 @@ public class FPSTest {
     private Duration deltaTime;
     int boltCooldown = 0;
     float jetleft = 70;
+    boolean menu = false;
+    boolean pause = false;
     public FPSTest() {
         Driver = new driver();
         Thread t = new Thread(){
@@ -182,10 +184,14 @@ public class FPSTest {
         
         double shift_m = 1;
         
-        boolean pause = false;
         while (true) {
             beginTime = Instant.now();
             //jump = jump * .99999;
+            
+            if(!Driver.inp.parentInFocus && !menu){
+                map.showMenu();
+            }
+            
             if(jump > 0){
                 jump = jump - 0.00024F;
             }else{

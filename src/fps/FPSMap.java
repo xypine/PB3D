@@ -38,7 +38,15 @@ public class FPSMap implements UI.drawable{
     public FPSMap(FPSTest parent) {
         this.parent = parent;
     }
-    
+    private boolean menu = false;
+    public void showMenu(){
+        showMenu(true);
+    }
+    public void showMenu(boolean on){
+        menu = on;
+        parent.menu = menu;
+        parent.pause = menu;
+    }
     @Override
     public void paint(Graphics g, int w, int h, driver logic) {
         int scale = 7;
@@ -78,6 +86,18 @@ public class FPSMap implements UI.drawable{
         //int ht = hf - hf / 10;
         //g.fillRect(wf-wt, hf-ht, wt, ht);
         g.fillRect(wf, hf, box_w/12, box_h/12);
+        if(parent.Driver.inp.parentInFocus){
+            showMenu(false);
+        }
+        if(menu){
+            paintMenu(g,w,h);
+        }
+    }
+    void paintMenu(Graphics g, int w, int h){
+        g.setColor(new Color(0F, 0F, 0F, .6F));
+        g.fillRect(0, 0, w, h);
+        g.setColor(new Color(1F, 1F, 1F, .9F));
+        g.fillRect(w / 3, h/3, (w/3)*1, (h/3)*1);
     }
 
 }
