@@ -34,9 +34,7 @@ import codenameprojection.driver;
 import codenameprojection.model;
 import codenameprojection.modelParser;
 import codenameprojection.model_frame;
-import java.awt.AWTException;
 import java.awt.FlowLayout;
-import java.awt.Robot;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -287,8 +285,8 @@ public class FPSTest {
                 jetleft = jetleft + 0.1F;
             }
             ////System.out.println(jetleft);
-            //f
-            if(Driver.inp.keys[70] && boltCooldown < -4){
+            //f //70
+            if(Driver.inp.mouseDown && boltCooldown < -4){
                 LinkedList<model_frame> frames2 = new LinkedList<>();
                 LinkedList<Point3D> points2 = new LinkedList<>();
                 LinkedList<Integer[]> lines2 = new LinkedList<>();

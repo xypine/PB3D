@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 3.3;
+    public static double minUtilsVer = 3.32;
 
     /**
      * @param args the command line arguments
