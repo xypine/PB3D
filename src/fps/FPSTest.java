@@ -192,30 +192,32 @@ public class FPSTest {
                 map.showMenu();
             }
             
-            if(jump > 0){
-                jump = jump - 0.00024F;
-            }else{
-                jump = 0;
+            if (!pause) {
+                if (jump > 0) {
+                    jump = jump - 0.00024F;
+                } else {
+                    jump = 0;
+                }
+                jump = jump + jump_vel;
+                jump_vel = jump_vel * 0;
+                vel = new Point3D(0, 0, 0);
+                Point3D rotVec = Driver.matmul(Driver.RX((float) Driver.angleX), new Point3F(thrust2, 0, -thrust)).toDVector3();
+                rotVec = Driver.matmul(Driver.RY((float) Driver.angleY), rotVec.toFVector3()).toDVector3();
+                rotVec.y = 0;
+                Point3D screenPos = Driver.getScreenPosition_org().clone();
+                screenPos.y = 0;
+                vel = Point3D.add(screenPos, rotVec);
+                vel.y = -1.8F - jump + Math.sin(Math.abs(vel.x) - Math.abs(vel.z)) * 0.12F;
+                Driver.screenPosition_org_next = vel.clone();
+                Driver.screenPosition_org_next.identifier = -2;
+                model cubeM = (model) Driver.models.values().toArray()[cubeHandle];
+                cubeM.hideLines = true;
+                cubeM.hidePoints = true;
+                thrust = thrust * 0.99F;
+                thrust2 = thrust2 * 0.99F;
             }
-            jump = jump + jump_vel;
-            jump_vel = jump_vel * 0;
-            vel = new Point3D(0, 0, 0);
-            Point3D rotVec = Driver.matmul(Driver.RX((float)Driver.angleX), new Point3F(thrust2, 0, -thrust)).toDVector3();
-            rotVec = Driver.matmul(Driver.RY((float)Driver.angleY), rotVec.toFVector3()).toDVector3();
-            rotVec.y = 0;
-            Point3D screenPos = Driver.getScreenPosition_org().clone();
-            screenPos.y = 0;
-            vel = Point3D.add(screenPos, rotVec);
-            vel.y = -1.8F - jump + Math.sin(Math.abs(vel.x) - Math.abs(vel.z)) * 0.12F;
-            Driver.screenPosition_org_next = vel.clone();
-            Driver.screenPosition_org_next.identifier = -2;
-            model cubeM = (model) Driver.models.values().toArray()[cubeHandle];
-            cubeM.hideLines = true;
-            cubeM.hidePoints = true;
-            thrust = thrust * 0.99F;
-            thrust2 = thrust2 * 0.99F;
             
-            if (!Driver.inp.isControlDown) {
+            if (!Driver.inp.isControlDown && !pause) {
                 System.setProperty("apple.awt.fullscreenhidecursor","true");
                 try {                                               //(deltaTime.getNano() * .0000000003)
                     Driver.angleYM = Driver.angleYM + Driver.inp.cX * 0.0005;
@@ -232,7 +234,7 @@ public class FPSTest {
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
             Driver.an_pause = pause;
-            if (!pause) {
+            if (!Driver.an_pause) {
                 for (Integer bolt : boltHandles) {
                     try {
                         model cursor = Driver.models.get(bolt);
@@ -266,78 +268,77 @@ public class FPSTest {
                     }
                 }
             }
-            for(Integer bolt : torem){
-                Driver.models.remove(bolt);
-                boltHandles.remove(bolt);
-            }
-            
-            //meta
-            if(Driver.inp.isShiftDown){
-                shift_m = 2;
-            }
-            else{
-                shift_m = 1;
-            }
-            
-            //space
-            if(Driver.inp.keys[32] && jetleft > 0){
-                jump_vel = jump_vel + 0.0007F*1.5;
-                jetleft = jetleft - .5F;
-            }
-            else if(Driver.inp.keys[32]){
-                jetleft = jetleft - .1F;
-            }
-            if(jetleft < 8000){
-                jetleft = jetleft + 0.1F;
-            }
-            ////System.out.println(jetleft);
-            //f //70
-            if(Driver.inp.mouseDown && boltCooldown < -4){
-                LinkedList<model_frame> frames2 = new LinkedList<>();
-                LinkedList<Point3D> points2 = new LinkedList<>();
-                LinkedList<Integer[]> lines2 = new LinkedList<>();
-                LinkedList<Point2D[]> faces2 = new LinkedList<>();
-                LinkedList<vertexGroup> color2 = new LinkedList<>();
-                Point3D from = Driver.getScreenPosition_org().clone();
-                from.x = -from.x;
-                from.y = -from.y - 1;
-                from.z = from.z - .1;
-                Point3D from2 = Driver.matmul(Driver.RX((float)-Driver.angleX), new Point3F(0, 0, 6)).toDVector3();
-                from2 = Driver.matmul(Driver.RY((float)-Driver.angleY), from2.toFVector3()).toDVector3();
-                from2 = Point3D.add(from2, from);
-                
-                points2.add(from);
-                points2.add(from2);
-                lines2.add(new Integer[]{from.identifier, from2.identifier});
-                frames2.add(new model_frame(points2 , lines2, faces2, color2));
-                model cursor = new model(frames2, true);
-                int cursorHandle = cursor.hashCode();
-                Driver.models.put(cursorHandle, cursor);
-                boltHandles.add(cursorHandle);
-                boltCooldown = boltCooldown + 250;
-            }
-            else if(boltCooldown > -5){
-                boltCooldown = boltCooldown - 1;
-            }
-            //w
-            if(Driver.inp.keys[87]){
-            //    cubeM.setX(cubeM.getX() + 100);
-            //cubeM.rotation_X++;
-                //System.out.println("W!");
-                thrust = (float) (thrust + 0.0025F * shift_m);
-            }
-            //s
-            if(Driver.inp.keys[83]){
-                thrust = (float) (thrust - 0.0025F * shift_m);
-            }
-            //a
-            if(Driver.inp.keys[65]){
-                thrust2 = (float) (thrust2 + 0.0025F * shift_m);
-                
-            }
-            //d
-            if(Driver.inp.keys[68]){
-                thrust2 = (float) (thrust2 - 0.0025F * shift_m);
+            if (!pause) {
+                for (Integer bolt : torem) {
+                    Driver.models.remove(bolt);
+                    boltHandles.remove(bolt);
+                }
+
+                //meta
+                if (Driver.inp.isShiftDown) {
+                    shift_m = 2;
+                } else {
+                    shift_m = 1;
+                }
+
+                //space
+                if (Driver.inp.keys[32] && jetleft > 0) {
+                    jump_vel = jump_vel + 0.0007F * 1.5;
+                    jetleft = jetleft - .5F;
+                } else if (Driver.inp.keys[32]) {
+                    jetleft = jetleft - .1F;
+                }
+                if (jetleft < 8000) {
+                    jetleft = jetleft + 0.1F;
+                }
+                ////System.out.println(jetleft);
+                //f //70
+                if (Driver.inp.mouseDown && boltCooldown < -4) {
+                    LinkedList<model_frame> frames2 = new LinkedList<>();
+                    LinkedList<Point3D> points2 = new LinkedList<>();
+                    LinkedList<Integer[]> lines2 = new LinkedList<>();
+                    LinkedList<Point2D[]> faces2 = new LinkedList<>();
+                    LinkedList<vertexGroup> color2 = new LinkedList<>();
+                    Point3D from = Driver.getScreenPosition_org().clone();
+                    from.x = -from.x;
+                    from.y = -from.y - 1;
+                    from.z = from.z - .1;
+                    Point3D from2 = Driver.matmul(Driver.RX((float) -Driver.angleX), new Point3F(0, 0, 6)).toDVector3();
+                    from2 = Driver.matmul(Driver.RY((float) -Driver.angleY), from2.toFVector3()).toDVector3();
+                    from2 = Point3D.add(from2, from);
+                    
+                    points2.add(from);
+                    points2.add(from2);
+                    lines2.add(new Integer[]{from.identifier, from2.identifier});
+                    frames2.add(new model_frame(points2, lines2, faces2, color2));
+                    model cursor = new model(frames2, true);
+                    int cursorHandle = cursor.hashCode();
+                    Driver.models.put(cursorHandle, cursor);
+                    boltHandles.add(cursorHandle);
+                    boltCooldown = boltCooldown + 250;
+                } else if (boltCooldown > -5) {
+                    boltCooldown = boltCooldown - 1;
+                }
+                //w
+                if (Driver.inp.keys[87]) {
+                    //    cubeM.setX(cubeM.getX() + 100);
+                    //cubeM.rotation_X++;
+                    //System.out.println("W!");
+                    thrust = (float) (thrust + 0.0025F * shift_m);
+                }
+                //s
+                if (Driver.inp.keys[83]) {
+                    thrust = (float) (thrust - 0.0025F * shift_m);
+                }
+                //a
+                if (Driver.inp.keys[65]) {
+                    thrust2 = (float) (thrust2 + 0.0025F * shift_m);
+                    
+                }
+                //d
+                if (Driver.inp.keys[68]) {
+                    thrust2 = (float) (thrust2 - 0.0025F * shift_m);
+                }
             }
             //q
             if(Driver.inp.keys[81]){
@@ -352,7 +353,7 @@ public class FPSTest {
             }
             //p
             if(Driver.inp.keys[80]){
-                pause = !pause;
+                Driver.an_pause = !Driver.an_pause;
                 Driver.inp.keys[80] = false;
             }
             //o
