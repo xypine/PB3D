@@ -73,7 +73,7 @@ public class FPSTest {
             }
             
         };
-        modelParser.filename = "assets/models/cube/cube";
+        modelParser.filename = "assets/models/misc/gordon";
         modelParser.size = 100;
         Driver.startWithNoModel = false;
         
