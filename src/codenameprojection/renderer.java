@@ -28,6 +28,7 @@ import JFUtils.Range;
 import JFUtils.dirs;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point2Int;
+import JFUtils.point.Point3D;
 import JFUtils.quickTools;
 import UI.drawable;
 import fps.FPSTest;
@@ -252,6 +253,8 @@ public class renderer extends JPanel{
             LinkedList<Integer[][]> linesToDraw = new LinkedList<>();
             LinkedList<Color> lineColorsToDraw = new LinkedList<>();
             
+            LinkedList<Point3D> pointsToDraw = new LinkedList<>();
+            
             if (drawLines) {
             for (int i : new Range(lines.size())) {
                 try {
@@ -345,9 +348,11 @@ public class renderer extends JPanel{
                             int xOff = cS / 2;
                             int yOff = cS / 2;
                             if (usePixelRendering) {
-                                gb.setColor(Color.green);
+                                Point3D d = new Point3D(pos.intX(), pos.intY(), cS);
+                                pointsToDraw.add(d);
+                                //gb.setColor(Color.green);
                                 //drawPoint(pos, Color.red);
-                                gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                                //gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                             } else {
                                 g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                             }
@@ -521,13 +526,22 @@ public class renderer extends JPanel{
                 gb.setColor(Color.BLACK);
                 gb.fillRect(0, 0, w, h);
                 for(int i : new Range(linesToDraw.size())){
-                    gb.setColor(lineColorsToDraw.get(i));
+                    if (shading) {
+                        gb.setColor(lineColorsToDraw.get(i));
+                    }
+                    else{
+                        gb.setColor(Color.red);
+                    }
                     Integer[][] coords = linesToDraw.get(i);
                     //int x1 = coords[0][0];
                     //int y1 = coords[0][1];
                     //int x2 = coords[1][0];
                     //int y2 = coords[1][1];
                     gb.drawLine(coords[0][0], coords[0][1], coords[1][0], coords[1][1]);
+                }
+                for(Point3D i : pointsToDraw){
+                    gb.setColor(Color.green);
+                    gb.drawRect((int)i.x, (int)i.y,(int) i.z,(int) i.z);
                 }
                 for(int i : new Range(facesToDraw.size())){
                     float wb = 0;

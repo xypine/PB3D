@@ -195,6 +195,20 @@ public class FPSTest {
                 map.showMenu();
             }
             
+            /*if(Driver.inp.mouseWheel == 1){
+            int last = Driver.inp.mouseWheel;
+            if(last == 2){
+            Driver.s.r.scale = Driver.s.r.scale * 2;
+            Driver.s.r.scale_restore = Driver.s.r.scale_restore / 2;
+            }
+            if(last == 0){
+            Driver.s.r.scale = Driver.s.r.scale / 2;
+            Driver.s.r.scale_restore = Driver.s.r.scale_restore * 2;
+            }
+            System.out.println(last);
+            Driver.inp.mouseWheel = 1;
+            }*/
+            
             if (!pause) {
                 if (jump > 0) {
                     jump = jump - 0.00024F;
@@ -366,6 +380,18 @@ public class FPSTest {
             //o
             if(Driver.inp.keys[79]){
                 //Driver.s.r.
+            }
+            //r
+            if(Driver.inp.keys[82]){
+                Driver.s.r.scale = Driver.s.r.scale / 2;
+                Driver.s.r.scale_restore = Driver.s.r.scale_restore * 2;
+                Driver.inp.keys[82] = false;
+            }
+            //t
+            if(Driver.inp.keys[84]){
+                Driver.s.r.scale = Driver.s.r.scale * 2;
+                Driver.s.r.scale_restore = Driver.s.r.scale_restore / 2;
+                Driver.inp.keys[84] = false;
             }
 //            last_sp = Driver.screenPosition_org.clone();
             

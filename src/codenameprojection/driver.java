@@ -235,7 +235,7 @@ public class driver{
         s.r.addKeyListener(inp);
         s.r.addMouseListener(inp);
         s.r.addMouseMotionListener(inp);
-        //s.r.addMouseWheelListener(inp);
+        s.r.addMouseWheelListener(inp);
         s.r.requestFocusInWindow();
         
     }
