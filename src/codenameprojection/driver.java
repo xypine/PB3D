@@ -508,6 +508,18 @@ public class driver{
             if(inp.keys[88] == true && !ingoredInputs.contains(88)){
                 //viewAngle.y -= factor*15;
             }
+            //o
+            if(inp.keys[79] == true && !ingoredInputs.contains(79)){
+                s.r.scale = s.r.scale / 1.25;
+                s.r.scale_restore = s.r.scale_restore * 1.25;
+                inp.keys[79] = false;
+            }
+            //p
+            if(inp.keys[80] == true && !ingoredInputs.contains(80)){
+                s.r.scale = s.r.scale * 1.25;
+                s.r.scale_restore = s.r.scale_restore / 1.25;
+                inp.keys[80] = false;
+            }
             
             //n
             if(inp.keys[78] == true && !ingoredInputs.contains(78)){

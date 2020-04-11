@@ -289,7 +289,7 @@ public class FPSTest {
                     }
                 }
             }
-            if (!pause) {
+            if (!menu) {
                 for (Integer bolt : torem) {
                     Driver.models.remove(bolt);
                     boltHandles.remove(bolt);
@@ -383,14 +383,14 @@ public class FPSTest {
             }
             //r
             if(Driver.inp.keys[82]){
-                Driver.s.r.scale = Driver.s.r.scale / 2;
-                Driver.s.r.scale_restore = Driver.s.r.scale_restore * 2;
+                Driver.s.r.scale = Driver.s.r.scale / 1.25;
+                Driver.s.r.scale_restore = Driver.s.r.scale_restore * 1.25;
                 Driver.inp.keys[82] = false;
             }
             //t
             if(Driver.inp.keys[84]){
-                Driver.s.r.scale = Driver.s.r.scale * 2;
-                Driver.s.r.scale_restore = Driver.s.r.scale_restore / 2;
+                Driver.s.r.scale = Driver.s.r.scale * 1.25;
+                Driver.s.r.scale_restore = Driver.s.r.scale_restore / 1.25;
                 Driver.inp.keys[84] = false;
             }
 //            last_sp = Driver.screenPosition_org.clone();
