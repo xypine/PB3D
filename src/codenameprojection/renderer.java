@@ -178,8 +178,8 @@ public class renderer extends JPanel{
     int lw = -1;
     int lh = -1;
     
-    public double scale = .5;
-    public double scale_restore = 2;
+    public double scale = 1;
+    public double scale_restore = 1;
     
     
     @Override
