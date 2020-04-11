@@ -35,6 +35,7 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -176,6 +177,10 @@ public class renderer extends JPanel{
     int lw = -1;
     int lh = -1;
     
+    public double scale = .5;
+    public double scale_restore = 2;
+    
+    
     @Override
     public void paintComponent(Graphics gd) {
         Instant beginTime = Instant.now();
@@ -185,11 +190,14 @@ public class renderer extends JPanel{
         Graphics2D g = (Graphics2D) gd;
         GraphicsDevice graphicsDeviceU = GraphicsEnvironment.getLocalGraphicsEnvironment()
          .getDefaultScreenDevice();
-        if((resW == -1 || resH == -1)&&false){
+        if((resW == -1 || resH == -1)){
             int w2 = graphicsDeviceU.getDisplayMode().getWidth();
             int h2 = graphicsDeviceU.getDisplayMode().getWidth();
             resW = w2;
             resH = h2;
+            DisplayMode displayModeV = graphicsDeviceU.getDisplayMode();
+            displayModeV = new DisplayMode(w/8, h/8, 3, 60);
+            //graphicsDeviceU.setDisplayMode(displayModeV);
             System.out.println("RES_W:" + resW + "\n" + "RES_H:" + resH);
         }
         else if((w != lw || h == lh)&&false){
@@ -225,11 +233,11 @@ public class renderer extends JPanel{
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             //gb.setColor(Color.BLACK);
             //gb.fillRect(0, 0, w, h);
+            gb.scale(scale, scale);
         }
         
         errors = 0;
         repaint();
-        
         g.setColor(Color.black);
         g.fillRect(0, 0, w, h);
         
@@ -337,6 +345,7 @@ public class renderer extends JPanel{
                             int xOff = cS / 2;
                             int yOff = cS / 2;
                             if (usePixelRendering) {
+                                gb.setColor(Color.green);
                                 //drawPoint(pos, Color.red);
                                 gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                             } else {
@@ -468,8 +477,8 @@ public class renderer extends JPanel{
                                 //g.setClip(0, 0, w, h);
                                 int middle = 255 / 2;
                                 Color c2 = c;
-                                c2 = Color.gray;
-                                int res = 1;
+                                //c2 = Color.gray;
+                                int res = 2;
                                 int rc = (int)(c2.getRed() / res) * res;
                                 int gc = (int)(c2.getGreen() / res) * res;
                                 int bc = (int)(c2.getBlue() / res) * res;
@@ -485,7 +494,7 @@ public class renderer extends JPanel{
                                 if(bc < 0){
                                     bc = 0;
                                 }
-                                c2 = new Color(rc, gc, bc, middle);
+                                c2 = new Color(rc, gc, bc, 255);
                                 g.setColor(c2);
                                 g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                             }
@@ -531,15 +540,17 @@ public class renderer extends JPanel{
                         hb = hb + y;
                     }
                     hb = hb / facesToDraw.get(i).ypoints.length;
-                    TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
-                    gb.setPaint(tex);
-                    gb.fillPolygon(facesToDraw.get(i));
+                    //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
+                    //gb.setPaint(tex);
+                    //gb.fillPolygon(facesToDraw.get(i));
                     Color c = faceColorsToDraw.get(i);
-                    c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 133);
+                    c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
                     gb.setColor(c);
                     gb.fillPolygon(facesToDraw.get(i));
                 }
-                g.drawImage(output, 0, 0, this);
+                int w2 = (int) (w*scale_restore);
+                int h2 = (int) (h*scale_restore);
+                g.drawImage(output, 0, 0, w2, h2, this);
             }
         }
             

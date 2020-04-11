@@ -52,12 +52,15 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import kuusisto.tinysound.TinySound;
 
 /**
  *
  * @author Jonnelafin
  */
 public class driver{
+    
+    public boolean useSound = true;
     
     private boolean usePB = true;
     
@@ -274,6 +277,7 @@ public class driver{
     long a, b, c, d;
     public void run(){
         CodeNameProjection.validate();
+        TinySound.init();
         points = new LinkedList<>();
         lines = new LinkedList<>();
         try {

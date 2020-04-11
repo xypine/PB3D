@@ -110,7 +110,7 @@ public class FPSTest {
         Driver.an_pause = false;
         //Driver.zero();
         
-        Driver.s.r.usePixelRendering = false;
+        Driver.s.r.usePixelRendering = true;
         Driver.s.r.drawFaces = true;
         Driver.s.r.drawPoints = true;
         Driver.s.r.drawLines = true;
@@ -159,7 +159,7 @@ public class FPSTest {
         }
         
         
-        Driver.shadingMultiplier = 0.5F;
+        //Driver.shadingMultiplier = 1F;
         LinkedList<Integer> boltHandles = new LinkedList<>();
         float speed = 0.4F;
 //        Driver.screenPosition_org = new Point3D(0, 0, 0);
@@ -188,7 +188,10 @@ public class FPSTest {
             beginTime = Instant.now();
             //jump = jump * .99999;
             
-            if(!Driver.inp.parentInFocus && !menu){
+            if((!Driver.inp.parentInFocus || Driver.inp.isEscDown) && !menu){
+                if(Driver.inp.isEscDown){
+                    Driver.inp.isEscDown = false;
+                }
                 map.showMenu();
             }
             
@@ -207,7 +210,11 @@ public class FPSTest {
                 Point3D screenPos = Driver.getScreenPosition_org().clone();
                 screenPos.y = 0;
                 vel = Point3D.add(screenPos, rotVec);
-                vel.y = -1.8F - jump + Math.sin(Math.abs(vel.x) - Math.abs(vel.z)) * 0.12F;
+                double sin = Math.sin(Math.abs(vel.x/2) + Math.abs(vel.z/2));
+                if (jump > 0) {
+                    sin = 0;
+                }
+                vel.y = -1.8F - jump + sin * 0.12F;
                 Driver.screenPosition_org_next = vel.clone();
                 Driver.screenPosition_org_next.identifier = -2;
                 model cubeM = (model) Driver.models.values().toArray()[cubeHandle];

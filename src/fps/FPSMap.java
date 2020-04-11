@@ -27,7 +27,12 @@ package fps;
 import JFUtils.point.Point3D;
 import codenameprojection.driver;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import javax.swing.JLabel;
 
 /**
  *
@@ -86,7 +91,7 @@ public class FPSMap implements UI.drawable{
         //int ht = hf - hf / 10;
         //g.fillRect(wf-wt, hf-ht, wt, ht);
         g.fillRect(wf, hf, box_w/12, box_h/12);
-        if(parent.Driver.inp.parentInFocus){
+        if(parent.Driver.inp.parentInFocus && parent.Driver.inp.mouseDown){
             showMenu(false);
         }
         if(menu){
@@ -98,6 +103,26 @@ public class FPSMap implements UI.drawable{
         g.fillRect(0, 0, w, h);
         g.setColor(new Color(1F, 1F, 1F, .9F));
         g.fillRect(w / 3, h/3, (w/3)*1, (h/3)*1);
+        g.setColor(Color.black);
+        Font FONT = g.getFont();
+        //g.drawString("Back to the game", w/2, h/2);
+        centerString(g, new Rectangle(w, h), "Continue The Game!", FONT);
     }
+    
+    
+    public void centerString(Graphics g, Rectangle r, String s, Font font) {
+        FontRenderContext frc = new FontRenderContext(null, true, true);
 
+        Rectangle2D r2D = font.getStringBounds(s, frc);
+        int rWidth = (int) Math.round(r2D.getWidth());
+        int rHeight = (int) Math.round(r2D.getHeight());
+        int rX = (int) Math.round(r2D.getX());
+        int rY = (int) Math.round(r2D.getY());
+
+        int a = (r.width / 2) - (rWidth / 2) - rX;
+        int b = (r.height / 2) - (rHeight / 2) - rY;
+
+        g.setFont(font);
+        g.drawString(s, r.x + a, r.y + b);
+    }
 }
