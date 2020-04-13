@@ -28,6 +28,7 @@ import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
+import codenameprojection.Flags;
 import codenameprojection.Utils;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
@@ -35,6 +36,7 @@ import codenameprojection.model;
 import codenameprojection.modelParser;
 import codenameprojection.model_frame;
 import java.awt.FlowLayout;
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -44,6 +46,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JSlider;
+import kuusisto.tinysound.Sound;
+import kuusisto.tinysound.TinySound;
 
 /**
  *
@@ -314,7 +318,8 @@ public class FPSTest {
                 }
                 ////System.out.println(jetleft);
                 //f //70
-                if (Driver.inp.mouseDown && boltCooldown < -4) {
+                System.out.println(boltCooldown);
+                if (Driver.inp.mouseDown && boltCooldown < -400) {
                     LinkedList<model_frame> frames2 = new LinkedList<>();
                     LinkedList<Point3D> points2 = new LinkedList<>();
                     LinkedList<Integer[]> lines2 = new LinkedList<>();
@@ -335,9 +340,16 @@ public class FPSTest {
                     model cursor = new model(frames2, true);
                     int cursorHandle = cursor.hashCode();
                     Driver.models.put(cursorHandle, cursor);
+                    //emit sound
+                    if(Flags.soundEnabled){
+                        //System.out.println(new JFUtils.dirs().music + "pew.mp3");
+                        Sound pew = TinySound.loadSound(new File(new JFUtils.dirs().music + "pew.wav"));
+                        pew.play(.5);
+                    }
+                    
                     boltHandles.add(cursorHandle);
-                    boltCooldown = boltCooldown + 250;
-                } else if (boltCooldown > -5) {
+                    boltCooldown = boltCooldown + 1500;
+                } else if (boltCooldown > -500) {
                     boltCooldown = boltCooldown - 1;
                 }
                 //w

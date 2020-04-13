@@ -277,7 +277,11 @@ public class driver{
     long a, b, c, d;
     public void run(){
         CodeNameProjection.validate();
-        TinySound.init();
+        try {
+            TinySound.init();
+        } catch (Exception e) {
+            Flags.soundEnabled = false;
+        }
         points = new LinkedList<>();
         lines = new LinkedList<>();
         try {
