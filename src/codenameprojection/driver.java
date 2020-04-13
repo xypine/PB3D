@@ -275,6 +275,7 @@ public class driver{
     public double angleZ = 0;
     public double angleZM = 0;
     long a, b, c, d;
+    public int defaultModelKey = 0;
     public void run(){
         CodeNameProjection.validate();
         try {
@@ -295,10 +296,12 @@ public class driver{
                 LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
                 LinkedList<vertexGroup> color2 = new modelParser().parseColor(points2);
                 model m = new model(new LinkedList<model_frame>(), false);
+                m.name = modelParser.filename;
                 for (LinkedList<Point3D> list : frames2) {
                     m.frames.add(new model_frame(list, lines2, faces2, color2));
                 }
-                models.put(m.hashCode(), m);
+                defaultModelKey = m.hashCode();
+                models.put(defaultModelKey, m);
             }
             
         } catch (Exception ex) {

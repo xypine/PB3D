@@ -91,8 +91,9 @@ public class FPSMap implements UI.drawable{
         //int ht = hf - hf / 10;
         //g.fillRect(wf-wt, hf-ht, wt, ht);
         g.fillRect(wf, hf, box_w/12, box_h/12);
-        if(parent.Driver.inp.parentInFocus && parent.Driver.inp.mouseDown){
+        if(parent.Driver.inp.parentInFocus && parent.Driver.inp.mouseDown && menu){
             showMenu(false);
+            parent.Driver.inp.mouseDown = false;
         }
         if(menu){
             paintMenu(g,w,h);

@@ -187,8 +187,14 @@ public class FPSTest {
         double jump_vel = 0;
         
         double shift_m = 1;
-        
+        model first_object = (model) Driver.models.get(Driver.defaultModelKey);
+        System.out.println("Default model name: " + first_object.name);
+        Sound pew = null;
+        if (Flags.soundEnabled) {
+            pew = TinySound.loadSound(new File(new JFUtils.dirs().music + "pew.wav"));
+        }
         while (true) {
+            model gordon = (model) Driver.models.get(Driver.defaultModelKey);
             beginTime = Instant.now();
             //jump = jump * .99999;
             
@@ -214,6 +220,7 @@ public class FPSTest {
             }*/
             
             if (!pause) {
+                gordon.rotation_Y = gordon.rotation_Y + 0.00001;
                 if (jump > 0) {
                     jump = jump - 0.00024F;
                 } else {
@@ -318,7 +325,7 @@ public class FPSTest {
                 }
                 ////System.out.println(jetleft);
                 //f //70
-                System.out.println(boltCooldown);
+                //System.out.println(boltCooldown);
                 if (Driver.inp.mouseDown && boltCooldown < -400) {
                     LinkedList<model_frame> frames2 = new LinkedList<>();
                     LinkedList<Point3D> points2 = new LinkedList<>();
@@ -343,12 +350,11 @@ public class FPSTest {
                     //emit sound
                     if(Flags.soundEnabled){
                         //System.out.println(new JFUtils.dirs().music + "pew.mp3");
-                        Sound pew = TinySound.loadSound(new File(new JFUtils.dirs().music + "pew.wav"));
                         pew.play(.5);
                     }
                     
                     boltHandles.add(cursorHandle);
-                    boltCooldown = boltCooldown + 1500;
+                    boltCooldown = boltCooldown + 3200;
                 } else if (boltCooldown > -500) {
                     boltCooldown = boltCooldown - 1;
                 }
