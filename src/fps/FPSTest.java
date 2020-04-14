@@ -223,8 +223,11 @@ public class FPSTest {
                 gordon.rotation_Y = gordon.rotation_Y + 0.00001;
                 if (jump > 0) {
                     jump = jump - 0.00024F;
-                } else {
-                    jump = 0;
+                } else if(Driver.getScreenPosition_org().x < 30 && Driver.getScreenPosition_org().z < 30 && Driver.getScreenPosition_org().x > -30 && Driver.getScreenPosition_org().z > -30){
+                    jump = jump *0.9999;
+                }
+                else{
+                    jump = jump - 0.00024F*2*deltaTime.getNano()*0.0001;
                 }
                 jump = jump + jump_vel;
                 jump_vel = jump_vel * 0;
@@ -350,7 +353,7 @@ public class FPSTest {
                     //emit sound
                     if(Flags.soundEnabled){
                         //System.out.println(new JFUtils.dirs().music + "pew.mp3");
-                        pew.play(.5);
+                        pew.play(.2);
                     }
                     
                     boltHandles.add(cursorHandle);
