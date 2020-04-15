@@ -235,12 +235,14 @@ public class renderer extends JPanel{
             //gb.setColor(Color.BLACK);
             //gb.fillRect(0, 0, w, h);
             gb.scale(scale, scale);
+            gb.setColor(Color.BLACK);
+            gb.fillRect(0, 0, w*2, h*2);
         }
         
         errors = 0;
         repaint();
         g.setColor(Color.black);
-        g.fillRect(0, 0, w, h);
+        g.fillRect(0, 0, w*2, h*2);
         
             g.setColor(Color.red);
             HashMap<Integer, Point2D> a = getIDMap();
@@ -412,7 +414,7 @@ public class renderer extends JPanel{
                             if (!drawErrors) {
                                 draw = false;
                             }
-                            throw e;
+                            //throw e;
                         }
                         g.setColor(c);
 

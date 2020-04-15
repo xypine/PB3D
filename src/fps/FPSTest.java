@@ -37,6 +37,7 @@ import codenameprojection.modelParser;
 import codenameprojection.model_frame;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -114,6 +115,10 @@ public class FPSTest {
         Driver.an_pause = false;
         //Driver.zero();
         
+        double scale = 2;
+        Driver.s.r.scale = 1 / scale;
+        Driver.s.r.scale_restore = 1 * scale;
+        
         Driver.s.r.usePixelRendering = true;
         Driver.s.r.drawFaces = true;
         Driver.s.r.drawPoints = true;
@@ -162,8 +167,8 @@ public class FPSTest {
             Driver.ingoredInputs.removeAll(Arrays.asList(defaultKeys));
         }
         
-        
-        //Driver.shadingMultiplier = 1F;
+        Driver.shadingMin = 25;
+        Driver.shadingMultiplier = 1;
         LinkedList<Integer> boltHandles = new LinkedList<>();
         float speed = 0.4F;
 //        Driver.screenPosition_org = new Point3D(0, 0, 0);
@@ -175,6 +180,9 @@ public class FPSTest {
         float shipRotY = 0;
         float shipRotZ = 0;
         
+        model singlePoint = loadPoint();
+        int singlePointHandle = singlePoint.hashCode();
+        Driver.models.put(singlePointHandle, singlePoint);
         
         
         float thrust = 0F;
@@ -188,6 +196,8 @@ public class FPSTest {
         
         double shift_m = 1;
         model first_object = (model) Driver.models.get(Driver.defaultModelKey);
+        first_object.hideLines = true;
+        first_object.setY(-.5);
         System.out.println("Default model name: " + first_object.name);
         Sound pew = null;
         if (Flags.soundEnabled) {
@@ -197,8 +207,8 @@ public class FPSTest {
             model gordon = (model) Driver.models.get(Driver.defaultModelKey);
             beginTime = Instant.now();
             //jump = jump * .99999;
-            
-            if((!Driver.inp.parentInFocus || Driver.inp.isEscDown) && !menu){
+                //!Driver.inp.parentInFocus || 
+            if((Driver.inp.isEscDown) && !menu){
                 if(Driver.inp.isEscDown){
                     Driver.inp.isEscDown = false;
                 }
@@ -282,7 +292,7 @@ public class FPSTest {
                         Point3D newPo = Point3D.add(one, Point3D.subtract(one, two));
                         Point3D newPt = Point3D.add(two, Point3D.subtract(one, two));
                         Point3D velBolt = Point3D.subtract(one, two);
-                        velBolt = Point3D.multiply(velBolt, new Point3D(.02, .02, .02));
+                        velBolt = Point3D.multiply(velBolt, new Point3D(.007, .007, .007));
                         cursor.setX(cursor.getX() + velBolt.x);
                         cursor.setY(cursor.getY() + velBolt.y);
                         cursor.setZ(cursor.getZ() + velBolt.z);
@@ -357,7 +367,7 @@ public class FPSTest {
                     }
                     
                     boltHandles.add(cursorHandle);
-                    boltCooldown = boltCooldown + 3200;
+                    boltCooldown = boltCooldown + 4500;
                 } else if (boltCooldown > -500) {
                     boltCooldown = boltCooldown - 1;
                 }
@@ -492,6 +502,23 @@ public class FPSTest {
     int rx2 = 15*2;
     int ry2 = rx2;
     int rz2 = 1;
+    
+    model loadPoint(){
+        model out = null;
+        try {
+            LinkedList<model_frame> frames = new LinkedList<>();
+            LinkedList<Point3D> points = new modelParser("assets/models/single").parse().getFirst();
+            LinkedList<Integer[]> parseLines = new modelParser("assets/models/single").parseLines(points);
+            LinkedList<Point2D[]> parseFaces = new modelParser("assets/models/single").parseFaces(points);
+            LinkedList<vertexGroup> color = new LinkedList<>();
+            frames.add(new model_frame(points , parseLines, parseFaces, color));
+            out = new model(frames, true);
+        } catch (IOException ex) {
+            Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return out;
+    }
+    
     LinkedList<model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();

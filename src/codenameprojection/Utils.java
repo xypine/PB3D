@@ -67,11 +67,11 @@ public class Utils {
                 //System.out.println(e);
                 z = last_z;
                 //System.out.println(z);
-                throw e;
+                //throw e;
             }
             catch (Exception e) {
                 
-                throw e;
+                //throw e;
             }
             out.add(new face(index, z, i));
             index++;

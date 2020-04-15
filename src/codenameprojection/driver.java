@@ -276,6 +276,10 @@ public class driver{
     public double angleZM = 0;
     long a, b, c, d;
     public int defaultModelKey = 0;
+    
+    public int shadingMax = 255;
+    public int shadingMin = 0;
+    
     public void run(){
         CodeNameProjection.validate();
         try {
@@ -341,6 +345,9 @@ public class driver{
             //frame = 10;
             beginTime = Instant.now();
             a = System.currentTimeMillis();
+            
+            //Validity checks
+            
             
             if(screenPosition_org_next.identifier != -1){
                 int oldID = screenPosition_org.identifier;
@@ -778,6 +785,7 @@ public class driver{
                 if(!Objects.isNull(point)){
                     boolean change = true;
                   //float distP = (255 - dist.get(point.identifier) * 7);
+                  dist2 = dist2 * shadingMultiplier;
                   float distP = (255 - dist2 * 25);
                     if(distP == 0.0F){
                         //System.out.println("F2");
@@ -789,18 +797,22 @@ public class driver{
                     }
                     //face_dists.add((float)distP);
                     
-                    if(Objects.isNull(face_dists.get(index))){
+                    try {
+                        if (Objects.isNull(face_dists.get(index))) {
+                            change = false;
+                            //face_dists.add(index, lastZ);
+                            //System.out.println("List too small, inflating...");
+                        }
+                    } catch (Exception e) {
                         change = false;
-                        //face_dists.add(index, lastZ);
-                        //System.out.println("List too small, inflating...");
                     }
-                    distP = distP * shadingMultiplier;
+                    //distP = distP * shadingMultiplier;
                     //System.out.println(distP);
-                    if(distP > 255){
-                        distP = 255;
+                    if(distP > shadingMax){
+                        distP = shadingMax;
                     }
-                    if(distP < 0){
-                        distP = 0;
+                    if(distP < shadingMin){
+                        distP = shadingMin;
                     }
                     if(change){
                         face_dists.set(index, lastZ);
