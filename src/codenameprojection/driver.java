@@ -100,7 +100,7 @@ public class driver{
     
     public boolean an_pause = false;
     
-    public final Graph grapher = new Graph();
+    //public final Graph grapher = new Graph();
     
     public Point3D camera = new Point3D(0, 0, 0);
     
@@ -256,7 +256,7 @@ public class driver{
             //m.x = m.x + 0.03;
             //m.rotation_Y = m.rotation_Y + 0.00001;
             //System.out.println(m.rotation_Y);
-            points2.addAll(m.getFrame(f, true, true).points);
+            points2.addAll(m.getFrame(f, true, true, true).points);
             lines2.addAll(m.getFrame(f).lines);
             faces2.addAll(m.getFrame(f).faces);
             if(m.hidePoints){

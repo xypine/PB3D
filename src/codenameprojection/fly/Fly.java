@@ -189,6 +189,8 @@ public class Fly {
         Point3D vel = new Point3D(0, 0, 0);
         //float shipRotX = 0;
         
+        
+        
         boolean pause = false;
         while (true) {
             beginTime = Instant.now();
@@ -393,7 +395,7 @@ public class Fly {
             //    camIndex = 0;
             }
             //camIndex = 0;
-            Point3D camPoint = shipM.getFrame(0, true, true).points.get(camIndex).clone();
+            Point3D camPoint = shipM.getFrame(0, true, true, true).points.get(camIndex).clone();
                                             //-shipM.getFrame(0, false, true).points.get(0).clone().x;
 //            Driver.screenPosition_org_next.x = -camPoint.x;
 //            Driver.screenPosition.x = -camPoint.x;

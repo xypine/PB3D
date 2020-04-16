@@ -39,6 +39,9 @@ public class model {
     public double rotation_Y = 0;
     public double rotation_Z = 0;
     
+    public double scale = 1;
+    
+    
      double x = 0;
     public synchronized void setX(double x){
         this.x = x;
@@ -84,7 +87,7 @@ public class model {
         int token = latest + 1;
         LinkedList<model_frame> newCache = new LinkedList<>();
         for(int i : new Range(frames.size())){
-            newCache.add(getFrame(i, true, true, true));
+            newCache.add(getFrame(i, true, true, true, true));
         }
 //        if(token > latest){
           frames_cache = newCache;
@@ -93,11 +96,11 @@ public class model {
     }
     
     synchronized public model_frame getFrame(int index){
-        return getFrame(index, false, true, true);
+        return getFrame(index, false, true, true, true);
     }
     
-    synchronized public model_frame getFrame(int index, boolean rotate, boolean translate){
-        return getFrame(index, false, rotate, translate);
+    synchronized public model_frame getFrame(int index, boolean rotate, boolean translate, boolean scale){
+        return getFrame(index, false, rotate, translate, scale);
     }
     
     public String name = "unnamed_model";
@@ -117,7 +120,7 @@ public class model {
         return out;
     }
     
-    synchronized public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate){
+    synchronized public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate, boolean scale){
         try {
             index = index % (frames.size() - 1);
         } catch (Exception e) {
@@ -156,6 +159,9 @@ public class model {
                 //i = driver.matmul(driver.RZ((float) rotation_Z), i.toFVector3()).toDVector3();
                 i2 = driver.matmul(driver.RX((float) rotation_X), i2.toFVector3()).toDVector3();
             }
+            if(scale){
+                i2 = Point3D.multiply(i2, new Point3D(this.scale,this.scale, this.scale));
+            }
             Point3D global = new Point3D(x, y, z);
             if (translate) {
                 i2 = Point3D.add(global, i2);
@@ -176,6 +182,10 @@ public class model {
     @Override
     protected Object clone() {
         return new model(frames, single_frame);
+    }
+    
+    public Point3D getLoc(){
+        return new Point3D(x, y, z);
     }
     
 }

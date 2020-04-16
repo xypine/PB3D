@@ -203,6 +203,13 @@ public class FPSTest {
         if (Flags.soundEnabled) {
             pew = TinySound.loadSound(new File(new JFUtils.dirs().music + "pew.wav"));
         }
+        
+        Point3D volDir = new Point3D(0, 0, 0);
+        
+        double volRight = 0;
+        double volLeft = 0;
+        double pan = 0.5;
+        
         while (true) {
             model gordon = (model) Driver.models.get(Driver.defaultModelKey);
             beginTime = Instant.now();
@@ -230,6 +237,19 @@ public class FPSTest {
             }*/
             
             if (!pause) {
+                volDir = Point3D.subtract(gordon.getLoc(), Driver.screenPosition);
+                volRight =(100 - volDir.x);
+                volLeft  =(100 - volDir.z);
+                pan =  1 - (volLeft - volRight)/5F;
+                pan = pan + .33333333F;
+                if(pan < -1){
+                    pan = -1;
+                }
+                if(pan > 1){
+                    pan = 1;
+                }
+                //System.out.println(pan);
+                //System.out.println(volDir);
                 gordon.rotation_Y = gordon.rotation_Y + 0.00001;
                 if (jump > 0) {
                     jump = jump - 0.00024F;
@@ -263,7 +283,7 @@ public class FPSTest {
             }
             
             if (!Driver.inp.isControlDown && !pause) {
-                System.setProperty("apple.awt.fullscreenhidecursor","true");
+                //System.setProperty("apple.awt.fullscreenhidecursor","true");
                 try {                                               //(deltaTime.getNano() * .0000000003)
                     Driver.angleYM = Driver.angleYM + Driver.inp.cX * 0.0005;
                     //System.out.println(Driver.angleYM);
@@ -363,7 +383,7 @@ public class FPSTest {
                     //emit sound
                     if(Flags.soundEnabled){
                         //System.out.println(new JFUtils.dirs().music + "pew.mp3");
-                        pew.play(.2);
+                        pew.play(.2, pan);
                     }
                     
                     boltHandles.add(cursorHandle);

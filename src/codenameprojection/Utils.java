@@ -112,4 +112,9 @@ public class Utils {
         z = z / set.size();
         return new Vertex(x, y, z);
     }
+    public static Point3D abs(Point3D from){
+        Point3D to = new Point3D(Math.abs(from.x), Math.abs(from.y), Math.abs(from.z));
+        to.identifier = from.identifier;
+        return to;
+    }
 }
