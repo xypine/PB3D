@@ -1,5 +1,5 @@
 # PB3D
-PB3D is an attempt at simple 3D rendering on java
+PB3D is an attempt at simple 3D rendering on java, without 3D acceleration
 
 # Downloads (and) Binaries:
 See the releases tab, make sure you have java installed.
