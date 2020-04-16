@@ -16,4 +16,5 @@ If you do not use netbeans:
 -make sure that java classpath includes the lib-directory and all of it's packages.
 
 # Dependencies
-[JFUtils](https://github.com/jonnelafin/JFUtils)
+[JFUtils](https://github.com/jonnelafin/JFUtils) (Binaries Included by Default)
+[TinySound](https://github.com/finnkuusisto/TinySound) (Binaries Included by Default)
