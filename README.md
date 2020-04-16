@@ -17,4 +17,5 @@ If you do not use netbeans:
 
 # Dependencies
 [JFUtils](https://github.com/jonnelafin/JFUtils) (Binaries Included by Default)
+
 [TinySound](https://github.com/finnkuusisto/TinySound) (Binaries Included by Default)
