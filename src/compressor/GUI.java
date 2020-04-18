@@ -30,6 +30,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
@@ -43,8 +44,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FrameInputStream;
@@ -69,12 +72,15 @@ public class GUI extends JFrame{
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         System.out.println(JFrame.EXIT_ON_CLOSE);
-        
         JLabel head;
         head = new JLabel("Compressor test");
         input = new JTextArea("Type the stuff to compress here");
+        //scroll.add(input);
+        JScrollPane scroll = new JScrollPane(input);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         JPanel from = new JPanel();
-        from.add(input);
+        //from.add(input);
         output = new JTextField("The output will appear here!");
         JPanel to = new JPanel();
         to.add(output);
@@ -94,7 +100,7 @@ public class GUI extends JFrame{
         //center.add(uncompress);
         
         add(head, BorderLayout.PAGE_START);
-        add(input, BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
         add(center, BorderLayout.LINE_END);
         //add(output, BorderLayout.LINE_END);
         setVisible(true);
@@ -150,6 +156,7 @@ class ButtonAct implements ActionListener{
                 LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(new File("test.lz4")));
                 outStream.write(data);
                 outStream.close();
+                System.out.println(decompressedLength + " --> " + data.length);
                 System.out.println("Saved file succesfully!");
             } catch (IOException iOException) {
                 JFUtils.quickTools.alert(iOException + "");
@@ -184,6 +191,7 @@ class ButtonAct implements ActionListener{
             } catch (UnsupportedEncodingException unsupportedEncodingException) {
                 
             }
+            data = new byte[Integer.MAX_VALUE/1000];
             final int decompressedLength = data.length;
             // compress data
             try {
@@ -196,6 +204,7 @@ class ButtonAct implements ActionListener{
             } catch (IOException iOException) {
                 JFUtils.quickTools.alert(iOException + "");
             }
+            data = null;
         }
     }
     
