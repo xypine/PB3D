@@ -280,6 +280,8 @@ public class driver{
     public int shadingMax = 255;
     public int shadingMin = 0;
     
+    public boolean defaultScrollWheel = true;
+    
     public void run(){
         CodeNameProjection.validate();
         try {
@@ -342,6 +344,7 @@ public class driver{
         running = true;
         boolean oldP = !(!s.r.drawPoints);
         while(running){
+            //System.out.println(inp.mouseWheel);
             //frame = 10;
             beginTime = Instant.now();
             a = System.currentTimeMillis();
@@ -356,6 +359,16 @@ public class driver{
                 screenPosition_org_next.identifier = -1;
             }
             
+            if(defaultScrollWheel){
+                if(inp.mouseWheel == 2){
+                    models.get(defaultModelKey).scale++;
+                    inp.mouseWheel = 1;
+                }
+                if(inp.mouseWheel == 0){
+                    models.get(defaultModelKey).scale--;
+                    inp.mouseWheel = 1;
+                }
+            }
             
             //Init
             //model model0 = (model) models.values().toArray()[0];

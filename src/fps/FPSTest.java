@@ -78,7 +78,7 @@ public class FPSTest {
             }
             
         };
-        modelParser.filename = "assets/models/misc/gordon";
+        modelParser.filename = "assets/models/hl/gman";
         modelParser.size = 100;
         Driver.startWithNoModel = false;
         
@@ -180,9 +180,9 @@ public class FPSTest {
         float shipRotY = 0;
         float shipRotZ = 0;
         
-        model singlePoint = loadPoint();
-        int singlePointHandle = singlePoint.hashCode();
-        Driver.models.put(singlePointHandle, singlePoint);
+        //model singlePoint = loadPoint();
+        //int singlePointHandle = singlePoint.hashCode();
+        //Driver.models.put(singlePointHandle, singlePoint);
         
         
         float thrust = 0F;
@@ -212,7 +212,13 @@ public class FPSTest {
         
         while (true) {
             model gordon = (model) Driver.models.get(Driver.defaultModelKey);
+            //model single = (model) Driver.models.get(singlePointHandle);
             beginTime = Instant.now();
+            /*single.rotation_Y = single.rotation_Y + 0.0001;
+            single.scale = 40;
+            single.hidePoints = false;
+            single.hideFaces = true;
+            single.hideLines = true;*/
             //jump = jump * .99999;
                 //!Driver.inp.parentInFocus || 
             if((Driver.inp.isEscDown) && !menu){
@@ -237,16 +243,18 @@ public class FPSTest {
             }*/
             
             if (!pause) {
+                //Point3D singleLoc = single.getFrame(0).points.get(1);
+                //gordon.setX(pan);
                 volDir = Point3D.subtract(gordon.getLoc(), Driver.screenPosition);
                 volRight =(100 - volDir.x);
                 volLeft  =(100 - volDir.z);
                 pan =  1 - (volLeft - volRight)/5F;
-                pan = pan + .33333333F;
-                if(pan < -1){
-                    pan = -1;
+                //pan = pan + .33333333F;
+                if(pan < -.8){
+                    pan = -.8;
                 }
-                if(pan > 1){
-                    pan = 1;
+                if(pan > .8){
+                    pan = .8;
                 }
                 //System.out.println(pan);
                 //System.out.println(volDir);
@@ -528,11 +536,12 @@ public class FPSTest {
         try {
             LinkedList<model_frame> frames = new LinkedList<>();
             LinkedList<Point3D> points = new modelParser("assets/models/single").parse().getFirst();
-            LinkedList<Integer[]> parseLines = new modelParser("assets/models/single").parseLines(points);
-            LinkedList<Point2D[]> parseFaces = new modelParser("assets/models/single").parseFaces(points);
+            LinkedList<Integer[]> parseLines = new LinkedList<>();//new modelParser("assets/models/single").parseLines(points);
+            LinkedList<Point2D[]> parseFaces = new LinkedList<>();//new modelParser("assets/models/single").parseFaces(points);
             LinkedList<vertexGroup> color = new LinkedList<>();
             frames.add(new model_frame(points , parseLines, parseFaces, color));
             out = new model(frames, true);
+            out.hidePoints = false;
         } catch (IOException ex) {
             Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
         }
