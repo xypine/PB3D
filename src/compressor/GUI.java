@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
@@ -47,6 +48,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -105,12 +107,15 @@ public class GUI extends JFrame{
         uncompress_from_file.addActionListener(new ButtonAct(4, this));
         JButton compress_assets = new JButton("Compress the assets folder");
         compress_assets.addActionListener(new ButtonAct(5, this));
+        JButton uncompress_assets = new JButton("Uncompress the assets folder");
+        uncompress_assets.addActionListener(new ButtonAct(6, this));
         input.setMinimumSize(new Dimension(200, 200));
         JPanel center = new JPanel(new GridLayout(4, 1));
         center.add(button_c_to_file);
         //center.add(button_compress);
         center.add(uncompress_from_file);
         center.add(compress_assets);
+        center.add(uncompress_assets);
         //center.add(uncompress);
         
         add(head, BorderLayout.PAGE_START);
@@ -216,9 +221,22 @@ class ButtonAct implements ActionListener{
                 long a = System.currentTimeMillis();
                 byte[] restored = new byte[decompressedLength];
                 LZ4FrameInputStream inStream = new LZ4FrameInputStream(new FileInputStream(new File("test.lz4")));
-                inStream.read(restored);
+                //inStream.read(restored);
+                int read = inStream.read();
+                LinkedList<Byte> red = new LinkedList();
+                while(read != -1){
+                    red.add((byte)read);
+                    read = inStream.read();
+                }
                 inStream.close();
-                parent.input.setText(new String(restored));
+                Byte[] uncompressed = red.toArray(new Byte[red.size()]);
+                byte[] clean = new byte[uncompressed.length];
+                int ind = 0;
+                for(Byte i : red){
+                    clean[ind] = i;
+                    ind++;
+                }
+                parent.input.setText(new String(clean));
                 String out = "Loaded file succesfully! (" + (System.currentTimeMillis()-a) + "ms)";
                 parent.output.setText(out);
                 System.out.println(out);
@@ -252,6 +270,8 @@ class ButtonAct implements ActionListener{
                 }
             }
             dir.mkdirs();
+            compress_assets(dir2, "assets_compressed/models/", parent);
+            /*
             int ind = 1;
             for(File i : dir2.listFiles()){
                 System.out.println(i.getName());
@@ -265,10 +285,116 @@ class ButtonAct implements ActionListener{
                     //Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 ind = ind + 1;
-            }
-            String out = "Assets folder compressed (" + dir2.getTotalSpace() + " --> " + dir.getTotalSpace() + ", " + (dir2.getTotalSpace()/dir.getTotalSpace()) + ")";
+            }*/
+            String out = "Assets folder compressed (" + dir2.length() + " --> " + dir.length() + ", " + (dir2.length()/dir.length()) + ")";
             System.out.println(out);
             parent.output.setText(out);
+        }
+        if(type == 6){
+            File dir = new File("assets_uncompressed/models");
+            File dir2 = new File("assets_compressed/models");
+            if(dir.exists()){
+                try {
+                    Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            Files.delete(file);
+                            return FileVisitResult.CONTINUE;
+                        }
+                        
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                            Files.delete(dir);
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                } catch (IOException ex) {
+                    JFUtils.quickTools.alert(ex + "");
+                    Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            dir.mkdirs();
+            uncompress_assets(dir2, "assets_uncompressed/models/", parent);
+            /*
+            int ind = 1;
+            for(File i : dir2.listFiles()){
+                System.out.println(i.getName());
+                try {
+                    String readFile = readFile(i.getPath(), Charset.defaultCharset());
+                    LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(new File("assets_compressed/models/" + i.getName())));
+                    outStream.write(readFile.getBytes("UTF-8"));
+                    outStream.close();
+                    parent.output.setText(ind + "/" + dir2.listFiles().length);
+                } catch (IOException ex) {
+                    //Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                ind = ind + 1;
+            }*/
+            String out = "Assets folder compressed (" + dir2.length() + " --> " + dir.length() + ", " + (dir2.length()/dir.length()) + ")";
+            System.out.println(out);
+            parent.output.setText(out);
+        }
+    }
+    static void compress_assets(File dir, String prefix, GUI parent){
+        for(File i : dir.listFiles()){
+            //System.out.println(prefix + i.getName());
+            //System.out.println(i.getName());
+            if (i.isFile() && i.getName().endsWith(".pb3d")) {
+                try {
+                    String readFile = readFile(i.getPath(), Charset.defaultCharset());
+                    LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(new File(prefix + i.getName())));
+                    outStream.write(readFile.getBytes("UTF-8"));
+                    outStream.close();
+                    //parent.output.setText(dir.listFiles().length);
+                } catch (IOException ex) {
+                    JFUtils.quickTools.alert(ex + "");
+                    Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if(i.isDirectory()){
+                System.out.println("Found folder: " + i.getName());
+                File lol = new File(prefix + i.getName());
+                lol.mkdir();
+                compress_assets(i, prefix + i.getName() + "/", parent);
+            }
+        }
+    }
+    static void uncompress_assets(File dir, String prefix, GUI parent){
+        for(File i : dir.listFiles()){
+            //System.out.println(prefix + i.getName());
+            //System.out.println(i.getName());
+            if (i.isFile() && i.getName().endsWith(".pb3d")) {
+                try {
+                    LZ4FrameInputStream inStream = new LZ4FrameInputStream(new FileInputStream(i));
+                    //inStream.read(restored);
+                    int read = inStream.read();
+                    LinkedList<Byte> red = new LinkedList();
+                    while(read != -1){
+                        red.add((byte)read);
+                        read = inStream.read();
+                    }
+                    inStream.close();
+                    Byte[] uncompressed = red.toArray(new Byte[red.size()]);
+                    byte[] clean = new byte[uncompressed.length];
+                    int ind = 0;
+                    for(Byte i2 : red){
+                        clean[ind] = i2;
+                        ind++;
+                    }
+                    PrintWriter out = new PrintWriter(prefix + i.getName());
+                    out.println(new String(clean));
+                    out.close();
+                    //parent.input.setText(new String(clean));
+                    //parent.output.setText(dir.listFiles().length);
+                } catch (IOException ex) {
+                    JFUtils.quickTools.alert(ex + "");
+                    Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if(i.isDirectory()){
+                System.out.println("Found folder: " + i.getName());
+                File lol = new File(prefix + i.getName());
+                lol.mkdir();
+                compress_assets(i, prefix + i.getName() + "/", parent);
+            }
         }
     }
     static String readFile(String path, Charset encoding) 
