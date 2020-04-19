@@ -39,6 +39,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -92,11 +103,14 @@ public class GUI extends JFrame{
         uncompress.addActionListener(new ButtonAct(3, this));
         JButton uncompress_from_file = new JButton("Uncompress From File");
         uncompress_from_file.addActionListener(new ButtonAct(4, this));
+        JButton compress_assets = new JButton("Compress the assets folder");
+        compress_assets.addActionListener(new ButtonAct(5, this));
         input.setMinimumSize(new Dimension(200, 200));
-        JPanel center = new JPanel(new GridLayout(2, 2));
+        JPanel center = new JPanel(new GridLayout(4, 1));
         center.add(button_c_to_file);
         //center.add(button_compress);
         center.add(uncompress_from_file);
+        center.add(compress_assets);
         //center.add(uncompress);
         
         add(head, BorderLayout.PAGE_START);
@@ -214,6 +228,54 @@ class ButtonAct implements ActionListener{
             }
             data = null;
         }
+        if(type == 5){
+            File dir = new File("assets_compressed/models");
+            File dir2 = new File("assets/models");
+            if(dir.exists()){
+                try {
+                    Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            Files.delete(file);
+                            return FileVisitResult.CONTINUE;
+                        }
+                        
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                            Files.delete(dir);
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                } catch (IOException ex) {
+                    JFUtils.quickTools.alert(ex + "");
+                    Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            dir.mkdirs();
+            int ind = 1;
+            for(File i : dir2.listFiles()){
+                System.out.println(i.getName());
+                try {
+                    String readFile = readFile(i.getPath(), Charset.defaultCharset());
+                    LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(new File("assets_compressed/models/" + i.getName())));
+                    outStream.write(readFile.getBytes("UTF-8"));
+                    outStream.close();
+                    parent.output.setText(ind + "/" + dir2.listFiles().length);
+                } catch (IOException ex) {
+                    //Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                ind = ind + 1;
+            }
+            String out = "Assets folder compressed (" + dir2.getTotalSpace() + " --> " + dir.getTotalSpace() + ", " + (dir2.getTotalSpace()/dir.getTotalSpace()) + ")";
+            System.out.println(out);
+            parent.output.setText(out);
+        }
+    }
+    static String readFile(String path, Charset encoding) 
+    throws IOException 
+    {
+      byte[] encoded = Files.readAllBytes(Paths.get(path));
+      return new String(encoded, encoding);
     }
     
 }
