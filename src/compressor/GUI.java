@@ -247,8 +247,8 @@ class ButtonAct implements ActionListener{
             data = null;
         }
         if(type == 5){
-            File dir = new File("assets_compressed/models");
-            File dir2 = new File("assets/models");
+            File dir = new File("assets_compressed");
+            File dir2 = new File("assets");
             if(dir.exists()){
                 try {
                     Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
@@ -270,7 +270,7 @@ class ButtonAct implements ActionListener{
                 }
             }
             dir.mkdirs();
-            compress_assets(dir2, "assets_compressed/models/", parent);
+            compress_assets(dir2, "assets_compressed/", parent);
             /*
             int ind = 1;
             for(File i : dir2.listFiles()){
@@ -291,8 +291,8 @@ class ButtonAct implements ActionListener{
             parent.output.setText(out);
         }
         if(type == 6){
-            File dir = new File("assets_uncompressed/models");
-            File dir2 = new File("assets_compressed/models");
+            File dir = new File("assets_uncompressed");
+            File dir2 = new File("assets_compressed");
             if(dir.exists()){
                 try {
                     Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
@@ -314,7 +314,14 @@ class ButtonAct implements ActionListener{
                 }
             }
             dir.mkdirs();
-            uncompress_assets(dir2, "assets_uncompressed/models/", parent);
+            String out = "Uncompress Failed.";
+            try {
+                uncompress_assets(dir2, "assets_uncompressed/", parent);
+                out = "Assets folder compressed (" + dir2.length() + " --> " + dir.length() + ", " + (dir2.length()/dir.length()) + ")";
+                
+            } catch (Exception e3) {
+                JFUtils.quickTools.alert(e3 + "");
+            }
             /*
             int ind = 1;
             for(File i : dir2.listFiles()){
@@ -330,7 +337,6 @@ class ButtonAct implements ActionListener{
                 }
                 ind = ind + 1;
             }*/
-            String out = "Assets folder compressed (" + dir2.length() + " --> " + dir.length() + ", " + (dir2.length()/dir.length()) + ")";
             System.out.println(out);
             parent.output.setText(out);
         }
