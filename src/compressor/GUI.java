@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Elias.
+ * Copyright 2020 Elias Eskelinen.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ import net.jpountz.xxhash.XXHashFactory;
  */
 public class GUI extends JFrame{
         JTextArea input;
-        JTextField output;
+        JLabel output;
     public static void main(String[] args) {
         new GUI();
     }
@@ -81,7 +81,7 @@ public class GUI extends JFrame{
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         JPanel from = new JPanel();
         //from.add(input);
-        output = new JTextField("The output will appear here!");
+        output = new JLabel("...");
         JPanel to = new JPanel();
         to.add(output);
         JButton button_compress = new JButton("Compress!");
@@ -102,7 +102,7 @@ public class GUI extends JFrame{
         add(head, BorderLayout.PAGE_START);
         add(scroll, BorderLayout.CENTER);
         add(center, BorderLayout.LINE_END);
-        //add(output, BorderLayout.LINE_END);
+        add(output, BorderLayout.PAGE_END);
         setVisible(true);
     }
 
@@ -153,10 +153,14 @@ class ButtonAct implements ActionListener{
             final int decompressedLength = data.length;
             // compress data
             try {
+                long a = System.currentTimeMillis();
                 LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(new File("test.lz4")));
                 outStream.write(data);
                 outStream.close();
-                System.out.println(decompressedLength + " --> " + data.length);
+                long newSize = new File("test.lz4").length();
+                String out = decompressedLength + " --> " + newSize + " (" + (System.currentTimeMillis()-a) + "ms)";
+                System.out.println(out);
+                parent.output.setText(out);
                 System.out.println("Saved file succesfully!");
             } catch (IOException iOException) {
                 JFUtils.quickTools.alert(iOException + "");
@@ -195,12 +199,16 @@ class ButtonAct implements ActionListener{
             final int decompressedLength = data.length;
             // compress data
             try {
+                long a = System.currentTimeMillis();
                 byte[] restored = new byte[decompressedLength];
                 LZ4FrameInputStream inStream = new LZ4FrameInputStream(new FileInputStream(new File("test.lz4")));
                 inStream.read(restored);
                 inStream.close();
                 parent.input.setText(new String(restored));
-                System.out.println("Loaded file succesfully!");
+                String out = "Loaded file succesfully! (" + (System.currentTimeMillis()-a) + "ms)";
+                parent.output.setText(out);
+                System.out.println(out);
+                restored = null;
             } catch (IOException iOException) {
                 JFUtils.quickTools.alert(iOException + "");
             }
