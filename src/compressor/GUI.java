@@ -270,7 +270,7 @@ class ButtonAct implements ActionListener{
                 }
             }
             dir.mkdirs();
-            compress_assets(dir2, "assets_compressed/models/", parent);
+            long size = compress_assets(dir2, "assets_compressed/models/", parent);
             /*
             int ind = 1;
             for(File i : dir2.listFiles()){
@@ -286,7 +286,7 @@ class ButtonAct implements ActionListener{
                 }
                 ind = ind + 1;
             }*/
-            String out = "Assets folder compressed (" + dir2.length() + " --> " + dir.length() + ", " + (dir2.length()/dir.length()) + ")";
+            String out = "Assets folder compressed (" + getSize(dir2) + " --> " + size + ", " + (getSize(dir2)/size) + ")";
             System.out.println(out);
             parent.output.setText(out);
         }
@@ -314,7 +314,7 @@ class ButtonAct implements ActionListener{
                 }
             }
             dir.mkdirs();
-            uncompress_assets(dir2, "assets_uncompressed/models/", parent);
+            long size = uncompress_assets(dir2, "assets_uncompressed/models/", parent);
             /*
             int ind = 1;
             for(File i : dir2.listFiles()){
@@ -330,21 +330,36 @@ class ButtonAct implements ActionListener{
                 }
                 ind = ind + 1;
             }*/
-            String out = "Assets folder compressed (" + dir2.length() + " --> " + dir.length() + ", " + (dir2.length()/dir.length()) + ")";
+            String out = "Assets folder uncompressed (" + size + " --> " + getSize(dir) + ", " + (size/getSize(dir)) + ")";
             System.out.println(out);
             parent.output.setText(out);
         }
     }
-    static void compress_assets(File dir, String prefix, GUI parent){
+    static long getSize(File dir){
+        long size = 0;
+        if(dir.isDirectory()){
+            for(File i : dir.listFiles()){
+                size = size + getSize(i);
+            }
+        }
+        else{
+            size = size + dir.length();
+        }
+        return size;
+    }
+    static long compress_assets(File dir, String prefix, GUI parent){
+        long size = 0;
         for(File i : dir.listFiles()){
             //System.out.println(prefix + i.getName());
             //System.out.println(i.getName());
             if (i.isFile() && i.getName().endsWith(".pb3d")) {
                 try {
                     String readFile = readFile(i.getPath(), Charset.defaultCharset());
-                    LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(new File(prefix + i.getName())));
+                    File file = new File(prefix + i.getName());
+                    LZ4FrameOutputStream outStream = new LZ4FrameOutputStream(new FileOutputStream(file));
                     outStream.write(readFile.getBytes("UTF-8"));
                     outStream.close();
+                    size = size + file.length();
                     //parent.output.setText(dir.listFiles().length);
                 } catch (IOException ex) {
                     JFUtils.quickTools.alert(ex + "");
@@ -354,11 +369,13 @@ class ButtonAct implements ActionListener{
                 System.out.println("Found folder: " + i.getName());
                 File lol = new File(prefix + i.getName());
                 lol.mkdir();
-                compress_assets(i, prefix + i.getName() + "/", parent);
+                size = size + compress_assets(i, prefix + i.getName() + "/", parent);
             }
         }
+        return size;
     }
-    static void uncompress_assets(File dir, String prefix, GUI parent){
+    static long uncompress_assets(File dir, String prefix, GUI parent){
+        long size = 0;
         for(File i : dir.listFiles()){
             //System.out.println(prefix + i.getName());
             //System.out.println(i.getName());
@@ -385,6 +402,7 @@ class ButtonAct implements ActionListener{
                     out.close();
                     //parent.input.setText(new String(clean));
                     //parent.output.setText(dir.listFiles().length);
+                    size = size + i.length();
                 } catch (IOException ex) {
                     JFUtils.quickTools.alert(ex + "");
                     Logger.getLogger(ButtonAct.class.getName()).log(Level.SEVERE, null, ex);
@@ -393,9 +411,10 @@ class ButtonAct implements ActionListener{
                 System.out.println("Found folder: " + i.getName());
                 File lol = new File(prefix + i.getName());
                 lol.mkdir();
-                compress_assets(i, prefix + i.getName() + "/", parent);
+                size = size + uncompress_assets(i, prefix + i.getName() + "/", parent);
             }
         }
+        return size;
     }
     static String readFile(String path, Charset encoding) 
     throws IOException 
