@@ -29,11 +29,14 @@ import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import static codenameprojection.Utils.P3ToP2;
 import codenameprojection.drawables.vertexGroup;
+import compressor.IO;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -63,6 +66,8 @@ public class modelParser {
         int ind = 0;
         try {
             BufferedReader c = new BufferedReader(new FileReader(filename + "_color.pb3d"));
+            Reader inputString = new StringReader(IO.readAsString(filename + "_color.pb3d"));
+            c = new BufferedReader(inputString);
             lineC = c.readLine();
             while (Objects.nonNull(lineC)) {
                 lineC = c.readLine();
@@ -119,15 +124,17 @@ public class modelParser {
         
         
         boolean useColor = true;
-        in = new BufferedReader(new FileReader(filename + ".pb3d"));
+        Reader inputString = new StringReader(IO.readAsString(filename + ".pb3d"));
+        //in = new BufferedReader(new FileReader(filename + ".pb3d"));
+        in = new BufferedReader(inputString);
              line = in.readLine();
-
              while(!Objects.isNull(line))
              {
                     try {
                      String curr = "";
                      //System.out.println(line);
                      line = in.readLine();
+                    //System.out.println(line);
                      int place = 0;
                      int[] coord = new int[3];
                      for (char i : line.toCharArray()) {
@@ -171,7 +178,10 @@ public class modelParser {
         LinkedList<Integer[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader(filename + "_lines.pb3d"));
+        Reader inputString = new StringReader(IO.readAsString(filename + "_lines.pb3d"));
+        //in = new BufferedReader(new FileReader(filename + "_lines.pb3d"));
+        in = new BufferedReader(inputString);
+        
              line = in.readLine();
 
              while(!Objects.isNull(line))
@@ -223,7 +233,9 @@ public class modelParser {
         LinkedList<Point2D[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
-        in = new BufferedReader(new FileReader(filename + "_faces.pb3d"));
+        Reader inputString = new StringReader(IO.readAsString(filename + "_faces.pb3d"));
+        //in = new BufferedReader(new FileReader(filename + "_faces.pb3d"));
+        in = new BufferedReader(inputString);
              line = in.readLine();
 
              while(!Objects.isNull(line))
@@ -279,6 +291,7 @@ public class modelParser {
         try {
             filename = "assets/models/Viper8";
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
+           
             new modelParser().parseLines(parse.getFirst());
             new modelParser().parseFaces(parse.getFirst());
             new modelParser().parseColor(parse.getFirst());
