@@ -68,7 +68,9 @@ public class model {
     public boolean hideLines = false;
     public boolean hideFaces = false;
     
-    boolean single_frame;
+    public int minFrame = 0;
+    
+    public boolean single_frame;
     public model(LinkedList<model_frame> frames, boolean singleFrame) {
         this.frames = frames;
         single_frame = singleFrame;
@@ -92,6 +94,7 @@ public class model {
 //        if(token > latest){
           frames_cache = newCache;
 //        }
+        latest = token;
         buffering = false;
     }
     
@@ -119,8 +122,9 @@ public class model {
         }
         return out;
     }
-    
+    public double animationSpeed = 1;
     synchronized public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate, boolean scale){
+        index = (int) (index * animationSpeed);
         try {
             index = index % (frames.size() - 1);
         } catch (Exception e) {
@@ -128,8 +132,8 @@ public class model {
         if(index > frames.size()-1){
             index = frames.size()-1;
         }
-        if(index < 0){
-            index = 0;
+        if(index < minFrame){
+            index = minFrame;
         }
         if(frames.hashCode() == frames_cache.hashCode() && !skipCache){
         //if(false){
@@ -147,7 +151,7 @@ public class model {
             out = (model_frame) frames.get(index).clone();
         }
         else{
-            out = (model_frame) frames.getFirst().clone();
+            out = (model_frame) frames.get(minFrame).clone();
         }
         int ind = 0;
         for(Point3D i : (LinkedList<Point3D>)(out.points.clone())){
@@ -180,8 +184,13 @@ public class model {
     }
 
     @Override
-    protected Object clone() {
-        return new model(frames, single_frame);
+    public model clone() {
+        model m = new model(frames, single_frame);
+        m.animationSpeed = this.animationSpeed;
+        m.x = x;
+        m.y = y;
+        m.z = z;
+        return m;
     }
     
     public Point3D getLoc(){

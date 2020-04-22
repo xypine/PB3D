@@ -28,6 +28,7 @@ import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
+import JFUtils.vector.dVector3;
 import codenameprojection.Flags;
 import codenameprojection.Utils;
 import codenameprojection.drawables.vertexGroup;
@@ -78,12 +79,10 @@ public class FPSTest {
             }
             
         };
-        modelParser.filename = "assets/models/hl/gman";
+        modelParser.filename = "assets/models/hl/gman_talk";
         modelParser.size = 100;
         Driver.startWithNoModel = false;
         
-        FPSMap map = new FPSMap(this);
-        Driver.s.r.extraDrawables.add(map);
         
         t.start();
         while(!Driver.running){
@@ -115,7 +114,7 @@ public class FPSTest {
         Driver.an_pause = false;
         //Driver.zero();
         
-        double scale = 2;
+        double scale = 1;
         Driver.s.r.scale = 1 / scale;
         Driver.s.r.scale_restore = 1 * scale;
         
@@ -167,8 +166,6 @@ public class FPSTest {
             Driver.ingoredInputs.removeAll(Arrays.asList(defaultKeys));
         }
         
-        Driver.shadingMin = 25;
-        Driver.shadingMultiplier = 1;
         LinkedList<Integer> boltHandles = new LinkedList<>();
         float speed = 0.4F;
 //        Driver.screenPosition_org = new Point3D(0, 0, 0);
@@ -197,6 +194,8 @@ public class FPSTest {
         double shift_m = 1;
         model first_object = (model) Driver.models.get(Driver.defaultModelKey);
         first_object.hideLines = true;
+        double speed2 = 0.2;
+        first_object.animationSpeed = speed2;
         first_object.setY(-.5);
         System.out.println("Default model name: " + first_object.name);
         Sound pew = null;
@@ -209,7 +208,34 @@ public class FPSTest {
         double volRight = 0;
         double volLeft = 0;
         double pan = 0.5;
-        
+        Driver.shadingAdd = 220;
+        Driver.shadingMin = 5;
+        Driver.shadingMultiplier = 3F;
+        Driver.screenPosition_org_next = new Point3D(0, -2.75, 1.4);
+        Driver.screenPosition_org_next.identifier = -2;
+        first_object.hideLines = false;
+        first_object.hideFaces = true;
+        first_object.hidePoints = true;
+        while (Driver.s.r.frame < 170 / speed2){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        first_object.hidePoints = true;
+        first_object.hideFaces = false;
+        first_object.hideLines = true;
+        first_object.scale = 0.75;
+        first_object.single_frame = true;
+        first_object.minFrame = 59;
+        Driver.shadingAdd = 0;
+        Driver.shadingMin = 20;
+        Driver.shadingMultiplier = 1.4F;
+        FPSMap map = new FPSMap(this);
+        Driver.s.r.extraDrawables.add(map);
+        Driver.screenPosition_org_next = new Point3D( 0, 0, 7 );
+        Driver.screenPosition_org_next.identifier = -2;
         while (true) {
             model gordon = (model) Driver.models.get(Driver.defaultModelKey);
             //model single = (model) Driver.models.get(singlePointHandle);
@@ -371,7 +397,7 @@ public class FPSTest {
                     LinkedList<model_frame> frames2 = new LinkedList<>();
                     LinkedList<Point3D> points2 = new LinkedList<>();
                     LinkedList<Integer[]> lines2 = new LinkedList<>();
-                    LinkedList<Point2D[]> faces2 = new LinkedList<>();
+                    LinkedList<Point3D[]> faces2 = new LinkedList<>();
                     LinkedList<vertexGroup> color2 = new LinkedList<>();
                     Point3D from = Driver.getScreenPosition_org().clone();
                     from.x = -from.x;
@@ -391,7 +417,7 @@ public class FPSTest {
                     //emit sound
                     if(Flags.soundEnabled){
                         //System.out.println(new JFUtils.dirs().music + "pew.mp3");
-                        pew.play(.2, pan);
+                        pew.play(.2, 0);
                     }
                     
                     boltHandles.add(cursorHandle);
@@ -483,7 +509,7 @@ public class FPSTest {
                     LinkedList<model_frame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
-                    LinkedList<Point2D[]> faces = new LinkedList<>();
+                    LinkedList<Point3D[]> faces = new LinkedList<>();
                     LinkedList<vertexGroup> color = new LinkedList<>();
                     
                     int rndX = rnd.nextInt(size*2) - size;
@@ -537,7 +563,7 @@ public class FPSTest {
             LinkedList<model_frame> frames = new LinkedList<>();
             LinkedList<Point3D> points = new modelParser("assets/models/single").parse().getFirst();
             LinkedList<Integer[]> parseLines = new LinkedList<>();//new modelParser("assets/models/single").parseLines(points);
-            LinkedList<Point2D[]> parseFaces = new LinkedList<>();//new modelParser("assets/models/single").parseFaces(points);
+            LinkedList<Point3D[]> parseFaces = new LinkedList<>();//new modelParser("assets/models/single").parseFaces(points);
             LinkedList<vertexGroup> color = new LinkedList<>();
             frames.add(new model_frame(points , parseLines, parseFaces, color));
             out = new model(frames, true);
@@ -552,13 +578,25 @@ public class FPSTest {
         int ind = 0;
         Random rnd = new Random();
         LinkedList<model> out = new LinkedList<>();
+        boolean facesU = true;
+        model m2 = null;
+        try {
+            LinkedList<Point3D> points3 = new modelParser("assets/models/misc/plane").parse().getFirst();
+            LinkedList<Integer[]> parseLines3 = new modelParser("assets/models/misc/plane").parseLines(points3);
+            LinkedList<Point3D[]> parseFaces3 = new modelParser("assets/models/misc/plane").parseFaces(points3);
+            LinkedList<model_frame> frames2 = new LinkedList<>();
+            frames2.add(new model_frame(points3, parseLines3, parseFaces3, new LinkedList<>()));
+            m2 = new model(frames2, true);
+        } catch (IOException iOException) {
+            facesU = false;
+        }
         for(int z : new Range(rz2)){
             for (int x : new Range(rx2)) {
                 for (int y: new Range(ry2)){
                     LinkedList<model_frame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
-                    LinkedList<Point2D[]> faces = new LinkedList<>();
+                    LinkedList<Point3D[]> faces = new LinkedList<>();
                     LinkedList<vertexGroup> color = new LinkedList<>();
 
                     double rndX = (x +0.5 - (rx2 / 2) )*2;
@@ -605,13 +643,30 @@ public class FPSTest {
                     //if(y == ry2){
                     //    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
                     //}
-
-
+                    /*
+                    try {
+                        LinkedList<Point3D> points3 = new modelParser("assets/models/misc/Plane").parse().getFirst();
+                        LinkedList<Integer[]> parseLines3 = new modelParser("assets/models/misc/Plane").parseLines(points);
+                        LinkedList<Point3D[]> parseFaces3 = new modelParser("assets/models/misc/Plane").parseFaces(points);
+                        for(Point3D i : points3){
+                            i.x = i.x + rndX;
+                            i.y = i.y + rndX;
+                            //i.z = i.z + rndX;
+                        }
+                        points.addAll(points3);
+                        lines.addAll(parseLines3);
+                        faces.addAll(parseFaces3);
+                    } catch (IOException iOException) {
+                    }*/
                     frames.add(new model_frame(points , lines, faces, color));
                     model m = new model(frames, true);
                     m.hidePoints = false;
                     m.hideLines = true;
+                    model m3 = m2.clone();
+                    m3.setX(rndX);
+                    m3.setY(rndY);
                     out.add(m);
+                    //out.add(m3);
                     ind = ind + 1;
                 }
             }

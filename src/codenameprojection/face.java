@@ -24,6 +24,7 @@
 package codenameprojection;
 
 import JFUtils.point.Point2D;
+import JFUtils.point.Point3D;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public class face implements Comparable<face>{
     public face() {
     }
     
-    public face(int ogIndex, float z, Point2D[] points){
+    public face(int ogIndex, float z, Point3D[] points){
         if(Objects.isNull(originalIndex) || Objects.isNull(z) || Objects.isNull(points)){
             System.out.println("a");
             if(points.length > 0){
@@ -55,8 +56,9 @@ public class face implements Comparable<face>{
         this.points = points;
     }
     
+    
     int originalIndex;
-    Point2D[] points = new Point2D[]{};
+    Point3D[] points = new Point3D[]{};
     
     public float z = (float) 0;
     public Integer getZ(){

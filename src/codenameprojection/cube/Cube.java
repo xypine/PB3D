@@ -257,7 +257,7 @@ public class Cube {
                     LinkedList<model_frame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
-                    LinkedList<Point2D[]> faces = new LinkedList<>();
+                    LinkedList<Point3D[]> faces = new LinkedList<>();
                     LinkedList<vertexGroup> color = new LinkedList<>();
                     
                     int rndX = rnd.nextInt(size*2) - size;
@@ -314,7 +314,7 @@ public class Cube {
                     LinkedList<model_frame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
-                    LinkedList<Point2D[]> faces = new LinkedList<>();
+                    LinkedList<Point3D[]> faces = new LinkedList<>();
                     LinkedList<vertexGroup> color = new LinkedList<>();
 
                     double rndX = (x +0.5 - (rx2 / 2) )*2;

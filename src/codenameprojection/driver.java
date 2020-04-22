@@ -124,7 +124,7 @@ public class driver{
         }
         LinkedList<Point3D> points2 = frames2.getFirst();
         LinkedList<Integer[]> lines2 = new modelParser("Cube").parseLines(points2);
-        LinkedList<Point2D[]> faces2 = new modelParser("Cube").parseFaces(points2);
+        LinkedList<Point3D[]> faces2 = new modelParser("Cube").parseFaces(points2);
         
         model m = new model(new LinkedList<model_frame>(), true);
         points2.forEach(l -> m.getFrame(0).points.add(l));
@@ -143,80 +143,12 @@ public class driver{
         //this.frames = ref;
         return id;
     }
-    /**
-     *
-     * @param center
-     * @param size
-     * @param Addlines
-     * @param addFaces
-     * @return The handle of the added object
-     */
-    public int addCubeOLD(dVector3 center, double size, boolean Addlines, boolean addFaces){
-        double s = size;
-        //zxy
-        dVector3 dlu = new dVector3(center.x +s, center.y +s, center.z -s);
-        dVector3 dld = new dVector3(center.x +s, center.y -s, center.z -s);
-        dVector3 dru = new dVector3(center.x -s, center.y +s, center.z -s);
-        dVector3 drd = new dVector3(center.x -s, center.y -s, center.z -s);
-        dVector3 ulu = new dVector3(center.x +s, center.y +s, center.z +s);
-        dVector3 uld = new dVector3(center.x +s, center.y -s, center.z +s);
-        dVector3 uru = new dVector3(center.x -s, center.y +s, center.z +s);
-        dVector3 urd = new dVector3(center.x -s, center.y -s, center.z +s);
-        points.add(dlu);
-        points.add(dld);
-        points.add(dru);
-        points.add(drd);
-        points.add(ulu);
-        points.add(uld);
-        points.add(uru);
-        points.add(urd);
-        if (Addlines) {
-            lines.add(new Integer[]{dlu.identifier, dld.identifier});
-            lines.add(new Integer[]{dlu.identifier, dru.identifier});
-            lines.add(new Integer[]{dld.identifier, drd.identifier});
-            lines.add(new Integer[]{dru.identifier, drd.identifier});
-            
-            lines.add(new Integer[]{ulu.identifier, uld.identifier});
-            lines.add(new Integer[]{ulu.identifier, uru.identifier});
-            lines.add(new Integer[]{uld.identifier, urd.identifier});
-            lines.add(new Integer[]{uru.identifier, urd.identifier});
-            
-            lines.add(new Integer[]{dlu.identifier, ulu.identifier});
-            lines.add(new Integer[]{dld.identifier, uld.identifier});
-            lines.add(new Integer[]{dru.identifier, uru.identifier});
-            lines.add(new Integer[]{drd.identifier, urd.identifier});
-        }
-        if(addFaces){
-            faces.add(new Point2D[]{vToP2(dlu), vToP2(dld), vToP2(dru)});
-            faces.add(new Point2D[]{vToP2(dld), vToP2(drd), vToP2(dru)});
-            faces.add(new Point2D[]{vToP2(ulu), vToP2(uld), vToP2(uru)});
-            faces.add(new Point2D[]{vToP2(uld), vToP2(urd), vToP2(uru)});
-            
-            faces.add(new Point2D[]{vToP2(dlu), vToP2(dld), vToP2(ulu)});
-            faces.add(new Point2D[]{vToP2(ulu), vToP2(uld), vToP2(dld)});
-            faces.add(new Point2D[]{vToP2(dru), vToP2(drd), vToP2(uru)});
-            faces.add(new Point2D[]{vToP2(uru), vToP2(urd), vToP2(drd)});
-            
-            faces.add(new Point2D[]{vToP2(dlu), vToP2(dru), vToP2(dru)});
-            
-            //faces.add(new Integer[]{urd), drd), dru)});
-            
-            //faces.add(new Integer[]{ulu), uld), uru)});
-            //faces.add(new Integer[]{uld), urd), uru)});
-            //faces.add(new Integer[]{ulu), dld), dru)});
-            //faces.add(new Integer[]{uld), drd), dru)});
-            
-            //faces.add(new Integer[]{dld), drd), drd)});
-        }
-        //CONTINUE FROM HERE, ADD THE CUBE TO THE MODELS MAP
-        return 0;
-    }
     public void addCube(dVector3 center, double size) throws IOException{
         addCube(center, size, true, true);
     }
     public LinkedList<Point3D> points;
     public LinkedList<Integer[]> lines;
-    public LinkedList<Point2D[]> faces = new LinkedList<>();
+    public LinkedList<Point3D[]> faces = new LinkedList<>();
     
     IDManager ids = new IDManager();
     
@@ -250,17 +182,17 @@ public class driver{
         //LinkedList<LinkedList<Point3D>> frames2 = new LinkedList<>();
         LinkedList<Point3D> points2 = new LinkedList<>();
         LinkedList<Integer[]> lines2 = new LinkedList<>();
-        LinkedList<Point2D[]> faces2 = new LinkedList<>();
+        LinkedList<Point3D[]> faces2 = new LinkedList<>();
         LinkedList<Integer> hidden = new LinkedList<>();
         for(model m : models.values()){
             //m.x = m.x + 0.03;
             //m.rotation_Y = m.rotation_Y + 0.00001;
             //System.out.println(m.rotation_Y);
-            points2.addAll(m.getFrame(f, true, true, true).points);
-            lines2.addAll(m.getFrame(f).lines);
-            faces2.addAll(m.getFrame(f).faces);
+            points2.addAll(m.getFrame(f, true, true, true, true).points);
+            lines2.addAll(m.getFrame(f, true, true, true, true).lines);
+            faces2.addAll(m.getFrame(f, true, true, true, true).faces);
             if(m.hidePoints){
-                m.getFrame(f).points.forEach(l -> {hidden.add(l.identifier);});
+                m.getFrame(f, true, true, true, true).points.forEach(l -> {hidden.add(l.identifier);});
             }
         }
         this.points = points2;
@@ -279,6 +211,7 @@ public class driver{
     
     public int shadingMax = 255;
     public int shadingMin = 0;
+    public int shadingAdd = 0;
     
     public boolean defaultScrollWheel = true;
     
@@ -299,7 +232,7 @@ public class driver{
                 LinkedList<LinkedList<Point3D>> frames2 = new modelParser().parse();
                 LinkedList<Point3D> points2 = frames2.getFirst();
                 LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
-                LinkedList<Point2D[]> faces2 = new modelParser().parseFaces(points2);
+                LinkedList<Point3D[]> faces2 = new modelParser().parseFaces(points2);
                 LinkedList<vertexGroup> color2 = new modelParser().parseColor(points2);
                 model m = new model(new LinkedList<model_frame>(), false);
                 m.name = modelParser.filename;
@@ -404,7 +337,7 @@ public class driver{
 //System.out.println(zep);
                 if (tickC % 1 == 0 && !an_pause) {
                     if (frame < frames.size() - 1 || true) {
-                        frame++;
+                        frame = (int) (frame + 1 * (deltaTime.toNanos() / 10000000));
                     } else {
                         //System.out.println("frame was " + frame + " before reset");
                         frame = 0;
@@ -753,13 +686,13 @@ public class driver{
             if(faces_color.isEmpty() && !faces.isEmpty()){
                 System.out.println("FACES_COLOR SIZE: " + faces_color.size());
                 System.out.println("List too small, inflating...");
-                for(Point2D[] face : faces){
+                for(Point3D[] face : faces){
                     faces_color.add(new Color(0, 0, 0));
                 }
             }
             
             b = System.currentTimeMillis();
-            for(Point2D[] face : faces){
+            for(Point3D[] face : faces){
                 boolean cont = false;
                 if(face.length == 3){
                     cont = true;
@@ -772,7 +705,7 @@ public class driver{
                     //continue;
                 }
                 
-                Point2D point = null;
+                Point3D point = null;
                 try {
                     point = face[0];
                 } catch (Exception e) {
@@ -789,10 +722,11 @@ public class driver{
                     }
                 }
                 
-                Point2D point1 = face[0];
-                Point2D point2 = face[1];
-                Point2D point3 = face[2];
-                
+                Point3D point1 = face[0];
+                Point3D point2 = face[1];
+                Point3D point3 = face[2];
+                //double[] map = Utils.map(point1, point2, point3);
+                //System.out.println(map);
                 float dist2 = (dist.get(point1.identifier) + dist.get(point2.identifier) + dist.get(point3.identifier))/3F;
                 //System.out.println(face_dists.size());
                 if(!Objects.isNull(point)){
@@ -821,6 +755,7 @@ public class driver{
                     }
                     //distP = distP * shadingMultiplier;
                     //System.out.println(distP);
+                    distP = distP + shadingAdd;
                     if(distP > shadingMax){
                         distP = shadingMax;
                     }

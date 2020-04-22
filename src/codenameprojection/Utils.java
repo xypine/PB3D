@@ -54,10 +54,10 @@ public class Utils {
         return o;
     }
     float last_z = 0;
-    public LinkedList<face> constructFaceList(LinkedList<Point2D[]> origin, LinkedList<Float> faces_dist){
+    public LinkedList<face> constructFaceList(LinkedList<Point3D[]> origin, LinkedList<Float> faces_dist){
         int index = 0;
         LinkedList<face> out = new LinkedList<>();
-        for(Point2D[] i : origin){
+        for(Point3D[] i : origin){
             float z = 0;
             try {
                 z = faces_dist.get(index);
@@ -116,5 +116,61 @@ public class Utils {
         Point3D to = new Point3D(Math.abs(from.x), Math.abs(from.y), Math.abs(from.z));
         to.identifier = from.identifier;
         return to;
+    }
+    public static double[] map(Point3D one, Point3D two, Point3D three){
+        Point3D average = Point3D.divide(Point3D.add(one, two), new Point3D(2, 2, 2));
+        Point3D diff = Point3D.subtract(average, three);
+        Point3D four = Point3D.subtract(average, diff);
+        four = diff;
+        return map(one, two, three, four);
+    }
+    public static double[] map(Point3D one, Point3D two, Point3D three, Point3D four){
+        return map(one.x + 0.5, one.y + 0.5, one.x, one.y, two.x, two.y, three.x, three.y, four.x, four.y);
+    }
+    public static double[] map(double x, double y, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3) {
+        double A = (x0 - x) * (y0 - y2) - (y0 - y) * (x0 - x2);
+        double B = ((x0 - x) * (y1 - y3) - (y0 - y) * (x1 - x3) + (x1 - x) * (y0 - y2) - (y1 - y) * (x0 - x2)) / 2.0;
+        double C = (x1 - x) * (y1 - y3) - (y1 - y) * (x1 - x3);
+
+        double det = A - 2.0 * B + C;
+
+        double u;
+        if (det == 0.0) {
+            u = A / (A - C);
+            if (Double.isNaN(u) || u < 0.0 || u > 1.0)
+                return null;
+        } else {
+            double u1 = ((A - B) + Math.sqrt(B * B - A * C)) / det;
+            boolean u1valid = !Double.isNaN(u1) && u1 >= 0.0 && 1.0 >= u1;
+
+            double u2 = ((A - B) - Math.sqrt(B * B - A * C)) / det;
+            boolean u2valid = !Double.isNaN(u2) && u2 >= 0.0 && 1.0 >= u2;
+
+            if (u1valid && u2valid)
+                u = u1 < u2 ? u2 : u1;
+            else if (u1valid)
+                u = u1;
+            else if (u2valid)
+                u = u2;
+            else
+                return null;
+        }
+
+        double v1 = ((1.0 - u) * (x0 - x) + u * (x1 - x)) / ((1.0 - u) * (x0 - x2) + u * (x1 - x3));
+        boolean v1valid = !Double.isNaN(v1) && v1 >= 0.0 && 1.0 >= v1;
+
+        double v2 = ((1.0 - u) * (y0 - y) + u * (y1 - y)) / ((1.0 - u) * (y0 - y2) + u * (y1 - y3));
+        boolean v2valid = !Double.isNaN(v2) && v2 >= 0.0 && 1.0 >= v2;
+
+        double v = v1;
+        if (v1valid && v2valid)
+            v = v1 < v2 ? v2 : v1;
+        else if (v1valid)
+            v = v1;
+        else if (v2valid)
+            v = v2;
+        //else
+        //    return null;
+        return new double[] { u, v };
     }
 }

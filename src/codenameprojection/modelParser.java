@@ -49,7 +49,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
                                     //assets/models/Viper8
-    public static String filename = "assets/models/hl/gman";
+    public static String filename = "assets/models/hl/gman_rising_head";
 
     public modelParser() {
     }
@@ -229,8 +229,8 @@ public class modelParser {
         System.out.println(out.size() + " lines loaded and parsed succesfully!");
         return out;
     }
-    public LinkedList<Point2D[]> parseFaces(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
-        LinkedList<Point2D[]> out = new LinkedList<>();
+    public LinkedList<Point3D[]> parseFaces(LinkedList<Point3D> points) throws FileNotFoundException, IOException{
+        LinkedList<Point3D[]> out = new LinkedList<>();
         String line;
         BufferedReader in;
         Reader inputString = new StringReader(IO.readAsString(filename + "_faces.pb3d"));
@@ -260,18 +260,18 @@ public class modelParser {
                             System.out.println("char in the line was null!");
                         }
                      try {
-                        out.add(new Point2D[]{
-                            P3ToP2(points.get(coord[0]+1)),
-                            P3ToP2(points.get(coord[1]+1)),
-                            P3ToP2(points.get(coord[2]+1))
+                        out.add(new Point3D[]{
+                            points.get(coord[0]+1),
+                            points.get(coord[1]+1),
+                            points.get(coord[2]+1)
                         });
                      }
                      catch(Exception e){
                             try {
-                                out.add(new Point2D[]{
-                                P3ToP2(points.get(coord[0])),
-                                P3ToP2(points.get(coord[1])),
-                                P3ToP2(points.get(coord[2]))
+                                out.add(new Point3D[]{
+                                points.get(coord[0]),
+                                points.get(coord[1]),
+                                points.get(coord[2])
                             });
                             } catch (Exception ez) {
                                 

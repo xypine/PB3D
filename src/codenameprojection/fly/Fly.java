@@ -264,7 +264,7 @@ public class Fly {
                 LinkedList<model_frame> frames2 = new LinkedList<>();
                 LinkedList<Point3D> points2 = new LinkedList<>();
                 LinkedList<Integer[]> lines2 = new LinkedList<>();
-                LinkedList<Point2D[]> faces2 = new LinkedList<>();
+                LinkedList<Point3D[]> faces2 = new LinkedList<>();
                 LinkedList<vertexGroup> color2 = new LinkedList<>();
                 Point3D c5 = shipM.getFrame(0).points.get(c1i).clone();
                 Point3D c6 = shipM.getFrame(0).points.get(c2i).clone();
@@ -462,7 +462,7 @@ public class Fly {
                     LinkedList<model_frame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
-                    LinkedList<Point2D[]> faces = new LinkedList<>();
+                    LinkedList<Point3D[]> faces = new LinkedList<>();
                     LinkedList<vertexGroup> color = new LinkedList<>();
                     
                     int rndX = rnd.nextInt(size*2) - size;
@@ -517,7 +517,7 @@ public class Fly {
                 LinkedList<model_frame> frames = new LinkedList<>();
                 LinkedList<Point3D> points = new LinkedList<>();
                 LinkedList<Integer[]> lines = new LinkedList<>();
-                LinkedList<Point2D[]> faces = new LinkedList<>();
+                LinkedList<Point3D[]> faces = new LinkedList<>();
                 LinkedList<vertexGroup> color = new LinkedList<>();
 
                 int rndX = (x - (rx2 / 2) )*3;

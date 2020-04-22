@@ -47,6 +47,7 @@ keyframes = True
 filename = "default"
 filetype = ".pb3d"
 useExternalOut = False
+onlyAnim = False
 
 #AXIS
 #up_z = [0, 0, 0]
@@ -242,6 +243,7 @@ def end_func(self):
     global t
     global st, st2, st3
     global useExternalOut
+    global onlyAnim
     print("Reading edges...",end="")
     self.report({'INFO'}, "Reading edges...")
     for i in lines:
@@ -282,24 +284,26 @@ def end_func(self):
         f = open(fn + filetype,"w")
         f.write(st)
         f.close()
-        f = open(fn + "_lines" + filetype, "w")
-        f.write(st2)
-        f.close()
-        f = open(fn + "_faces" + filetype, "w")
-        f.write(st3)
-        f.close()
-        f = open(fn + "_color" + filetype, "w")
-        f.write(st4)
-        f.close()
+        if(not onlyAnim):
+            f = open(fn + "_lines" + filetype, "w")
+            f.write(st2)
+            f.close()
+            f = open(fn + "_faces" + filetype, "w")
+            f.write(st3)
+            f.close()
+            f = open(fn + "_color" + filetype, "w")
+            f.write(st4)
+            f.close()
     if not useExternalOut:
         f = bpy.data.texts.new(filename + filetype)
         f.from_string(st)
-        f = bpy.data.texts.new(filename + "_lines" + filetype)
-        f.from_string(st2)
-        f = bpy.data.texts.new(filename + "_faces" + filetype)
-        f.from_string(st3)
-        f = bpy.data.texts.new(filename + "_color" + filetype)
-        f.from_string(st4)
+        if(not onlyAnim):
+            f = bpy.data.texts.new(filename + "_lines" + filetype)
+            f.from_string(st2)
+            f = bpy.data.texts.new(filename + "_faces" + filetype)
+            f.from_string(st3)
+            f = bpy.data.texts.new(filename + "_color" + filetype)
+            f.from_string(st4)
     print("Everything done, have a good day.")
     self.report({'INFO'}, "Everything done, have a good day.")
 done = False
@@ -357,7 +361,11 @@ class MyProperties(PropertyGroup):
         description="If unchecked, the files will be found in the scripts tab in blender",
         default = True
         )
-
+    my_bool2: BoolProperty(
+        name="Only export animation (if you have the lines/faces already)",
+        description="Only export animation (if you have the lines/faces already)",
+        default = False
+        )
     my_int: IntProperty(
         name = "Int Value",
         description="A integer property",
@@ -413,7 +421,7 @@ class pbPanel(bpy.types.Panel):
     bl_region_type = 'WINDOW'
     bl_context = "object"
     def draw(self, context):
-        global filename, useExternalOut, up_z, up_y, up_x
+        global filename, useExternalOut, up_z, up_y, up_x, onlyAnim
         scene = context.scene
         my_tool = scene.my_tool
         
@@ -423,6 +431,7 @@ class pbPanel(bpy.types.Panel):
         #self.layout.prop(my_tool, "my_enum")
         
         self.layout.prop(my_tool, "my_bool")
+        self.layout.prop(my_tool, "my_bool2")
         self.layout.operator("object.pb_3d_exporter")
         self.layout.label(text="You can always cancel exporting by pressing esc or mouse 2")
         self.layout.label(text="Animation range will be set to scene frame range")
@@ -430,6 +439,7 @@ class pbPanel(bpy.types.Panel):
         filename = bpy.context.scene.my_tool.my_path + "/" + bpy.context.scene.my_tool.my_string
         
         ax = bpy.context.scene.my_tool.my_enum
+        onlyAnim = bpy.context.scene.my_tool.my_bool2
         #if(ax == 'z'):
         #    axis = up_z
         #if(ax == 'y'):

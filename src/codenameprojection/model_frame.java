@@ -35,10 +35,10 @@ import java.util.LinkedList;
 public class model_frame {
     public LinkedList<Point3D> points;
     public LinkedList<Integer[]> lines;
-    public LinkedList<Point2D[]> faces = new LinkedList<>();
+    public LinkedList<Point3D[]> faces = new LinkedList<>();
     public LinkedList<vertexGroup> color = new LinkedList<>();
 
-    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point2D[]> f, LinkedList<vertexGroup> c) {
+    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point3D[]> f, LinkedList<vertexGroup> c) {
         this.points = p;
         this.lines = l;
         this.faces = f;
@@ -47,7 +47,7 @@ public class model_frame {
 
     @Override
     protected Object clone(){
-        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point2D[]>) faces.clone(), (LinkedList<vertexGroup>) color.clone());
+        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point3D[]>) faces.clone(), (LinkedList<vertexGroup>) color.clone());
     }
     
     
