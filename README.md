@@ -5,9 +5,13 @@ PB3D is an attempt at simple 3D rendering on java, without 3D acceleration
 See the releases tab, make sure you have java installed.
 # Demo controls: 
 i,j,k,l to rotate
+
 0 to switch to image-based awt rendering (supports resolution scaling)
+
 9 to switch to standard awt rendering
+
 a, w, d, s, q and e to move
+
 # How to set up
 -use git clone to get the source code
 
