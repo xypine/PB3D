@@ -7,8 +7,9 @@ See the releases tab, make sure you have java installed.
 i,j,k,l to rotate
 
 0 to switch to image-based awt rendering (supports resolution scaling)
+    o, p for resolution scaling
 
-9 to switch to standard awt rendering
+9 to switch to standard awt rendering (does not support resolution scaling)
 
 a, w, d, s, q and e to move
 
@@ -29,5 +30,7 @@ If you do not use netbeans:
 [TinySound](https://github.com/finnkuusisto/TinySound) (Binaries Included by Default)
 
 # Random Screenshots
+Polygons #1:
+![Polygons #1](matte.png)
 Wireframe #1:
 ![Wireframe #1](Capture.JPG)
