@@ -31,6 +31,7 @@ import JFUtils.point.Point2Int;
 import JFUtils.point.Point3D;
 import JFUtils.quickTools;
 import UI.drawable;
+import codenameprojection.drawables.vertexGroup;
 import fps.FPSTest;
 import java.awt.AWTException;
 import java.awt.Color;
@@ -96,6 +97,8 @@ public class renderer extends JPanel{
     private LinkedList<Point2D> points = new LinkedList<>();
     private LinkedList<Integer> pointsToHide = new LinkedList<>();
     private LinkedList<Point2D> points_sizes = new LinkedList<>();
+    
+    private LinkedList<vertexGroup> color = new LinkedList<>();
     
     private LinkedList<Integer[]> lines = new LinkedList<>();
     private LinkedList<Color> lines_color = new LinkedList<>();
@@ -324,17 +327,23 @@ public class renderer extends JPanel{
             g.setColor(Color.green);
             //int value = (int) (new Random().nextInt(255) / 2) * 4;
             
-            
+            //System.out.println(drawPoints);
             if (drawPoints) {
             for (int i : new Range(points.size())) {
                 try {
+                    Color col = Color.red;
                     Point2D pos = points.get(i);
+                    for(vertexGroup vg : color){
+                        if(vg.vertexID == pos.identifier){
+                            col = new Color(vg.r, vg.g, vg.b);
+                        }
+                    }
                     if (!pointsToHide.contains(pos.identifier)) {
                         try {
                             //int value2 = new Random().nextInt(255) / 2;
                             //int value3 = new Random().nextInt(255) / 2;
                             //g.setColor(new Color(value2, value, value3));
-                            
+                            g.setColor(col);
                             Point2D s = points_sizes.get(i);
                             
                             int cS = (int) (25 - (s.x * 2));
@@ -542,6 +551,11 @@ public class renderer extends JPanel{
                     gb.drawLine(coords[0][0], coords[0][1], coords[1][0], coords[1][1]);
                 }
                 for(Point3D i : pointsToDraw){
+                    for(vertexGroup vg : color){
+                        if(vg.vertexID == i.identifier){
+                            i = new Color(vg.r, vg.g, vg.b);
+                        }
+                    }
                     gb.setColor(Color.green);
                     gb.drawRect((int)i.x, (int)i.y,(int) i.z,(int) i.z);
                 }
@@ -596,8 +610,9 @@ public class renderer extends JPanel{
     }
     public driver Logic;
     public boolean debug = true;
-    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide, driver Logic){
+    public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide, LinkedList<vertexGroup> color, driver Logic){
         this.points = newSet;
+        this.color = color;
         this.points_sizes = newSizes;
         this.pointsToHide = pointsToHide;
         this.Logic = Logic;

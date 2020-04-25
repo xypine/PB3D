@@ -147,6 +147,7 @@ public class driver{
         addCube(center, size, true, true);
     }
     public LinkedList<Point3D> points;
+    public LinkedList<vertexGroup> color;
     public LinkedList<Integer[]> lines;
     public LinkedList<Point3D[]> faces = new LinkedList<>();
     
@@ -184,6 +185,7 @@ public class driver{
         LinkedList<Integer[]> lines2 = new LinkedList<>();
         LinkedList<Point3D[]> faces2 = new LinkedList<>();
         LinkedList<Integer> hidden = new LinkedList<>();
+        LinkedList<vertexGroup> color2 = new LinkedList<>();
         for(model m : models.values()){
             //m.x = m.x + 0.03;
             //m.rotation_Y = m.rotation_Y + 0.00001;
@@ -191,10 +193,12 @@ public class driver{
             points2.addAll(m.getFrame(f, true, true, true, true).points);
             lines2.addAll(m.getFrame(f, true, true, true, true).lines);
             faces2.addAll(m.getFrame(f, true, true, true, true).faces);
+            color2.addAll(m.getFrame(f, true, true, true, true).color);
             if(m.hidePoints){
                 m.getFrame(f, true, true, true, true).points.forEach(l -> {hidden.add(l.identifier);});
             }
         }
+        this.color = color2;
         this.points = points2;
         this.lines = lines2;
         this.faces = faces2;
@@ -780,7 +784,7 @@ public class driver{
             
             c = System.currentTimeMillis();
             //Rendering
-            s.r.updatePoints(set, sizes, pointsToHide, this);
+            s.r.updatePoints(set, sizes, pointsToHide, color, this);
             s.r.updateLines(lines, lines_color);
             
             

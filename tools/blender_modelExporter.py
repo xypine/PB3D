@@ -331,7 +331,8 @@ class exporter(bpy.types.Operator):
         
         #RESET
         #---
-        global obj, scn, frame, end, frames, keyframes, verts, lines, faces, pr, t
+        global obj, scn, frame, end, frames, keyframes, verts, lines, faces, pr, t, done
+        done = False
         obj = bpy.context.active_object
         scn = bpy.context.scene
 
