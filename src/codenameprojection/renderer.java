@@ -38,6 +38,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -112,7 +113,7 @@ public class renderer extends JPanel{
     public int frame;
     
     public boolean drawPoints = true;
-    public boolean shading = true;
+    public boolean shading = false;
     public boolean drawLines = false;
     public boolean drawFaces = true;
     public boolean drawErrors = false;
@@ -253,9 +254,11 @@ public class renderer extends JPanel{
             drawnLines = 0;
             
             LinkedList<Polygon> facesToDraw = new LinkedList<>();
+            LinkedList<Integer[]> facesToDraw_id = new LinkedList<>();
             LinkedList<Color> faceColorsToDraw = new LinkedList<>();
             
             LinkedList<Integer[][]> linesToDraw = new LinkedList<>();
+            LinkedList<Integer[]> linesToDraw_id = new LinkedList<>();
             LinkedList<Color> lineColorsToDraw = new LinkedList<>();
             
             LinkedList<Point3D> pointsToDraw = new LinkedList<>();
@@ -309,6 +312,10 @@ public class renderer extends JPanel{
                                 linesToDraw.add(new Integer[][]{
                                     {x1, y1}, {x2, y2} 
                                 });
+                                linesToDraw_id.add(new Integer[]{
+                                    a.get(lines.get(i)[0]).identifier,
+                                    a.get(lines.get(i)[1]).identifier
+                                });
                                 lineColorsToDraw.add(c);
                             } else {
                                 g.drawLine(x1, y1, x2, y2);
@@ -360,6 +367,7 @@ public class renderer extends JPanel{
                             int yOff = cS / 2;
                             if (usePixelRendering) {
                                 Point3D d = new Point3D(pos.intX(), pos.intY(), cS);
+                                d.identifier = pos.identifier;
                                 pointsToDraw.add(d);
                                 //gb.setColor(Color.green);
                                 //drawPoint(pos, Color.red);
@@ -437,6 +445,11 @@ public class renderer extends JPanel{
                             if (usePixelRendering) {
                                 faceColorsToDraw.add(c);
                                 facesToDraw.add(new Polygon(xpoints, ypoints, npoints));
+                                facesToDraw_id.add(new Integer[]{
+                                    o.identifier,
+                                    t.identifier,
+                                    r.identifier
+                                });
                                 //gb.setColor(c);
                                 //gb.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                                 ////drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
@@ -537,46 +550,100 @@ public class renderer extends JPanel{
                 gb.setColor(Color.BLACK);
                 gb.fillRect(0, 0, w, h);
                 for(int i : new Range(linesToDraw.size())){
+                    Integer[][] coords = linesToDraw.get(i);
                     if (shading) {
                         gb.setColor(lineColorsToDraw.get(i));
                     }
                     else{
-                        gb.setColor(Color.red);
+                        int x_id = linesToDraw_id.get(i)[0];
+                        int y_id = linesToDraw_id.get(i)[1];
+                        Color xc = Color.white;
+                        Color yc = Color.white;
+                        int changes = 0;
+                        for(vertexGroup vg : color){
+                            if(vg.vertexID == x_id){
+                                xc = new Color(vg.r, vg.g, vg.b);
+                                changes++;
+                            }
+                            if(vg.vertexID == y_id){
+                                yc = new Color(vg.r, vg.g, vg.b);
+                                changes++;
+                            }
+                        }
+                        if(changes == 0){
+                            //System.out.println("whoops");
+                        }
+                        int minx = Math.min(coords[0][0], coords[1][0]);
+                        int miny = Math.min(coords[0][1], coords[1][1]);
+                        int maxx = Math.max(coords[0][0], coords[1][0]);
+                        int maxy = Math.max(coords[0][1], coords[1][1]);
+                        Color one = xc;
+                        Color two = yc;
+                        if(coords[0][0] < coords[1][0] && coords[0][1] < coords[1][1]){
+                            Color tmp = one.brighter().darker();
+                            one = two;
+                            two = tmp;
+                        }
+                        GradientPaint gp = new GradientPaint(minx,miny,one,maxx,maxy, two); 
+                        gb.setPaint(gp);
+                        //gb.setColor(xc);
                     }
-                    Integer[][] coords = linesToDraw.get(i);
                     //int x1 = coords[0][0];
                     //int y1 = coords[0][1];
                     //int x2 = coords[1][0];
                     //int y2 = coords[1][1];
                     gb.drawLine(coords[0][0], coords[0][1], coords[1][0], coords[1][1]);
+                    gb.setPaint(null);
                 }
                 for(Point3D i : pointsToDraw){
+                    Color col = Color.white;
                     for(vertexGroup vg : color){
                         if(vg.vertexID == i.identifier){
-                            i = new Color(vg.r, vg.g, vg.b);
+                            col = new Color(vg.r, vg.g, vg.b);
                         }
                     }
-                    gb.setColor(Color.green);
+                    gb.setColor(col);
                     gb.drawRect((int)i.x, (int)i.y,(int) i.z,(int) i.z);
                 }
-                for(int i : new Range(facesToDraw.size())){
-                    float wb = 0;
-                    for(int x : facesToDraw.get(i).xpoints){
-                        wb = wb + x;
+                if (drawFaces) {
+                    for (int i : new Range(facesToDraw.size())) {
+                        Color c1 = Color.white;
+                        Color c2 = Color.white;
+                        Color c3 = Color.white;
+                        /*
+                        Integer[] ids = facesToDraw_id.get(i);
+                        for(vertexGroup vg : color){
+                            if(vg.vertexID == ids[0]){
+                                c1 = new Color(vg.r, vg.g, vg.b);
+                            }
+                            if(vg.vertexID == ids[1]){
+                                c2 = new Color(vg.r, vg.g, vg.b);
+                            }
+                            if(vg.vertexID == ids[2]){
+                                c3 = new Color(vg.r, vg.g, vg.b);
+                            }
+                        }
+                        */
+                        //java.awt.geom.Point2D start
+                        //LinearGradientPaint p
+                        float wb = 0;
+                        for (int x : facesToDraw.get(i).xpoints) {
+                            wb = wb + x;
+                        }
+                        wb = wb / facesToDraw.get(i).xpoints.length;
+                        float hb = 0;
+                        for (int y : facesToDraw.get(i).ypoints) {
+                            hb = hb + y;
+                        }
+                        hb = hb / facesToDraw.get(i).ypoints.length;
+                        //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
+                        //gb.setPaint(tex);
+                        //gb.fillPolygon(facesToDraw.get(i));
+                        Color c = faceColorsToDraw.get(i);
+                        c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
+                        gb.setColor(c);
+                        gb.fillPolygon(facesToDraw.get(i));
                     }
-                    wb = wb / facesToDraw.get(i).xpoints.length;
-                    float hb = 0;
-                    for(int y : facesToDraw.get(i).ypoints){
-                        hb = hb + y;
-                    }
-                    hb = hb / facesToDraw.get(i).ypoints.length;
-                    //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
-                    //gb.setPaint(tex);
-                    //gb.fillPolygon(facesToDraw.get(i));
-                    Color c = faceColorsToDraw.get(i);
-                    c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
-                    gb.setColor(c);
-                    gb.fillPolygon(facesToDraw.get(i));
                 }
                 int w2 = (int) (w*scale_restore);
                 int h2 = (int) (h*scale_restore);

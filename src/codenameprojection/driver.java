@@ -409,19 +409,31 @@ public class driver{
             if(inp.keys[84] == true && !ingoredInputs.contains(84)){
                 s.r.drawLines = true;
                 s.r.drawFaces = false;
-                s.r.drawPoints = oldP;
+                //s.r.drawPoints = oldP;
+                try {
+                    models.get(defaultModelKey).hidePoints = true;
+                } catch (Exception e) {
+                }
             }
             //g
             if(inp.keys[71] == true && !ingoredInputs.contains(71)){
                 s.r.drawLines = false;
                 s.r.drawFaces = true;
-                s.r.drawPoints = oldP;
+                //s.r.drawPoints = oldP;
+                try {
+                    models.get(defaultModelKey).hidePoints = true;
+                } catch (Exception e) {
+                }
             }
             //b
             if(inp.keys[66] == true && !ingoredInputs.contains(66)){
                 s.r.drawLines = false;
                 s.r.drawFaces = false;
-                s.r.drawPoints = true;
+                //s.r.drawPoints = true;
+                try {
+                    models.get(defaultModelKey).hidePoints = false;
+                } catch (Exception e) {
+                }
             }
             
             //d
