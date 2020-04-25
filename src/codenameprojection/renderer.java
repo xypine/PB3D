@@ -44,6 +44,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
@@ -577,8 +578,8 @@ public class renderer extends JPanel{
                         int miny = Math.min(coords[0][1], coords[1][1]);
                         int maxx = Math.max(coords[0][0], coords[1][0]);
                         int maxy = Math.max(coords[0][1], coords[1][1]);
-                        Color one = xc;
-                        Color two = yc;
+                        Color one = yc;
+                        Color two = xc;
                         if(coords[0][0] < coords[1][0] && coords[0][1] < coords[1][1]){
                             Color tmp = one.brighter().darker();
                             one = two;
@@ -607,10 +608,15 @@ public class renderer extends JPanel{
                 }
                 if (drawFaces) {
                     for (int i : new Range(facesToDraw.size())) {
+                        int[][] coords = {
+                            facesToDraw.get(i).xpoints,
+                            facesToDraw.get(i).ypoints,
+                        };
+                        Color c = faceColorsToDraw.get(i);
                         Color c1 = Color.white;
                         Color c2 = Color.white;
                         Color c3 = Color.white;
-                        /*
+                        
                         Integer[] ids = facesToDraw_id.get(i);
                         for(vertexGroup vg : color){
                             if(vg.vertexID == ids[0]){
@@ -623,9 +629,29 @@ public class renderer extends JPanel{
                                 c3 = new Color(vg.r, vg.g, vg.b);
                             }
                         }
-                        */
+                        int minx = Math.min(coords[0][0], coords[0][1]);
+                        int miny = Math.min(coords[1][0], coords[1][1]);
+                        int maxx = Math.max(coords[0][0], coords[0][1]);
+                        int maxy = Math.max(coords[1][0], coords[1][1]);
+                        Color one = c1;
+                        Color two = c2;
+                        int r2 = (one.getRed() * c.getRed()) / 255;
+                        int g2 = (one.getGreen() * c.getGreen()) / 255;
+                        int b2 = (one.getBlue() * c.getBlue()) / 255;
+                        int r3 = (two.getRed() * c.getRed()) / 255;
+                        int g3 = (two.getGreen() * c.getGreen()) / 255;
+                        int b3 = (two.getBlue() * c.getBlue()) / 255;
+                        Color one2 = new Color(r2, g2, b2);
+                        Color two2 = new Color(r2, g2, b2);
+                        if(coords[0][0] < coords[0][1] && coords[1][0] < coords[1][1]){
+                            Color tmp = one2.brighter().darker();
+                            one2 = two2;
+                            two2 = tmp;
+                        }
+                        GradientPaint gp = new GradientPaint(minx,miny,one2,maxx,maxy, two2); 
+                        gb.setPaint(gp);
                         //java.awt.geom.Point2D start
-                        //LinearGradientPaint p
+                        //LinearGradientPaint p = new LinearGradientPaint
                         float wb = 0;
                         for (int x : facesToDraw.get(i).xpoints) {
                             wb = wb + x;
@@ -639,10 +665,13 @@ public class renderer extends JPanel{
                         //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
                         //gb.setPaint(tex);
                         //gb.fillPolygon(facesToDraw.get(i));
-                        Color c = faceColorsToDraw.get(i);
-                        c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
-                        gb.setColor(c);
+                        c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255/2);
+                        if(shading){
+                            gb.setPaint(null);
+                            gb.setColor(c);
+                        }
                         gb.fillPolygon(facesToDraw.get(i));
+                        gb.setPaint(null);
                     }
                 }
                 int w2 = (int) (w*scale_restore);
@@ -715,6 +744,43 @@ public class renderer extends JPanel{
         //Collections.sort(this.faces);
         //faces.sort(null);
     }
+    private java.awt.Color interpolateColor(final Color COLOR1, final Color COLOR2, float fraction)
+        {            
+            final float INT_TO_FLOAT_CONST = 1f / 255f;
+            fraction = Math.min(fraction, 1f);
+            fraction = Math.max(fraction, 0f);
+            
+            final float RED1 = COLOR1.getRed() * INT_TO_FLOAT_CONST;
+            final float GREEN1 = COLOR1.getGreen() * INT_TO_FLOAT_CONST;
+            final float BLUE1 = COLOR1.getBlue() * INT_TO_FLOAT_CONST;
+            final float ALPHA1 = COLOR1.getAlpha() * INT_TO_FLOAT_CONST;
+
+            final float RED2 = COLOR2.getRed() * INT_TO_FLOAT_CONST;
+            final float GREEN2 = COLOR2.getGreen() * INT_TO_FLOAT_CONST;
+            final float BLUE2 = COLOR2.getBlue() * INT_TO_FLOAT_CONST;
+            final float ALPHA2 = COLOR2.getAlpha() * INT_TO_FLOAT_CONST;
+
+            final float DELTA_RED = RED2 - RED1;
+            final float DELTA_GREEN = GREEN2 - GREEN1;
+            final float DELTA_BLUE = BLUE2 - BLUE1;
+            final float DELTA_ALPHA = ALPHA2 - ALPHA1;
+
+            float red = RED1 + (DELTA_RED * fraction);
+            float green = GREEN1 + (DELTA_GREEN * fraction);
+            float blue = BLUE1 + (DELTA_BLUE * fraction);
+            float alpha = ALPHA1 + (DELTA_ALPHA * fraction);
+
+            red = Math.min(red, 1f);
+            red = Math.max(red, 0f);
+            green = Math.min(green, 1f);
+            green = Math.max(green, 0f);
+            blue = Math.min(blue, 1f);
+            blue = Math.max(blue, 0f);
+            alpha = Math.min(alpha, 1f);
+            alpha = Math.max(alpha, 0f);
+
+            return new Color(red, green, blue, alpha);        
+        }
     public HashMap getIDMap(){
         HashMap<Integer, Point2D> out = new HashMap<Integer, Point2D>();
         for(Point2D i : points){
