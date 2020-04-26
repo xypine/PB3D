@@ -635,14 +635,18 @@ public class renderer extends JPanel{
                         int maxy = Math.max(coords[1][0], coords[1][1]);
                         Color one = c1;
                         Color two = c2;
-                        int r2 = (one.getRed() * c.getRed()) / 255;
-                        int g2 = (one.getGreen() * c.getGreen()) / 255;
-                        int b2 = (one.getBlue() * c.getBlue()) / 255;
+                        int r2 = (one.getRed() * c3.getRed()) / 255;
+                        r2 = (r2 * c.getRed()) / 255;
+                        int g2 = (one.getGreen() * c3.getGreen()) / 255;
+                        g2 = (g2 * c.getGreen()) / 255;
+                        int b2 = (one.getBlue() * c3.getBlue()) / 255;
+                        b2 = (b2 * c.getBlue()) / 255;
                         int r3 = (two.getRed() * c.getRed()) / 255;
+                        //r3 = (r3 * c.getRed()) / 255;
                         int g3 = (two.getGreen() * c.getGreen()) / 255;
                         int b3 = (two.getBlue() * c.getBlue()) / 255;
                         Color one2 = new Color(r2, g2, b2);
-                        Color two2 = new Color(r2, g2, b2);
+                        Color two2 = new Color(r3, g3, b3);
                         if(coords[0][0] < coords[0][1] && coords[1][0] < coords[1][1]){
                             Color tmp = one2.brighter().darker();
                             one2 = two2;
