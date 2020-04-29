@@ -24,6 +24,7 @@
 
 package codenameprojection;
 
+import codenameprojection.drawables.face;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import JFUtils.point.Point2D;
