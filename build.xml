@@ -11,29 +11,34 @@
     <description>Builds, tests, and runs the project codeNameProjection.</description>
     <import file="nbproject/build-impl.xml"/>
     <target name="javadocs" depends="init">
-    <mkdir dir="${build.docs}"/>
-    <javadoc destdir="${build.docs}"
-             author="true"
-             version="true"
-             windowtitle="${Name} API"
-             doctitle="${Name}"
-             extdirs="${module.thirdparty}"
+		<mkdir dir="${build.docs}"/>
+		<javadoc destdir="${build.docs}"
+				author="true"
+				version="true"
+				windowtitle="${Name} API"
+				doctitle="${Name}"
+				extdirs="${module.thirdparty}"
 
-             additionalparam="-Xdoclint:none"
+				additionalparam="-Xdoclint:none"
 
-             excludepackagenames="${excludedPackages}"
-             bottom="Copyright lololololololol">
-        <arg line="${java.module.arg}"/>
-        <classpath refid="javac.driver.classpath"/>
-        <sourcepath>
-            <pathelement path="${source.java}"/>
-            <pathelement path="${source.jna-client}"/>
-        </sourcepath>
-        <sourcepath refid="source.java.openoffice"/>
-        <sourcepath refid="source.java.additional"/>
-        <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-    </javadoc>
-</target>
+				excludepackagenames="${excludedPackages}"
+				bottom="Copyright lololololololol">
+			<arg line="${java.module.arg}"/>
+			<classpath refid="javac.driver.classpath"/>
+			<sourcepath>
+				<pathelement path="${source.java}"/>
+				<pathelement path="${source.jna-client}"/>
+			</sourcepath>
+			<sourcepath refid="source.java.openoffice"/>
+			<sourcepath refid="source.java.additional"/>
+			<link href="http://docs.oracle.com/javase/7/docs/api/"/>
+		</javadoc>
+	</target>
+	<target name="jar">
+		<jar destfile="foo.jar" basedir="${dir.classes}">
+			<zipgroupfileset dir="lib" includes="*.jar"/>
+		</jar>
+	</target>
     <!--
 
     There exist several targets which are by default empty and which can be 
