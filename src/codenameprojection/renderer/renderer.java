@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package codenameprojection;
+package codenameprojection.renderer;
 
 import JFUtils.Range;
 import JFUtils.dirs;
@@ -32,6 +32,8 @@ import JFUtils.point.Point3D;
 import JFUtils.quickTools;
 import UI.drawable;
 import codenameprojection.drawables.vertexGroup;
+import codenameprojection.driver;
+import codenameprojection.drawables.face;
 import fps.FPSTest;
 import java.awt.AWTException;
 import java.awt.Color;
@@ -72,7 +74,7 @@ import javax.swing.JPanel;
  *
  * @author Jonnelafin
  */
-public class renderer extends JPanel{
+public class renderer extends JPanel implements rendererInterface{
     public BufferedImage output;
     public double cx;
     public double cy;
@@ -635,6 +637,11 @@ public class renderer extends JPanel{
                         int maxy = Math.max(coords[1][0], coords[1][1]);
                         Color one = c1;
                         Color two = c2;
+                        if(coords[0][0] < coords[0][1] && coords[1][0] < coords[1][1]){
+                            Color tmp = one.brighter().darker();
+                            one = two;
+                            two = tmp;
+                        }
                         int r2 = (one.getRed() * c3.getRed()) / 255;
                         r2 = (r2 * c.getRed()) / 255;
                         int g2 = (one.getGreen() * c3.getGreen()) / 255;
@@ -647,11 +654,6 @@ public class renderer extends JPanel{
                         int b3 = (two.getBlue() * c.getBlue()) / 255;
                         Color one2 = new Color(r2, g2, b2);
                         Color two2 = new Color(r3, g3, b3);
-                        if(coords[0][0] < coords[0][1] && coords[1][0] < coords[1][1]){
-                            Color tmp = one2.brighter().darker();
-                            one2 = two2;
-                            two2 = tmp;
-                        }
                         GradientPaint gp = new GradientPaint(minx,miny,one2,maxx,maxy, two2); 
                         gb.setPaint(gp);
                         //java.awt.geom.Point2D start
@@ -710,6 +712,7 @@ public class renderer extends JPanel{
     }
     public driver Logic;
     public boolean debug = true;
+    @Override
     public void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide, LinkedList<vertexGroup> color, driver Logic){
         this.points = newSet;
         this.color = color;
@@ -717,6 +720,7 @@ public class renderer extends JPanel{
         this.pointsToHide = pointsToHide;
         this.Logic = Logic;
     }
+    @Override
     public void updateLines(LinkedList<Integer[]> newSet, LinkedList<Color> color){
         this.lines = newSet;
         this.lines_color = color;
@@ -725,6 +729,7 @@ public class renderer extends JPanel{
     LinkedList<face> faces_unsorted = new LinkedList<>();
     LinkedList<Color> faces_color = new LinkedList<>();
     LinkedList<Float> faces_dist = new LinkedList<>();
+    @Override
     public void updateFaces(LinkedList<face> newSet, LinkedList<Color> color, LinkedList<Float> dist){
         
         this.faces_color = color;
@@ -785,6 +790,7 @@ public class renderer extends JPanel{
 
             return new Color(red, green, blue, alpha);        
         }
+    @Override
     public HashMap getIDMap(){
         HashMap<Integer, Point2D> out = new HashMap<Integer, Point2D>();
         for(Point2D i : points){

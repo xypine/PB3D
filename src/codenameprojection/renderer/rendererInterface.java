@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Elias Eskelinen.
+ * Copyright 2020 Elias Eskelinen <elias.eskelinen@protonmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,36 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package codenameprojection.renderer;
 
-package codenameprojection;
-
-import codenameprojection.renderer.renderer;
-import javax.swing.JFrame;
+import JFUtils.point.Point2D;
+import codenameprojection.drawables.vertexGroup;
+import codenameprojection.driver;
+import codenameprojection.drawables.face;
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
- * @author Jonnelafin
+ * @author Elias Eskelinen aka Jonnelafin
  */
-public class Screen extends JFrame{
-    public renderer r;
+public interface rendererInterface {
+
+    HashMap getIDMap();
+
+    void updateFaces(LinkedList<face> newSet, LinkedList<Color> color, LinkedList<Float> dist);
+
+    void updateLines(LinkedList<Integer[]> newSet, LinkedList<Color> color);
+
+    void updatePoints(LinkedList<Point2D> newSet, LinkedList<Point2D> newSizes, LinkedList<Integer> pointsToHide, LinkedList<vertexGroup> color, driver Logic);
     
-    
-    
-    public Screen(){
-        //Create the renderer
-        r = new renderer(this);
-        
-        //init this
-        this.setTitle("Projection renderer");
-        this.setSize(400, 550);
-        this.setLocationRelativeTo(null);
-        this.setLocation(0, 0);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        //Init components
-        this.add(r);
-        
-        //Set visible
-        this.setVisible(true);
-    }
 }

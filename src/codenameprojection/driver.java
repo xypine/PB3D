@@ -24,6 +24,7 @@
 
 package codenameprojection;
 
+import codenameprojection.drawables.face;
 import JFUtils.Input;
 import JFUtils.InputActivated;
 import JFUtils.Range;
@@ -498,12 +499,12 @@ public class driver{
             }
             
             //n
-            if(inp.keys[78] == true && !ingoredInputs.contains(78)){
-                System.out.print("Saving face lists to file...");
-                listToFile(s.r.faces);
-                listToFile(s.r.faces_unsorted);
-                System.out.println("Done!");
-            }
+//            if(inp.keys[78] == true && !ingoredInputs.contains(78)){
+//                System.out.print("Saving face lists to file...");
+//                listToFile(s.r.faces);
+//                listToFile(s.r.faces_unsorted);
+//                System.out.println("Done!");
+//            }
             
             //j
             if(inp.keys[74] == true && !ingoredInputs.contains(74)){

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package codenameprojection;
+package codenameprojection.drawables;
 
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
@@ -57,8 +57,8 @@ public class face implements Comparable<face>{
     }
     
     
-    int originalIndex;
-    Point3D[] points = new Point3D[]{};
+    public int originalIndex;
+    public Point3D[] points = new Point3D[]{};
     
     public float z = (float) 0;
     public Integer getZ(){
