@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.LinkedList;
 import net.jpountz.lz4.LZ4FrameInputStream;
 
@@ -37,10 +38,18 @@ import net.jpountz.lz4.LZ4FrameInputStream;
  * @author Elias Eskelinen <elias.eskelinen@protonmail.com>
  */
 public class IO {
+    static int filesDone = 0;
+    
+    static LinkedList<String> dependencyRecord = new LinkedList<>();
+    
     public static String readAsString(String path) throws IOException{
         return readAsString(path, true, true);
     }
     public static String readAsString(String path, boolean uncompress, boolean ignoreCompressError) throws IOException{
+        if(!dependencyRecord.contains(path)){
+            dependencyRecord.add(path);
+        }
+        filesDone++;
         if(uncompress){
             try {
                 LZ4FrameInputStream inStream = new LZ4FrameInputStream(new FileInputStream(new File(path)));
@@ -73,7 +82,7 @@ public class IO {
             return readFile(path, Charset.defaultCharset());
         }
     }
-    static String readFile(String path, Charset encoding) throws IOException {
+    private static String readFile(String path, Charset encoding) throws IOException {
       byte[] encoded = Files.readAllBytes(Paths.get(path));
       return new String(encoded, encoding);
     }
