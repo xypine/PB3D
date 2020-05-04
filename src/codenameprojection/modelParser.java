@@ -24,11 +24,14 @@
 
 package codenameprojection;
 
+import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
 import static codenameprojection.Utils.P3ToP2;
 import codenameprojection.drawables.vertexGroup;
+import codenameprojection.models.Model;
+import codenameprojection.models.ModelFrame;
 import compressor.IO;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -39,6 +42,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -299,4 +303,5 @@ public class modelParser {
             Logger.getLogger(modelParser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
 }

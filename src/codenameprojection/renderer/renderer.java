@@ -115,6 +115,7 @@ public class renderer extends JPanel implements rendererInterface{
     public int drawnFaces;
     public int frame;
     
+    public boolean fillPoints = true;
     public boolean drawPoints = true;
     public boolean shading = false;
     public boolean drawLines = false;
@@ -361,8 +362,8 @@ public class renderer extends JPanel implements rendererInterface{
                             //        if(cS > 255){
                             //            cS = 255;
                             //        }
-                            if (cS < 0) {
-                                cS = 0;
+                            if (cS < 2) {
+                                cS = 2;
                             }
 
                             //g.setColor(new Color(cS, cS, cS));
@@ -376,7 +377,11 @@ public class renderer extends JPanel implements rendererInterface{
                                 //drawPoint(pos, Color.red);
                                 //gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                             } else {
-                                g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                                if (fillPoints) {
+                                    g.fillRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                                } else {
+                                    g.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
+                                }
                             }
                             //g.drawRect(pos.intX() - xOff, pos.intY() - yOff, s.intX(), s.intY());
                         } catch (Exception e) {
@@ -606,7 +611,11 @@ public class renderer extends JPanel implements rendererInterface{
                         }
                     }
                     gb.setColor(col);
-                    gb.drawRect((int)i.x, (int)i.y,(int) i.z,(int) i.z);
+                    if (fillPoints) {
+                        gb.fillRect((int) i.x, (int) i.y, (int) i.z, (int) i.z);
+                    } else {
+                        gb.drawRect((int) i.x, (int) i.y, (int) i.z, (int) i.z);
+                    }
                 }
                 if (drawFaces) {
                     for (int i : new Range(facesToDraw.size())) {

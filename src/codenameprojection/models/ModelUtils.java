@@ -24,13 +24,19 @@
 
 package codenameprojection.models;
 
+import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
+import codenameprojection.cube.Cube;
 import codenameprojection.drawables.vertexGroup;
+import codenameprojection.driver;
 import codenameprojection.modelParser;
 import static codenameprojection.modelParser.filename;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -39,8 +45,9 @@ import java.util.LinkedList;
 public class ModelUtils {
     
     public static void main(String[] args) {
-        filename = "assets/models/Viper8";
+        modelParser.filename = "assets/models/misc/color";
         try {
+            modelParser.size = 10;
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             
             //new modelParser().parseLines(parse.getFirst());
@@ -52,7 +59,41 @@ public class ModelUtils {
             Model m =  new Model(frames, true);
             LinkedList<Model> models = new LinkedList<>();
             models.add(m);
-            heightmap(1, models);
+            Double[][] heightmapd = heightmap(1, models);
+            for(Double[] row : heightmapd){
+                for(Double i : row){
+                    System.out.print(Math.round(i) + " ");
+                }
+                System.out.println("");
+            }
+            driver Driver = new driver();
+            Thread t = new Thread(){
+                @Override
+                public void run() {
+                    super.run(); //To change body of generated methods, choose Tools | Templates.
+                    Driver.run();
+                    //Driver = new driver(null);
+                }
+
+            };
+            Driver.startWithNoModel = false;
+        
+            
+            LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd);
+            LinkedList<Integer> gridHandles = new LinkedList<>();
+            for(Model m2 : grid){
+                Integer handle = m2.hashCode();
+                Driver.models.put(handle, m2);
+                gridHandles.add(handle);
+            }
+            t.start();
+            while(!Driver.running){
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Cube.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } catch (IOException iOException) {
             iOException.printStackTrace();
         }
@@ -64,7 +105,66 @@ public class ModelUtils {
         Point2D maxs = max(joined);
         System.out.println("Min: " + mins.represent());
         System.out.println("Max: " + maxs.represent());
-        return null;
+        int w = (int) (maxs.x - mins.x);
+        int h = (int) (maxs.y - mins.y);
+        System.out.println("Width: " + w);
+        System.out.println("Height: " + h);
+        Double[][] out = new Double[w+2][h+2];
+        for(int x : new Range(w+2)){
+            for(int y : new Range(h+2)){
+                out[x][y] = -99999D;
+            }
+        }
+        for(Point3D i : joined){
+            try {
+                int x = (int) i.x;
+                int y = (int) i.z;
+                x = x + w / 2;
+                y = y + h / 2;
+                double z = i.y;
+                double curr = out[x][y];
+                if (z > curr) {
+                    out[x][y] = z;
+                }
+            } catch (Exception e) {
+                //throw e;
+            }
+        }
+        int x = 0;
+        int y = 0;
+        Double[][] out2 = out.clone();
+        for(Double[] row : out){
+            for(Double i : row){
+                int done = 0;
+                if (i == -99999D) {
+                    double sum = 0;
+                    double raw_done = 0;
+                    double raw_sum = 0;
+                    for(Point2D d : JFUtils.quickTools.vectorDirs4){
+                        try {
+                            double val = out[(int) (x + d.x)][(int) (y + d.y)];
+                            if (val != -99999D) {
+                                sum = sum + val;
+                                done++;
+                            }
+                            raw_sum = raw_sum + val;
+                            raw_done++;
+                        } catch (Exception e) {
+                        }
+                    }
+                    double raw = raw_sum / raw_done;
+                    
+                    out2[x][y] = i;
+                    if (raw > -99999D) {
+                        out2[x][y] = sum / done;
+                    }
+                }
+                y++;
+            }
+            x++;
+            y = 0;
+        }
+        return out2;
     }
     public static LinkedList<Point3D> join(LinkedList<Model> models){
         LinkedList<Point3D> out = new LinkedList<>();
@@ -80,8 +180,8 @@ public class ModelUtils {
             if (i.x < x) {
                 x = i.x;
             }
-            if (i.y < y) {
-                y = i.y;
+            if (i.z < y) {
+                y = i.z;
             }
         }
         Point2D out = new Point2D(x, y);
@@ -94,11 +194,83 @@ public class ModelUtils {
             if (i.x > x) {
                 x = i.x;
             }
-            if (i.y > y) {
-                y = i.y;
+            if (i.z > y) {
+                y = i.z;
             }
         }
         Point2D out = new Point2D(x, y);
+        return out;
+    }
+    static LinkedList<Model> constructGrid(int rx2, int ry2, Double[][] h){
+        int ind = 0;
+        int rz2 = 1;
+        Random rnd = new Random();
+        LinkedList<Model> out = new LinkedList<>();
+        for(int z : new Range(rz2)){
+            for (int x : new Range(rx2)) {
+                for (int y: new Range(ry2)){
+                    LinkedList<ModelFrame> frames = new LinkedList<>();
+                    LinkedList<Point3D> points = new LinkedList<>();
+                    LinkedList<Integer[]> lines = new LinkedList<>();
+                    LinkedList<Point3D[]> faces = new LinkedList<>();
+                    LinkedList<vertexGroup> color = new LinkedList<>();
+
+                    double rndX = (x - (rx2 / 2) )*1;
+                    double rndY = (y - (ry2 / 2) )*1;
+                    double rndZ = h[x][y];
+
+
+
+                    points.add(new Point3D(rndX, rndZ, rndY));
+
+
+                    if(out.size() > 2){
+                        try {
+                            Point3D last = out.get(ind - 1).getFrame(0).points.getFirst();
+                            if (y !=0) {
+                                lines.add(new Integer[]{points.getFirst().identifier, last.identifier});
+                            }
+                        } catch (Exception e) {
+                        }
+                            
+                            
+                        try {
+                            Point3D pair = out.get(ind - ry2).getFrame(0).points.getFirst();
+                            if (x != 0) {
+                                lines.add(new Integer[]{points.getFirst().identifier, pair.identifier});
+                            }
+                        } catch (Exception e) {
+                        }
+                        
+                        try {
+                            Point3D pair = out.get(ind - (rx2 * ry2)*rz2).getFrame(0).points.getFirst();
+                            if (false) {
+                                lines.add(new Integer[]{points.getFirst().identifier, pair.identifier});
+                            }
+                        } catch (Exception e) {
+                            //System.out.println(ind - (rx2 * ry2)*rz2);
+                        }
+                            //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                            //lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - rz2).getFrame(0).points.getFirst().identifier});
+                            //faces.add(new Point2D[]{
+
+                            //});
+                    }
+                    //if(y == ry2){
+                    //    lines.add(new Integer[]{points.getFirst().identifier, out.get(ind - ry2).getFrame(0).points.getFirst().identifier});
+                    //}
+
+
+                    frames.add(new ModelFrame(points , lines, faces, color));
+                    Model m = new Model(frames, true);
+                    m.hidePoints = false;
+                    m.hideLines = false;
+                    out.add(m);
+                    ind = ind + 1;
+                }
+            }
+        }
+        
         return out;
     }
 }
