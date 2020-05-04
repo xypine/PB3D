@@ -136,16 +136,20 @@ public class ModelUtils {
         for(Double[] row : out){
             for(Double i : row){
                 int done = 0;
-                if (i == -99999D) {
+                //i != -99999D
+                if (true) {
                     double sum = 0;
                     double raw_done = 0;
                     double raw_sum = 0;
                     for(Point2D d : JFUtils.quickTools.vectorDirs4){
                         try {
                             double val = out[(int) (x + d.x)][(int) (y + d.y)];
-                            if (val != -99999D) {
-                                sum = sum + val;
-                                done++;
+                            //if (val != -99999D && sum / 10 < val) {
+                            //    sum = sum + val;
+                            //    done++;
+                            //}
+                            if(val > sum){
+                                sum = val;
                             }
                             raw_sum = raw_sum + val;
                             raw_done++;
@@ -155,8 +159,12 @@ public class ModelUtils {
                     double raw = raw_sum / raw_done;
                     
                     out2[x][y] = i;
-                    if (raw > -99999D) {
-                        out2[x][y] = sum / done;
+                    //raw != -99999D
+                    //if (raw > -9999D) {
+                    //    out[x][y] = sum / done;
+                    //}
+                    if (i != -99999D || raw_sum / done != -99999D) {
+                        out2[x][y] = sum;
                     }
                 }
                 y++;
