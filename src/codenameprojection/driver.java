@@ -340,11 +340,17 @@ public class driver{
             if(zep == 0){
                 zep = 1;
             }
+            double offset = deltaTime.toNanos() / 200000D;
+            if(offset == 0){
+                offset = 10;
+            }
             if (!usePB) {
 //System.out.println(zep);
-                if (tickC % 1 == 0 && !an_pause) {
+                if (!an_pause && tickC % (int)(offset) == 0) {
                     if (frame < frames.size() - 1 || true) {
-                        frame = (int) (frame + 1 * (deltaTime.toNanos() / 10000000));
+                        double add = 1;
+                        //add = 1 * (deltaTime.toNanos() / 10000000);
+                        frame = (int) (frame + add);
                     } else {
                         //System.out.println("frame was " + frame + " before reset");
                         frame = 0;

@@ -3,11 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/coding/CodeNameProjection/src/fps/FPSTest.java</file>
-            <file>file:/coding/CodeNameProjection/src/codenameprojection/renderer.java</file>
+            <file>file:/coding/CodeNameProjection/src/compressor/GUI.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/driver.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/CodeNameProjection.java</file>
-            <file>file:/coding/CodeNameProjection/src/codenameprojection/model.java</file>
+            <file>file:/coding/CodeNameProjection/src/compressor/IO.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/modelParser.java</file>
         </group>
     </open-files>

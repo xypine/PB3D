@@ -1,2 +1,5 @@
-nausea:1
-stockMenus:true
+#Enables the hashcheck
+secure true
+#Nearest release-version
+version 3
+
