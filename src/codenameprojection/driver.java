@@ -24,6 +24,8 @@
 
 package codenameprojection;
 
+import codenameprojection.models.ModelFrame;
+import codenameprojection.models.Model;
 import codenameprojection.drawables.face;
 import JFUtils.Input;
 import JFUtils.InputActivated;
@@ -105,7 +107,7 @@ public class driver{
     
     public Point3D camera = new Point3D(0, 0, 0);
     
-    public ConcurrentHashMap<Integer, model> models = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Integer, Model> models = new ConcurrentHashMap<>();
     public float shadingMultiplier = 1;
     public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
         LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();
@@ -127,7 +129,7 @@ public class driver{
         LinkedList<Integer[]> lines2 = new modelParser("Cube").parseLines(points2);
         LinkedList<Point3D[]> faces2 = new modelParser("Cube").parseFaces(points2);
         
-        model m = new model(new LinkedList<model_frame>(), true);
+        Model m = new Model(new LinkedList<ModelFrame>(), true);
         points2.forEach(l -> m.getFrame(0).points.add(l));
         int id = points2.hashCode();
         models.put(id, m);
@@ -187,7 +189,7 @@ public class driver{
         LinkedList<Point3D[]> faces2 = new LinkedList<>();
         LinkedList<Integer> hidden = new LinkedList<>();
         LinkedList<vertexGroup> color2 = new LinkedList<>();
-        for(model m : models.values()){
+        for(Model m : models.values()){
             //m.x = m.x + 0.03;
             //m.rotation_Y = m.rotation_Y + 0.00001;
             //System.out.println(m.rotation_Y);
@@ -239,10 +241,10 @@ public class driver{
                 LinkedList<Integer[]> lines2 = new modelParser().parseLines(points2);
                 LinkedList<Point3D[]> faces2 = new modelParser().parseFaces(points2);
                 LinkedList<vertexGroup> color2 = new modelParser().parseColor(points2);
-                model m = new model(new LinkedList<model_frame>(), false);
+                Model m = new Model(new LinkedList<ModelFrame>(), false);
                 m.name = modelParser.filename;
                 for (LinkedList<Point3D> list : frames2) {
-                    m.frames.add(new model_frame(list, lines2, faces2, color2));
+                    m.frames.add(new ModelFrame(list, lines2, faces2, color2));
                 }
                 defaultModelKey = m.hashCode();
                 models.put(defaultModelKey, m);
@@ -309,7 +311,7 @@ public class driver{
             }
             
             //Init
-            //model model0 = (model) models.values().toArray()[0];
+            //model model0 = (Model) models.values().toArray()[0];
             //model0.y = Math.sin(tickC/100)/100;
             //model0.rotation_Y++;
             

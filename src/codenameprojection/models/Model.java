@@ -22,19 +22,20 @@
  * THE SOFTWARE.
  */
 
-package codenameprojection;
+package codenameprojection.models;
 
 import JFUtils.Range;
 import JFUtils.point.Point3D;
 import codenameprojection.drawables.vertexGroup;
+import codenameprojection.driver;
 import java.util.LinkedList;
 
 /**
  *
  * @author Jonnelafin
  */
-public class model {
-    public LinkedList<model_frame> frames;
+public class Model {
+    public LinkedList<ModelFrame> frames;
     public double rotation_X = 0;
     public double rotation_Y = 0;
     public double rotation_Z = 0;
@@ -71,12 +72,12 @@ public class model {
     public int minFrame = 0;
     
     public boolean single_frame;
-    public model(LinkedList<model_frame> frames, boolean singleFrame) {
+    public Model(LinkedList<ModelFrame> frames, boolean singleFrame) {
         this.frames = frames;
         single_frame = singleFrame;
     }
     
-    public LinkedList<model_frame> frames_cache = new LinkedList<>();
+    public LinkedList<ModelFrame> frames_cache = new LinkedList<>();
     
     public driver parent;
     
@@ -87,7 +88,7 @@ public class model {
     synchronized void updatecache(){
         buffering = true;
         int token = latest + 1;
-        LinkedList<model_frame> newCache = new LinkedList<>();
+        LinkedList<ModelFrame> newCache = new LinkedList<>();
         for(int i : new Range(frames.size())){
             newCache.add(getFrame(i, true, true, true, true));
         }
@@ -98,11 +99,11 @@ public class model {
         buffering = false;
     }
     
-    synchronized public model_frame getFrame(int index){
+    synchronized public ModelFrame getFrame(int index){
         return getFrame(index, false, true, true, true);
     }
     
-    synchronized public model_frame getFrame(int index, boolean rotate, boolean translate, boolean scale){
+    synchronized public ModelFrame getFrame(int index, boolean rotate, boolean translate, boolean scale){
         return getFrame(index, false, rotate, translate, scale);
     }
     
@@ -123,7 +124,7 @@ public class model {
         return out;
     }
     public double animationSpeed = 1;
-    synchronized public model_frame getFrame(int index, boolean skipCache, boolean rotate, boolean translate, boolean scale){
+    synchronized public ModelFrame getFrame(int index, boolean skipCache, boolean rotate, boolean translate, boolean scale){
         index = (int) (index * animationSpeed);
         try {
             index = index % (frames.size() - 1);
@@ -145,13 +146,13 @@ public class model {
             }
             return frames_cache.get(index);
         }
-        model_frame out;
+        ModelFrame out;
         if(!single_frame){
 //            System.out.println(index);
-            out = (model_frame) frames.get(index).clone();
+            out = (ModelFrame) frames.get(index).clone();
         }
         else{
-            out = (model_frame) frames.get(minFrame).clone();
+            out = (ModelFrame) frames.get(minFrame).clone();
         }
         int ind = 0;
         for(Point3D i : (LinkedList<Point3D>)(out.points.clone())){
@@ -184,8 +185,8 @@ public class model {
     }
 
     @Override
-    public model clone() {
-        model m = new model(frames, single_frame);
+    public Model clone() {
+        Model m = new Model(frames, single_frame);
         m.animationSpeed = this.animationSpeed;
         m.x = x;
         m.y = y;

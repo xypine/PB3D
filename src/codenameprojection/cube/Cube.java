@@ -29,9 +29,9 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
-import codenameprojection.model;
+import codenameprojection.models.Model;
 import codenameprojection.modelParser;
-import codenameprojection.model_frame;
+import codenameprojection.models.ModelFrame;
 import java.awt.FlowLayout;
 import java.time.Duration;
 import java.time.Instant;
@@ -71,16 +71,16 @@ public class Cube {
         modelParser.size = 100;
         Driver.startWithNoModel = false;
         
-        LinkedList<model> points = constructCloud(); // //new LinkedList<>();
+        LinkedList<Model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
-        for(model m : points){
+        for(Model m : points){
             Integer handle = m.hashCode();
             Driver.models.put(handle, m);
             handles.add(handle);
         }
-        LinkedList<model> grid = constructGrid();
+        LinkedList<Model> grid = constructGrid();
         LinkedList<Integer> gridHandles = new LinkedList<>();
-        for(model m : grid){
+        for(Model m : grid){
             Integer handle = m.hashCode();
             Driver.models.put(handle, m);
             gridHandles.add(handle);
@@ -174,7 +174,7 @@ public class Cube {
         while (true) {
             beginTime = Instant.now();
             
-            model cubeM = (model) Driver.models.values().toArray()[1];
+            Model cubeM = (Model) Driver.models.values().toArray()[1];
             cubeM.hideLines = true;
             cubeM.hidePoints = true;
             
@@ -248,13 +248,13 @@ public class Cube {
     int rx = 5;
     int ry = 5;
     int rz = 5;
-    LinkedList<model> constructCloud(){
+    LinkedList<Model> constructCloud(){
         Random rnd = new Random();
-        LinkedList<model> out = new LinkedList<model>();
+        LinkedList<Model> out = new LinkedList<Model>();
         for(int x : new Range(rx)){
             for (int y : new Range(ry)) {
                 for (int z : new Range(rz)){
-                    LinkedList<model_frame> frames = new LinkedList<>();
+                    LinkedList<ModelFrame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point3D[]> faces = new LinkedList<>();
@@ -290,8 +290,8 @@ public class Cube {
                     
                     
                     
-                    frames.add(new model_frame(points , lines, faces, color));
-                    model m = new model(frames, true);
+                    frames.add(new ModelFrame(points , lines, faces, color));
+                    Model m = new Model(frames, true);
                     m.hidePoints = false;
                     out.add(m);
                 }
@@ -304,14 +304,14 @@ public class Cube {
     int rx2 = 3;
     int ry2 = rx2;
     int rz2 = rx2;
-    LinkedList<model> constructGrid(){
+    LinkedList<Model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();
-        LinkedList<model> out = new LinkedList<>();
+        LinkedList<Model> out = new LinkedList<>();
         for(int z : new Range(rz2)){
             for (int x : new Range(rx2)) {
                 for (int y: new Range(ry2)){
-                    LinkedList<model_frame> frames = new LinkedList<>();
+                    LinkedList<ModelFrame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point3D[]> faces = new LinkedList<>();
@@ -363,8 +363,8 @@ public class Cube {
                     //}
 
 
-                    frames.add(new model_frame(points , lines, faces, color));
-                    model m = new model(frames, true);
+                    frames.add(new ModelFrame(points , lines, faces, color));
+                    Model m = new Model(frames, true);
                     m.hidePoints = false;
                     m.hideLines = false;
                     out.add(m);

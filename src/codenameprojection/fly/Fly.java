@@ -31,9 +31,9 @@ import JFUtils.point.Point3F;
 import codenameprojection.Utils;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
-import codenameprojection.model;
+import codenameprojection.models.Model;
 import codenameprojection.modelParser;
-import codenameprojection.model_frame;
+import codenameprojection.models.ModelFrame;
 import java.awt.FlowLayout;
 import java.time.Duration;
 import java.time.Instant;
@@ -133,7 +133,7 @@ public class Fly {
         }
         //Driver.models.clear();
         int ship = (int) Driver.models.keySet().toArray()[0];
-        model shipM = Driver.models.get(ship);
+        Model shipM = Driver.models.get(ship);
         //shipM.frames.getFirst().lines = new LinkedList<>();
         //shipM.frames.getFirst().faces = new LinkedList<>();
         
@@ -141,16 +141,16 @@ public class Fly {
         shipM.hideFaces = true;
         shipM.hidePoints = false;
         
-        LinkedList<model> points = constructCloud(); // //new LinkedList<>();
+        LinkedList<Model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
-        for(model m : points){
+        for(Model m : points){
             Integer handle = m.hashCode();
             Driver.models.put(handle, m);
             handles.add(handle);
         }
-        LinkedList<model> grid = constructGrid();
+        LinkedList<Model> grid = constructGrid();
         LinkedList<Integer> gridHandles = new LinkedList<>();
-        for(model m : grid){
+        for(Model m : grid){
             Integer handle = m.hashCode();
             Driver.models.put(handle, m);
             gridHandles.add(handle);
@@ -218,14 +218,14 @@ public class Fly {
             Driver.angleXM = Driver.angleXM + Driver.inp.cY * 0.0002;
             Driver.inp.cY = (int) (Driver.inp.cY * 0.5);
             
-            model shipModel = Driver.models.get(ship);
+            Model shipModel = Driver.models.get(ship);
             Point3D shipCenter = Utils.average(shipModel.getFrame(0).points);
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
             if (!pause) {
                 for (Integer bolt : boltHandles) {
                     try {
-                        model cursor = Driver.models.get(bolt);
+                        Model cursor = Driver.models.get(bolt);
                         //Point3D.multiply(Driver.viewAngle, new Point3D(1, 1, 1)
                         double speeds = 0.5;
                         Point3D one = cursor.frames.get(0).points.get(0);
@@ -261,7 +261,7 @@ public class Fly {
             //space
             if(Driver.inp.keys[32] && boltCooldown < 1){
                 
-                LinkedList<model_frame> frames2 = new LinkedList<>();
+                LinkedList<ModelFrame> frames2 = new LinkedList<>();
                 LinkedList<Point3D> points2 = new LinkedList<>();
                 LinkedList<Integer[]> lines2 = new LinkedList<>();
                 LinkedList<Point3D[]> faces2 = new LinkedList<>();
@@ -277,8 +277,8 @@ public class Fly {
                 points2.add(c5);
                 points2.add(c6);
                 lines2.add(new Integer[]{c5.identifier, c6.identifier});
-                frames2.add(new model_frame(points2 , lines2, faces2, color2));
-                model cursor = new model(frames2, true);
+                frames2.add(new ModelFrame(points2 , lines2, faces2, color2));
+                Model cursor = new Model(frames2, true);
                 int cursorHandle = cursor.hashCode();
                 Driver.models.put(cursorHandle, cursor);
                 boltHandles.add(cursorHandle);
@@ -300,7 +300,7 @@ public class Fly {
                     modelParser.filename = "assets/models/old/Cube";
                     LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
                     LinkedList<model_frame> cf = new LinkedList<>();
-                    cf.add(new model_frame(parse.get(0), new LinkedList<Integer[]>(), new LinkedList<Point2D[]>()));
+                    cf.add(new ModelFrame(parse.get(0), new LinkedList<Integer[]>(), new LinkedList<Point2D[]>()));
                     cyclone c = new cyclone(cf, true);
                     Driver.models.put(c.hashCode(), c);
                 } catch (IOException ex) {
@@ -427,7 +427,7 @@ public class Fly {
             //shipModel.y = shipModel.y + vel.y;
             //shipModel.z = shipModel.z + vel.z;
             for(Integer handle : handles){
-                model m = Driver.models.get(handle);
+                Model m = Driver.models.get(handle);
                 if(m.getFrame(0).points.getFirst().z < size){
                     //m.getFrame(0).points.getFirst().z = m.getFrame(0).points.getFirst().z + 0.03*100;
                 }
@@ -453,13 +453,13 @@ public class Fly {
     int rx = 5;
     int ry = 5;
     int rz = 5;
-    LinkedList<model> constructCloud(){
+    LinkedList<Model> constructCloud(){
         Random rnd = new Random();
-        LinkedList<model> out = new LinkedList<model>();
+        LinkedList<Model> out = new LinkedList<Model>();
         for(int x : new Range(rx)){
             for (int y : new Range(ry)) {
                 for (int z : new Range(rz)){
-                    LinkedList<model_frame> frames = new LinkedList<>();
+                    LinkedList<ModelFrame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point3D[]> faces = new LinkedList<>();
@@ -495,8 +495,8 @@ public class Fly {
                     
                     
                     
-                    frames.add(new model_frame(points , lines, faces, color));
-                    model m = new model(frames, true);
+                    frames.add(new ModelFrame(points , lines, faces, color));
+                    Model m = new Model(frames, true);
                     m.hidePoints = false;
                     out.add(m);
                 }
@@ -508,13 +508,13 @@ public class Fly {
     
     int rx2 = 15 * 2;
     int ry2 = 15 * 2;
-    LinkedList<model> constructGrid(){
+    LinkedList<Model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();
-        LinkedList<model> out = new LinkedList<model>();
+        LinkedList<Model> out = new LinkedList<Model>();
         for(int x : new Range(rx2)){
             for (int y : new Range(ry2)) {
-                LinkedList<model_frame> frames = new LinkedList<>();
+                LinkedList<ModelFrame> frames = new LinkedList<>();
                 LinkedList<Point3D> points = new LinkedList<>();
                 LinkedList<Integer[]> lines = new LinkedList<>();
                 LinkedList<Point3D[]> faces = new LinkedList<>();
@@ -544,8 +544,8 @@ public class Fly {
                 //}
                 
 
-                frames.add(new model_frame(points , lines, faces, color));
-                model m = new model(frames, true);
+                frames.add(new ModelFrame(points , lines, faces, color));
+                Model m = new Model(frames, true);
                 m.hidePoints = false;
                 m.hideLines = false;
                 out.add(m);

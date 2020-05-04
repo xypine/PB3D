@@ -33,9 +33,9 @@ import codenameprojection.Flags;
 import codenameprojection.Utils;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
-import codenameprojection.model;
+import codenameprojection.models.Model;
 import codenameprojection.modelParser;
-import codenameprojection.model_frame;
+import codenameprojection.models.ModelFrame;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
@@ -94,16 +94,16 @@ public class FPSTest {
         }
         int cubeHandle = 0;
         
-        LinkedList<model> points = constructCloud(); // //new LinkedList<>();
+        LinkedList<Model> points = constructCloud(); // //new LinkedList<>();
         LinkedList<Integer> handles = new LinkedList<>();
-        for(model m : points){
+        for(Model m : points){
             Integer handle = m.hashCode();
             Driver.models.put(handle, m);
             handles.add(handle);
         }
-        LinkedList<model> grid = constructGrid();
+        LinkedList<Model> grid = constructGrid();
         LinkedList<Integer> gridHandles = new LinkedList<>();
-        for(model m : grid){
+        for(Model m : grid){
             Integer handle = m.hashCode();
             Driver.models.put(handle, m);
             gridHandles.add(handle);
@@ -192,7 +192,7 @@ public class FPSTest {
         double jump_vel = 0;
         
         double shift_m = 1;
-        model first_object = (model) Driver.models.get(Driver.defaultModelKey);
+        Model first_object = (Model) Driver.models.get(Driver.defaultModelKey);
         first_object.hideLines = true;
         double speed2 = 0.2;
         first_object.animationSpeed = speed2;
@@ -237,8 +237,8 @@ public class FPSTest {
         Driver.screenPosition_org_next = new Point3D( 0, 0, 7 );
         Driver.screenPosition_org_next.identifier = -2;
         while (true) {
-            model gordon = (model) Driver.models.get(Driver.defaultModelKey);
-            //model single = (model) Driver.models.get(singlePointHandle);
+            Model gordon = (Model) Driver.models.get(Driver.defaultModelKey);
+            //model single = (Model) Driver.models.get(singlePointHandle);
             beginTime = Instant.now();
             /*single.rotation_Y = single.rotation_Y + 0.0001;
             single.scale = 40;
@@ -309,7 +309,7 @@ public class FPSTest {
                 vel.y = -1.8F - jump + sin * 0.12F;
                 Driver.screenPosition_org_next = vel.clone();
                 Driver.screenPosition_org_next.identifier = -2;
-                model cubeM = (model) Driver.models.values().toArray()[cubeHandle];
+                Model cubeM = (Model) Driver.models.values().toArray()[cubeHandle];
                 cubeM.hideLines = true;
                 cubeM.hidePoints = true;
                 thrust = thrust * 0.99F;
@@ -336,7 +336,7 @@ public class FPSTest {
             if (!Driver.an_pause) {
                 for (Integer bolt : boltHandles) {
                     try {
-                        model cursor = Driver.models.get(bolt);
+                        Model cursor = Driver.models.get(bolt);
                         //Point3D.multiply(Driver.viewAngle, new Point3D(1, 1, 1)
                         double speeds = 0.5;
                         Point3D one = cursor.frames.get(0).points.get(0);
@@ -394,7 +394,7 @@ public class FPSTest {
                 //f //70
                 //System.out.println(boltCooldown);
                 if (Driver.inp.mouseDown && boltCooldown < -400) {
-                    LinkedList<model_frame> frames2 = new LinkedList<>();
+                    LinkedList<ModelFrame> frames2 = new LinkedList<>();
                     LinkedList<Point3D> points2 = new LinkedList<>();
                     LinkedList<Integer[]> lines2 = new LinkedList<>();
                     LinkedList<Point3D[]> faces2 = new LinkedList<>();
@@ -410,8 +410,8 @@ public class FPSTest {
                     points2.add(from);
                     points2.add(from2);
                     lines2.add(new Integer[]{from.identifier, from2.identifier});
-                    frames2.add(new model_frame(points2, lines2, faces2, color2));
-                    model cursor = new model(frames2, true);
+                    frames2.add(new ModelFrame(points2, lines2, faces2, color2));
+                    Model cursor = new Model(frames2, true);
                     int cursorHandle = cursor.hashCode();
                     Driver.models.put(cursorHandle, cursor);
                     //emit sound
@@ -500,13 +500,13 @@ public class FPSTest {
     int rx = 5;
     int ry = 5;
     int rz = 5;
-    LinkedList<model> constructCloud(){
+    LinkedList<Model> constructCloud(){
         Random rnd = new Random();
-        LinkedList<model> out = new LinkedList<model>();
+        LinkedList<Model> out = new LinkedList<Model>();
         for(int x : new Range(rx)){
             for (int y : new Range(ry)) {
                 for (int z : new Range(rz)){
-                    LinkedList<model_frame> frames = new LinkedList<>();
+                    LinkedList<ModelFrame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point3D[]> faces = new LinkedList<>();
@@ -542,8 +542,8 @@ public class FPSTest {
                     
                     
                     
-                    frames.add(new model_frame(points , lines, faces, color));
-                    model m = new model(frames, true);
+                    frames.add(new ModelFrame(points , lines, faces, color));
+                    Model m = new Model(frames, true);
                     m.hidePoints = false;
                     out.add(m);
                 }
@@ -557,16 +557,16 @@ public class FPSTest {
     int ry2 = rx2;
     int rz2 = 1;
     
-    model loadPoint(){
-        model out = null;
+    Model loadPoint(){
+        Model out = null;
         try {
-            LinkedList<model_frame> frames = new LinkedList<>();
+            LinkedList<ModelFrame> frames = new LinkedList<>();
             LinkedList<Point3D> points = new modelParser("assets/models/single").parse().getFirst();
             LinkedList<Integer[]> parseLines = new LinkedList<>();//new modelParser("assets/models/single").parseLines(points);
             LinkedList<Point3D[]> parseFaces = new LinkedList<>();//new modelParser("assets/models/single").parseFaces(points);
             LinkedList<vertexGroup> color = new LinkedList<>();
-            frames.add(new model_frame(points , parseLines, parseFaces, color));
-            out = new model(frames, true);
+            frames.add(new ModelFrame(points , parseLines, parseFaces, color));
+            out = new Model(frames, true);
             out.hidePoints = false;
         } catch (IOException ex) {
             Logger.getLogger(FPSTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -574,26 +574,26 @@ public class FPSTest {
         return out;
     }
     
-    LinkedList<model> constructGrid(){
+    LinkedList<Model> constructGrid(){
         int ind = 0;
         Random rnd = new Random();
-        LinkedList<model> out = new LinkedList<>();
+        LinkedList<Model> out = new LinkedList<>();
         boolean facesU = true;
-        model m2 = null;
+        Model m2 = null;
         try {
             LinkedList<Point3D> points3 = new modelParser("assets/models/misc/plane").parse().getFirst();
             LinkedList<Integer[]> parseLines3 = new modelParser("assets/models/misc/plane").parseLines(points3);
             LinkedList<Point3D[]> parseFaces3 = new modelParser("assets/models/misc/plane").parseFaces(points3);
-            LinkedList<model_frame> frames2 = new LinkedList<>();
-            frames2.add(new model_frame(points3, parseLines3, parseFaces3, new LinkedList<>()));
-            m2 = new model(frames2, true);
+            LinkedList<ModelFrame> frames2 = new LinkedList<>();
+            frames2.add(new ModelFrame(points3, parseLines3, parseFaces3, new LinkedList<>()));
+            m2 = new Model(frames2, true);
         } catch (IOException iOException) {
             facesU = false;
         }
         for(int z : new Range(rz2)){
             for (int x : new Range(rx2)) {
                 for (int y: new Range(ry2)){
-                    LinkedList<model_frame> frames = new LinkedList<>();
+                    LinkedList<ModelFrame> frames = new LinkedList<>();
                     LinkedList<Point3D> points = new LinkedList<>();
                     LinkedList<Integer[]> lines = new LinkedList<>();
                     LinkedList<Point3D[]> faces = new LinkedList<>();
@@ -658,11 +658,11 @@ public class FPSTest {
                         faces.addAll(parseFaces3);
                     } catch (IOException iOException) {
                     }*/
-                    frames.add(new model_frame(points , lines, faces, color));
-                    model m = new model(frames, true);
+                    frames.add(new ModelFrame(points , lines, faces, color));
+                    Model m = new Model(frames, true);
                     m.hidePoints = false;
                     m.hideLines = true;
-                    model m3 = m2.clone();
+                    Model m3 = m2.clone();
                     m3.setX(rndX);
                     m3.setY(rndY);
                     out.add(m);

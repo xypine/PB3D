@@ -7,17 +7,17 @@
 package codenameprojection.fly;
 
 import codenameprojection.driver;
-import codenameprojection.model;
-import codenameprojection.model_frame;
+import codenameprojection.models.Model;
+import codenameprojection.models.ModelFrame;
 import java.util.LinkedList;
 
 /**
  *
  * @author Jonnelafin
  */
-public class cyclone extends model{
+public class cyclone extends Model{
 
-    public cyclone(LinkedList<model_frame> frames, boolean singleFrame) {
+    public cyclone(LinkedList<ModelFrame> frames, boolean singleFrame) {
         super(frames, singleFrame);
     }
 
@@ -25,7 +25,7 @@ public class cyclone extends model{
     public void executeLogic(driver parent_) {
         super.executeLogic(parent_);
         try {
-            model player = (model) parent.models.values().toArray()[0];
+            Model player = (Model) parent.models.values().toArray()[0];
             setZ(player.getZ() -10);
             setY(player.getY());
             setX(player.getX());

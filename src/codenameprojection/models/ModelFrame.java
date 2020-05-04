@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package codenameprojection;
+package codenameprojection.models;
 
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
@@ -32,13 +32,13 @@ import java.util.LinkedList;
  *
  * @author Elias Eskelinen
  */
-public class model_frame {
+public class ModelFrame {
     public LinkedList<Point3D> points;
     public LinkedList<Integer[]> lines;
     public LinkedList<Point3D[]> faces = new LinkedList<>();
     public LinkedList<vertexGroup> color = new LinkedList<>();
 
-    public model_frame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point3D[]> f, LinkedList<vertexGroup> c) {
+    public ModelFrame(LinkedList<Point3D> p, LinkedList<Integer[]> l, LinkedList<Point3D[]> f, LinkedList<vertexGroup> c) {
         this.points = p;
         this.lines = l;
         this.faces = f;
@@ -47,7 +47,7 @@ public class model_frame {
 
     @Override
     protected Object clone(){
-        return new model_frame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point3D[]>) faces.clone(), (LinkedList<vertexGroup>) color.clone());
+        return new ModelFrame((LinkedList<Point3D>) points.clone(), (LinkedList<Integer[]>) lines.clone(), (LinkedList<Point3D[]>) faces.clone(), (LinkedList<vertexGroup>) color.clone());
     }
     
     
