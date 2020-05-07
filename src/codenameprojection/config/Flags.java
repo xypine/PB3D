@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package codenameprojection;
+package codenameprojection.config;
 
 /**
  *
@@ -30,4 +30,5 @@ package codenameprojection;
  */
 public class Flags {
     public static boolean soundEnabled = true;
+    public static boolean secure = true;
 }

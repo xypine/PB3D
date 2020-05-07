@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 public class ModelUtils {
     
     public static void main(String[] args) {
-        modelParser.filename = "assets/models/misc/color";
+        modelParser.filename = "assets/models/Viper8";
         try {
             modelParser.size = 10;
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();

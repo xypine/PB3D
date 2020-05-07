@@ -29,7 +29,7 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
 import JFUtils.vector.dVector3;
-import codenameprojection.Flags;
+import codenameprojection.config.Flags;
 import codenameprojection.Utils;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;

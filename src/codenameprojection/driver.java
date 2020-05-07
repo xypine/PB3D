@@ -24,6 +24,7 @@
 
 package codenameprojection;
 
+import codenameprojection.config.Flags;
 import codenameprojection.models.ModelFrame;
 import codenameprojection.models.Model;
 import codenameprojection.drawables.face;

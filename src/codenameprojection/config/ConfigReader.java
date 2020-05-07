@@ -44,6 +44,7 @@ public class ConfigReader {
             System.out.println(red.keySet().toArray()[i] + ": " + red.values().toArray()[i]);
         }
     }
+    public static void 
     static String override = 
         "#Enables the hashcheck\n" +
         "secure true\n" +
@@ -54,12 +55,12 @@ public class ConfigReader {
         try {
             String source = compressor.IO.readAsString(configPath);
             //source = override;
-            System.out.println(source);
+            //System.out.println(source);
             String buffer = "";
             String name = "";
             boolean comment = false;
             for(char i : source.toCharArray()){
-                System.out.println(i);
+                //System.out.println(i);
                 switch (i) {
                     case '#':
                         if(buffer.equals("")){
