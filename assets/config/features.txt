@@ -1,5 +1,7 @@
 #Enables the hashcheck
-secure true
-#Nearest release-version
+secure false
+#Nearest release-version, unimplemented
 version 3
+#Default is true
+soundEnabled true
 

@@ -23,9 +23,11 @@
  */
 package codenameprojection;
 
+import codenameprojection.config.Flags;
 import codenameprojection.renderer.renderer;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -71,20 +73,29 @@ public class CodeNameProjection {
         }
         String h = getHash();
         System.out.println("Hashcode: " + h);
-        try {
-            System.out.println("Trying to download hashcode...");
-            String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt").replaceAll("\n", "");
-            System.out.println("Downloaded hash: " + h2);
-            if(h.equals(h2)){
-                secure = true;
-                System.out.println("Hash validated succesfully");
+        codenameprojection.config.Flags.loadAndSet();
+        
+        if (Flags.secure) {
+            try {
+                System.out.println("Trying to download hashcode...");
+                String h2 = JFUtils.web.WebUtils.readStringFromURL("https://raw.githubusercontent.com/jonnelafin/PB3D/master/hash.txt").replaceAll("\n", "");
+                System.out.println("Downloaded hash: " + h2);
+                if (h.equals(h2)) {
+                    secure = true;
+                    System.out.println("Hash validated succesfully");
+                } else {
+                    throw new SecurityException("HASHES DO NOT MATCH: " + h + " != " + h2);
+                }
+            } catch (Exception ex) {
+                //System.out.println("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
+                Logger.getGlobal().log(Level.WARNING, "HASH INVALID, INSECURE MODE ENABLED. ERROR: {0}", ex);
             }
-            else{
-                throw new SecurityException("HASHES DO NOT MATCH: " + h + " != " + h2);
+        } else {
+            try {
+                throw new SecurityException("INSECURE MODE ENABLED. Securemode disabled from config");
+            } catch (SecurityException securityException) {
+                Logger.getGlobal().log(Level.WARNING, "HASH INVALID, INSECURE MODE ENABLED. ERROR: {0}", securityException);
             }
-        } catch (Exception ex) {
-            //System.out.println("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
-            Logger.getGlobal().warning("HASH INVALID, INSECURE MODE ENABLED. ERROR: " + ex);
         }
     }
     public static String getHash(){

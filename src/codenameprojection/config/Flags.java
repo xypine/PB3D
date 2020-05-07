@@ -24,6 +24,13 @@
 
 package codenameprojection.config;
 
+import JFUtils.Range;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Jonnelafin
@@ -31,4 +38,31 @@ package codenameprojection.config;
 public class Flags {
     public static boolean soundEnabled = true;
     public static boolean secure = true;
+    
+    public static void loadAndSet(){
+        try {
+            HashMap<String, Object> loaded = ConfigReader.load();
+            System.out.println(loaded);
+            set(loaded);
+        } catch (IOException iOException) {
+            System.out.println("COULD NOT READ CONFIG FILE AT " + ConfigReader.configPath);
+        }
+    }
+    static void set(HashMap<String, Object> loaded){
+        loaded.keySet().forEach((k) -> {
+            switch(k){
+                case "soundEnabled":
+                    soundEnabled = (boolean) loaded.get(k);
+                    break;
+                case "secure":
+                    secure = (boolean) loaded.get(k);
+                    break;
+                default:
+                    Logger.getGlobal().log(Level.WARNING, "No flag for \"{0}\"", k);
+            }
+        });
+    }
+    public static void main(String[] args) {
+        loadAndSet();
+    }
 }

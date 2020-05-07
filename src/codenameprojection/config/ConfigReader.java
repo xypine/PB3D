@@ -38,21 +38,28 @@ public class ConfigReader {
     
     public static void main(String[] args) {
         System.out.println("Testing config loading...");
-        HashMap red = load();
-        System.out.println("Keys, values:");
-        for(int i : new Range(red.size())){
-            System.out.println(red.keySet().toArray()[i] + ": " + red.values().toArray()[i]);
+        HashMap red = null;
+        try {
+            red = load();
+            System.out.println("Keys, values:");
+            for(int i : new Range(red.size())){
+                System.out.println(red.keySet().toArray()[i] + ": " + red.values().toArray()[i]);
+            }
+        } catch (IOException iOException) {
+            System.out.println("Could not read configfile! ERROR:" + iOException);
         }
+        
     }
-    public static void 
+    
     static String override = 
         "#Enables the hashcheck\n" +
         "secure true\n" +
         "#Nearest release-version\n" +
         "version 3\n";
-    public static HashMap<String, Object> load(){
+    public static HashMap<String, Object> load() throws IOException{
         HashMap<String, Object> out = new HashMap<>();
         try {
+            System.out.println("Trying to load configfile at " + configPath);
             String source = compressor.IO.readAsString(configPath);
             //source = override;
             //System.out.println(source);
@@ -98,7 +105,7 @@ public class ConfigReader {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
         }
         return out;
     }
