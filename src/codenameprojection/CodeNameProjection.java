@@ -25,7 +25,6 @@ package codenameprojection;
 
 import codenameprojection.config.Flags;
 import codenameprojection.renderer.renderer;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,7 @@ import java.util.logging.Logger;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static double minUtilsVer = 3.32;
+    public static double minUtilsVer = 3.42;
 
     /**
      * @param args the command line arguments

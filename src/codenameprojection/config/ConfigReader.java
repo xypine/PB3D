@@ -83,10 +83,10 @@ public class ConfigReader {
                             Object value = null;
                             buffer = buffer.replace("\r", "");
                             value = BooleanUtils.toBooleanObject(buffer);
-                            System.out.println(value);
+                            //System.out.println(value);
                             //buffer.equalsIgnoreCase("true") || buffer.equalsIgnoreCase("false")
                             if (Objects.isNull(value)) {
-                                System.out.println(buffer);
+                                //System.out.println(buffer);
                                 try {
                                     value = Double.parseDouble(buffer);
                                 } catch (NumberFormatException numberFormatException) {
@@ -95,7 +95,7 @@ public class ConfigReader {
                             }                            
                             else {
                                 //value = "true".equals(buffer);
-                                System.out.println("boolean found");
+                                //System.out.println("boolean found");
                             }
                             out.put(name, value);
                             buffer = "";
