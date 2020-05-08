@@ -27,6 +27,7 @@ package codenameprojection.models;
 import JFUtils.Range;
 import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
+import JFUtils.quickTools;
 import codenameprojection.cube.Cube;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
@@ -45,7 +46,7 @@ import java.util.logging.Logger;
 public class ModelUtils {
     
     public static void main(String[] args) {
-        modelParser.filename = "assets/models/Viper8";
+        modelParser.filename = "assets/models/misc/color";
         try {
             modelParser.size = 10;
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
@@ -105,8 +106,8 @@ public class ModelUtils {
         Point2D maxs = max(joined);
         System.out.println("Min: " + mins.represent());
         System.out.println("Max: " + maxs.represent());
-        int w = (int) (maxs.x - mins.x);
-        int h = (int) (maxs.y - mins.y);
+        int w = (int) Math.ceil(maxs.x - mins.x);
+        int h = (int) Math.ceil(maxs.y - mins.y);
         System.out.println("Width: " + w);
         System.out.println("Height: " + h);
         Double[][] out = new Double[w+2][h+2];
@@ -132,7 +133,7 @@ public class ModelUtils {
         }
         int x = 0;
         int y = 0;
-        Double[][] out2 = out.clone();
+        Double[][] out2 = new Double[out.length][out[0].length];
         for(Double[] row : out){
             for(Double i : row){
                 int done = 0;
@@ -141,15 +142,32 @@ public class ModelUtils {
                     double sum = 0;
                     double raw_done = 0;
                     double raw_sum = 0;
-                    for(Point2D d : JFUtils.quickTools.vectorDirs4){
+                    for(Point2D d : quickTools.vectorDirs4){
                         try {
                             double val = out[(int) (x + d.x)][(int) (y + d.y)];
                             //if (val != -99999D && sum / 10 < val) {
                             //    sum = sum + val;
                             //    done++;
                             //}
-                            if(val > sum){
+                            if(val > sum / done && val > -99999D){
                                 sum = val;
+                                done++;
+                            }
+                            raw_sum = raw_sum + val;
+                            raw_done++;
+                        } catch (Exception e) {
+                        }
+                    }
+                    for(Point2D d : quickTools.dirs){
+                        try {
+                            double val = out[(int) (x + d.x * 2)][(int) (y + d.y * 2)];
+                            //if (val != -99999D && sum / 10 < val) {
+                            //    sum = sum + val;
+                            //    done++;
+                            //}
+                            if(val > sum / done && val > -99999D){
+                                sum = val;
+                                done++;
                             }
                             raw_sum = raw_sum + val;
                             raw_done++;
@@ -163,7 +181,7 @@ public class ModelUtils {
                     //if (raw > -9999D) {
                     //    out[x][y] = sum / done;
                     //}
-                    if (i != -99999D || raw_sum / done != -99999D) {
+                    if (i != -99999D || raw != -99999D) {
                         out2[x][y] = sum;
                     }
                 }
