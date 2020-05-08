@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Elias Eskelinen <elias.eskelinen@protonmail.com>.
+ * Copyright 2020 Elias Eskelinen (elias.eskelinen@protonmail.com).
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,12 @@ package codenameprojection.config;
 import JFUtils.Range;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  *
- * @author Elias Eskelinen <elias.eskelinen@protonmail.com>
+ * @author Elias Eskelinen (elias.eskelinen@protonmail.com)
  */
 public class ConfigReader {
     static String configPath = new JFUtils.dirs().config + "features.txt";
@@ -81,15 +81,22 @@ public class ConfigReader {
                     case '\n':
                         if (!comment) {
                             Object value = null;
-                            if ("true".equals(buffer) || "false".equals(buffer)) {
-                                value = "true".equals(buffer);
-                            } else {
+                            buffer = buffer.replace("\r", "");
+                            value = BooleanUtils.toBooleanObject(buffer);
+                            System.out.println(value);
+                            //buffer.equalsIgnoreCase("true") || buffer.equalsIgnoreCase("false")
+                            if (Objects.isNull(value)) {
+                                System.out.println(buffer);
                                 try {
                                     value = Double.parseDouble(buffer);
                                 } catch (NumberFormatException numberFormatException) {
                                     value = buffer;
                                 }
                             }                            
+                            else {
+                                //value = "true".equals(buffer);
+                                System.out.println("boolean found");
+                            }
                             out.put(name, value);
                             buffer = "";
                             name = "";
