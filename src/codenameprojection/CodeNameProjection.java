@@ -68,7 +68,7 @@ public class CodeNameProjection {
     public static void validate(){
         if(JFUtils.versionCheck.version != minUtilsVer){
             //throw new UnsupportedClassVersionError("pb3d needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
-            Logger.getGlobal().warning("pb3d needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
+            Logger.getGlobal().log(Level.WARNING, "pb3d needs jfutils {0}, current version is {1}", new Object[]{minUtilsVer, JFUtils.versionCheck.version});
         }
         String h = getHash();
         System.out.println("Hashcode: " + h);

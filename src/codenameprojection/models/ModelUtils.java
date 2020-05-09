@@ -32,12 +32,15 @@ import codenameprojection.cube.Cube;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
 import codenameprojection.modelParser;
-import static codenameprojection.modelParser.filename;
+import java.awt.FlowLayout;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
 
 /**
  *
@@ -45,7 +48,22 @@ import java.util.logging.Logger;
  */
 public class ModelUtils {
     
+    public static int blur = 1;
+    public static double minH = -99999D;
+    
     public static void main(String[] args) {
+        JFrame actions = new JFrame();
+        actions.setSize(500, 500);
+        actions.setTitle("Collisionmesh generator");
+        actions.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        actions.setLayout(new FlowLayout());
+        
+        JSlider blur_s = new JSlider(0, 6, blur);
+        actions.add(new JLabel("\"Blur\" : " + blur));
+        actions.add(blur_s);
+        
+        actions.setVisible(true);
+        
         modelParser.filename = "assets/models/misc/color";
         try {
             modelParser.size = 10;
@@ -113,7 +131,7 @@ public class ModelUtils {
         Double[][] out = new Double[w+2][h+2];
         for(int x : new Range(w+2)){
             for(int y : new Range(h+2)){
-                out[x][y] = -99999D;
+                out[x][y] = minH;
             }
         }
         for(Point3D i : joined){
@@ -137,21 +155,26 @@ public class ModelUtils {
         for(Double[] row : out){
             for(Double i : row){
                 int done = 0;
-                //i != -99999D
+                //i != minH
                 if (true) {
                     double sum = 0;
                     double raw_done = 0;
                     double raw_sum = 0;
+                    double hi = minH;
                     for(Point2D d : quickTools.vectorDirs4){
                         try {
                             double val = out[(int) (x + d.x)][(int) (y + d.y)];
-                            //if (val != -99999D && sum / 10 < val) {
+                            //if (val != minH && sum / 10 < val) {
                             //    sum = sum + val;
                             //    done++;
                             //}
-                            if(val > sum / done && val > -99999D){
+                            /*
+                            if(val > sum / 2 && val > minH){
                                 sum = val;
                                 done++;
+                            }*/
+                            if(val > hi){
+                                hi = val;
                             }
                             raw_sum = raw_sum + val;
                             raw_done++;
@@ -161,13 +184,37 @@ public class ModelUtils {
                     for(Point2D d : quickTools.dirs){
                         try {
                             double val = out[(int) (x + d.x * 2)][(int) (y + d.y * 2)];
-                            //if (val != -99999D && sum / 10 < val) {
+                            //if (val != minH && sum / 10 < val) {
                             //    sum = sum + val;
                             //    done++;
                             //}
-                            if(val > sum / done && val > -99999D){
+                            /*
+                            if(val > sum / 2 && val > minH){
                                 sum = val;
                                 done++;
+                            }*/
+                            if(val > hi){
+                                hi = val;
+                            }
+                            raw_sum = raw_sum + val;
+                            raw_done++;
+                        } catch (Exception e) {
+                        }
+                    }
+                    for(Point2D d : quickTools.dirs){
+                        try {
+                            double val = out[(int) (x + d.x * 3)][(int) (y + d.y * 3)];
+                            //if (val != minH && sum / 10 < val) {
+                            //    sum = sum + val;
+                            //    done++;
+                            //}
+                            /*
+                            if(val > sum / 2 && val > minH){
+                                sum = val;
+                                done++;
+                            }*/
+                            if(val > hi){
+                                hi = val;
                             }
                             raw_sum = raw_sum + val;
                             raw_done++;
@@ -177,12 +224,12 @@ public class ModelUtils {
                     double raw = raw_sum / raw_done;
                     
                     out2[x][y] = i;
-                    //raw != -99999D
+                    //raw != minH
                     //if (raw > -9999D) {
                     //    out[x][y] = sum / done;
                     //}
-                    if (i != -99999D || raw != -99999D) {
-                        out2[x][y] = sum;
+                    if (i != minH || raw != minH) {
+                        out2[x][y] = hi;
                     }
                 }
                 y++;
