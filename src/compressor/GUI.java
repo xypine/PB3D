@@ -24,6 +24,9 @@
 
 package compressor;
 
+import codenameprojection.demos.Record;
+import codenameprojection.demos.demoInterface;
+import codenameprojection.models.ModelUtils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -74,13 +77,32 @@ import net.jpountz.xxhash.XXHashFactory;
  *
  * @author Jonnelafin
  */
-public class GUI extends JFrame{
-        JTextArea input;
-        JLabel output;
+public class GUI extends JFrame implements demoInterface{
+    
+    public final String NAME = "Compressor GUI";
+    public final String COMMENT = "Simple lz4 compressor GUI & demo";
+    
+    
+    JTextArea input;
+    JLabel output;
     public static void main(String[] args) {
-        new GUI();
+        new GUI(true);
     }
-    public GUI() throws HeadlessException {
+
+    public GUI() {
+    }
+    
+    
+    
+    static {
+        try {
+            Record.announce(GUI.class);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(ModelUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public GUI(boolean doStuff) throws HeadlessException {
         setTitle("Compressor GUI");
         setSize(600, 300);
         setLayout(new BorderLayout());

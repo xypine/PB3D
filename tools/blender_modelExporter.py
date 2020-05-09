@@ -53,10 +53,10 @@ onlyAnim = False
 #up_z = [0, 0, 0]
 #up_y = [-90, 0, 0]
 #up_y = [0, -90, 0]
-up_z = [0, 0, 0]
-up_y = [-90, 0, 0]
-up_y = [0, -90, 0]
-axis = [0, 0, 0]
+up_z = [0, 2, 1]
+up_y = [0, 1, 2]
+up_x = [2, 1, 0]
+axis = [0, 2, 1]
 
 if not keyframes:
     frames = [frame]
@@ -90,6 +90,7 @@ def updateMesh():
     global faces
     global filename
     global colors
+    global axis
     #filename = obj.name
     
     #new_obj = obj.copy()
@@ -131,6 +132,10 @@ def updateMesh():
     bpy.ops.object.select_all(action='DESELECT')
     new_obj.select_set(True) # Blender 2.8x
     bpy.ops.object.delete() 
+    #Do orientation
+    for i in range(len(verts)):
+        ori = verts[i]
+        verts[i] = [ori[axis[0]], ori[axis[1]], ori[axis[2]]]
 #deselectA()
 
 def exp(self):
@@ -429,7 +434,7 @@ class pbPanel(bpy.types.Panel):
         #self.layout.label(text="You can export to .pb3d here:")
         self.layout.prop(my_tool, "my_path")
         self.layout.prop(my_tool, "my_string")
-        #self.layout.prop(my_tool, "my_enum")
+        self.layout.prop(my_tool, "my_enum")
         
         self.layout.prop(my_tool, "my_bool")
         self.layout.prop(my_tool, "my_bool2")
@@ -441,12 +446,12 @@ class pbPanel(bpy.types.Panel):
         
         ax = bpy.context.scene.my_tool.my_enum
         onlyAnim = bpy.context.scene.my_tool.my_bool2
-        #if(ax == 'z'):
-        #    axis = up_z
-        #if(ax == 'y'):
-        #    axis = up_y
-        #if(ax == 'x'):
-        #    axis = up_x
+        if(ax == 'z'):
+            axis = up_z
+        if(ax == 'y'):
+            axis = up_y
+        if(ax == 'x'):
+            axis = up_x
 def register():
     bpy.utils.register_class(exporter)
     bpy.utils.register_class(pbPanel)
