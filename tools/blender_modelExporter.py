@@ -72,8 +72,13 @@ def oops(self, context):
     global pr
     self.layout.label(text="Processing animation frames" + pr + "...")
 
-
-
+def make_path_absolute(path = ""):
+    """ Prevent Blender's relative paths of doom """
+    
+    sane_path = lambda p: os.path.abspath(bpy.path.abspath(p))
+    if path.startswith("//"):
+        return sane_path(path)
+    return path
 def func_object_duplicate_flatten_modifiers(context, ob):
     depth = bpy.context.evaluated_depsgraph_get()
     eobj = ob.evaluated_get(depth)
@@ -443,7 +448,7 @@ class pbPanel(bpy.types.Panel):
         self.layout.label(text="Animation range will be set to scene frame range")
         useExternalOut = bpy.context.scene.my_tool.my_bool
         filename = bpy.context.scene.my_tool.my_path + "/" + bpy.context.scene.my_tool.my_string
-        
+        filename = make_path_absolute(filename)
         ax = bpy.context.scene.my_tool.my_enum
         onlyAnim = bpy.context.scene.my_tool.my_bool2
         if(ax == 'z'):

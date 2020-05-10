@@ -345,18 +345,20 @@ public class driver{
             }
             if (!usePB) {
 //System.out.println(zep);
-                if (!an_pause && tickC % (int)(offset) == 0) {
-                    if (frame < frames.size() - 1 || true) {
-                        double add = 1;
-                        //add = 1 * (deltaTime.toNanos() / 10000000);
-                        frame = (int) (frame + add);
-                    } else {
-                        //System.out.println("frame was " + frame + " before reset");
-                        frame = 0;
+                try {
+                    if (!an_pause && tickC % (int) (offset) == 0) {
+                        if (frame < frames.size() - 1 || true) {
+                            double add = 1;
+                            //add = 1 * (deltaTime.toNanos() / 10000000);
+                            frame = (int) (frame + add);
+                        } else {
+                            //System.out.println("frame was " + frame + " before reset");
+                            frame = 0;
+                        }
+
+                        //points = frames.get(frame);
                     }
-                    
-                    //points = frames.get(frame);
-                    
+                } catch (Exception e) {
                 }
                 s.r.frame = frame;
                 try {
