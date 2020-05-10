@@ -258,7 +258,6 @@ public class modelParser {
                             System.out.println("char in the line was null!");
                         }
                      try {
-                         System.out.println(coord[3]);
                          if (Objects.isNull(coord[3])) {
                              out.add(new Point3D[]{
                                  points.get(coord[0] + 1),
@@ -272,7 +271,7 @@ public class modelParser {
                                  points.get(coord[2] + 1)
                              });
                              out.add(new Point3D[]{
-                                 points.get(coord[1] + 1),
+                                 points.get(coord[0] + 1),
                                  points.get(coord[2] + 1),
                                  points.get(coord[3] + 1)
                              });

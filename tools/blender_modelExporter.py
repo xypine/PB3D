@@ -197,6 +197,10 @@ def exp(self):
         p2 = i[1]
         p3 = i[2]
         st3 = st3 + str(p1) + " " + str(p2) + " " + str(p3) + " "
+        quad = (len(i) == 4)
+        if quad:
+            p4 = i[3]
+            st3 = st3 + str(p4) + " "
         st3 = st3 + "\n"
     st3 = st3 + "\n"
     print("DONE")
@@ -272,6 +276,11 @@ def end_func(self):
         p2 = i[1]
         p3 = i[2]
         st3 = st3 + str(p1) + " " + str(p2) + " " + str(p3) + " "
+        
+        quad = (len(i) == 4)
+        if quad:
+            p4 = i[3]
+            st3 = st3 + str(p4) + " "
         st3 = st3 + "\n"
     st3 = st3 + "\n"
     print("DONE")
