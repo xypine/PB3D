@@ -47,7 +47,7 @@ public class modelParser {
     IDManager ids = new IDManager();
                                     //assets/models/Viper8
                                     //assets/models/x2/00/room
-    public static String filename = "assets/models/misc/plane";
+    public static String filename = "assets/models/x2/00/room";
 
     public modelParser() {
     }
