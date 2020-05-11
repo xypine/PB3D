@@ -45,7 +45,7 @@ public class Screen extends JFrame{
         this.setSize(400, 550);
         this.setLocationRelativeTo(null);
         this.setLocation(0, 0);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
         //Init components
         this.add(r);

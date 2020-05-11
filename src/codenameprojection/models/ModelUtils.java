@@ -310,7 +310,7 @@ class demo{
         JFrame actions = new JFrame();
         actions.setSize(500, 500);
         actions.setTitle("Collisionmesh generator");
-        actions.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        actions.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         actions.setLayout(new FlowLayout());
         
         JSlider blur_s = new JSlider(0, 6, blur);

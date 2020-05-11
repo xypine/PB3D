@@ -106,8 +106,8 @@ public class GUI extends JFrame implements demoInterface{
         setTitle("Compressor GUI");
         setSize(600, 300);
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        System.out.println(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        System.out.println(JFrame.DISPOSE_ON_CLOSE);
         JLabel head;
         head = new JLabel("Compressor test");
         input = new JTextArea("Type the stuff to compress here");
