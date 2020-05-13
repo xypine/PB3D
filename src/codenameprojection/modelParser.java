@@ -53,7 +53,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
                                     //assets/models/Viper8
-    public static String filename = "assets/models/misc/grass";
+    public static String filename = "assets/models/x2/00/room";
 
     public modelParser() {
     }
