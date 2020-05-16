@@ -129,7 +129,7 @@ public class FPSTest {
         frame = new JFrame("\"PB3D\" Fly simulator :)");
         
         frame.setSize(800, 800);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new FlowLayout());
         
         JSlider step = new JSlider(0, 100, 0);

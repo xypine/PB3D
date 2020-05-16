@@ -24,16 +24,10 @@
 
 package codenameprojection;
 
-import JFUtils.Range;
-import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.vector.dVector3;
-import static codenameprojection.Utils.P3ToP2;
 import codenameprojection.drawables.vertexGroup;
-import codenameprojection.models.Model;
-import codenameprojection.models.ModelFrame;
 import compressor.IO;
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -42,7 +36,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.Objects;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +46,7 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
                                     //assets/models/Viper8
+                                    //assets/models/x2/00/room
     public static String filename = "assets/models/x2/00/room";
 
     public modelParser() {
@@ -248,7 +242,7 @@ public class modelParser {
                      //System.out.println(line);
                      
                      int place = 0;
-                     int[] coord = new int[3];
+                     int[] coord = new int[4];
                         try {
                             for (char i : line.toCharArray()) {
                                 if (i == ' ') {
@@ -264,13 +258,28 @@ public class modelParser {
                             System.out.println("char in the line was null!");
                         }
                      try {
-                        out.add(new Point3D[]{
-                            points.get(coord[0]+1),
-                            points.get(coord[1]+1),
-                            points.get(coord[2]+1)
-                        });
+                         if (Objects.isNull(coord[3])) {
+                             out.add(new Point3D[]{
+                                 points.get(coord[0] + 1),
+                                 points.get(coord[1] + 1),
+                                 points.get(coord[2] + 1)
+                             });
+                         } else {
+                             out.add(new Point3D[]{
+                                 points.get(coord[0] + 1),
+                                 points.get(coord[1] + 1),
+                                 points.get(coord[2] + 1)
+                             });
+                             out.add(new Point3D[]{
+                                 points.get(coord[0] + 1),
+                                 points.get(coord[2] + 1),
+                                 points.get(coord[3] + 1)
+                             });
+                         }
                      }
                      catch(Exception e){
+                         throw e;
+                         /*
                             try {
                                 out.add(new Point3D[]{
                                 points.get(coord[0]),
@@ -282,6 +291,7 @@ public class modelParser {
                                 System.out.println("Error parsing face: " + ez);
                                 //ez.printStackTrace();
                             }
+                        */
                         }
                 
                     line = in.readLine();
@@ -293,7 +303,7 @@ public class modelParser {
     }
     public static void main(String[] args) {
         try {
-            filename = "assets/models/Viper8";
+            //filename = "assets/models/Viper8";
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
            
             new modelParser().parseLines(parse.getFirst());

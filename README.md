@@ -13,7 +13,7 @@ i,j,k,l to rotate
 
 a, w, d, s, q and e to move
 
-# How to set up
+# How to set up for development and compiling
 -use git clone to get the source code
 
 -make sure all the dependencies listed under the next section are present in the lib sub-directory.
@@ -28,6 +28,8 @@ If you do not use netbeans:
 [JFUtils](https://github.com/jonnelafin/JFUtils) (Binaries Included by Default)
 
 [TinySound](https://github.com/finnkuusisto/TinySound) (Binaries Included by Default)
+
+[LZ4](https://github.com/lz4/lz4-java) (Binaries Included by Default)
 
 # Random Screenshots
 Polygons #1:

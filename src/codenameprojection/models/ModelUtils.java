@@ -29,9 +29,14 @@ import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.quickTools;
 import codenameprojection.cube.Cube;
+import codenameprojection.demos.Record;
+import codenameprojection.demos.demoInterface;
 import codenameprojection.drawables.vertexGroup;
 import codenameprojection.driver;
 import codenameprojection.modelParser;
+import static codenameprojection.models.ModelUtils.blur;
+import static codenameprojection.models.ModelUtils.constructGrid;
+import static codenameprojection.models.ModelUtils.heightmap;
 import java.awt.FlowLayout;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -46,77 +51,29 @@ import javax.swing.JSlider;
  *
  * @author Jonnelafin
  */
-public class ModelUtils {
+public class ModelUtils implements demoInterface{
     
     public static int blur = 1;
     public static double minH = -99999D;
     
     public static void main(String[] args) {
-        JFrame actions = new JFrame();
-        actions.setSize(500, 500);
-        actions.setTitle("Collisionmesh generator");
-        actions.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        actions.setLayout(new FlowLayout());
-        
-        JSlider blur_s = new JSlider(0, 6, blur);
-        actions.add(new JLabel("\"Blur\" : " + blur));
-        actions.add(blur_s);
-        
-        actions.setVisible(true);
-        
-        modelParser.filename = "assets/models/misc/color";
-        try {
-            modelParser.size = 10;
-            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
-            
-            //new modelParser().parseLines(parse.getFirst());
-            //new modelParser().parseFaces(parse.getFirst());
-            //new modelParser().parseColor(parse.getFirst());
-            ModelFrame first = new ModelFrame(parse.getFirst(), new LinkedList<Integer[]>(), new LinkedList<Point3D[]>(), new LinkedList<vertexGroup>());
-            LinkedList<ModelFrame> frames = new LinkedList<>();
-            frames.add(first);
-            Model m =  new Model(frames, true);
-            LinkedList<Model> models = new LinkedList<>();
-            models.add(m);
-            Double[][] heightmapd = heightmap(1, models);
-            for(Double[] row : heightmapd){
-                for(Double i : row){
-                    System.out.print(Math.round(i) + " ");
-                }
-                System.out.println("");
-            }
-            driver Driver = new driver();
-            Thread t = new Thread(){
-                @Override
-                public void run() {
-                    super.run(); //To change body of generated methods, choose Tools | Templates.
-                    Driver.run();
-                    //Driver = new driver(null);
-                }
+        new demo();
+    }
 
-            };
-            Driver.startWithNoModel = false;
-        
-            
-            LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd);
-            LinkedList<Integer> gridHandles = new LinkedList<>();
-            for(Model m2 : grid){
-                Integer handle = m2.hashCode();
-                Driver.models.put(handle, m2);
-                gridHandles.add(handle);
-            }
-            t.start();
-            while(!Driver.running){
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Cube.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        } catch (IOException iOException) {
-            iOException.printStackTrace();
+    static {
+        try {
+            Record.announce(ModelUtils.class);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(ModelUtils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(ModelUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public ModelUtils() {
+    }
+    
+    
     
     public static Double[][] heightmap(double step, LinkedList<Model> models){
         LinkedList<Point3D> joined = join(models);
@@ -346,4 +303,74 @@ public class ModelUtils {
         
         return out;
     }
+}
+class demo{
+
+    public demo() {
+        JFrame actions = new JFrame();
+        actions.setSize(500, 500);
+        actions.setTitle("Collisionmesh generator");
+        actions.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        actions.setLayout(new FlowLayout());
+        
+        JSlider blur_s = new JSlider(0, 6, blur);
+        actions.add(new JLabel("\"Blur\" : " + blur));
+        actions.add(blur_s);
+        
+        actions.setVisible(true);
+        
+        modelParser.filename = "assets/models/misc/color";
+        try {
+            modelParser.size = 10;
+            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
+            
+            //new modelParser().parseLines(parse.getFirst());
+            //new modelParser().parseFaces(parse.getFirst());
+            //new modelParser().parseColor(parse.getFirst());
+            ModelFrame first = new ModelFrame(parse.getFirst(), new LinkedList<Integer[]>(), new LinkedList<Point3D[]>(), new LinkedList<vertexGroup>());
+            LinkedList<ModelFrame> frames = new LinkedList<>();
+            frames.add(first);
+            Model m =  new Model(frames, true);
+            LinkedList<Model> models = new LinkedList<>();
+            models.add(m);
+            Double[][] heightmapd = heightmap(1, models);
+            for(Double[] row : heightmapd){
+                for(Double i : row){
+                    System.out.print(Math.round(i) + " ");
+                }
+                System.out.println("");
+            }
+            driver Driver = new driver();
+            Thread t = new Thread(){
+                @Override
+                public void run() {
+                    super.run(); //To change body of generated methods, choose Tools | Templates.
+                    Driver.run();
+                    //Driver = new driver(null);
+                }
+
+            };
+            Driver.startWithNoModel = false;
+        
+            
+            LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd);
+            LinkedList<Integer> gridHandles = new LinkedList<>();
+            for(Model m2 : grid){
+                Integer handle = m2.hashCode();
+                Driver.models.put(handle, m2);
+                gridHandles.add(handle);
+            }
+            t.start();
+            while(!Driver.running){
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Cube.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (IOException iOException) {
+            iOException.printStackTrace();
+        }
+    }
+    
 }
