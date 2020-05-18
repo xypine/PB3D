@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package codenameprojection;
+package codenameprojection.renderer;
 
 import codenameprojection.renderer.renderer;
 import javax.swing.JFrame;

@@ -24,6 +24,7 @@
 
 package codenameprojection;
 
+import codenameprojection.renderer.Screen;
 import codenameprojection.config.Flags;
 import codenameprojection.models.ModelFrame;
 import codenameprojection.models.Model;
@@ -245,11 +246,15 @@ public class driver{
                 for (LinkedList<Point3D> list : frames2) {
                     m.frames.add(new ModelFrame(list, lines2, faces2, color2));
                 }
+                //if(frames2.size() < 2){
+                    m.single_frame = true;
+                //}
                 defaultModelKey = m.hashCode();
                 models.put(defaultModelKey, m);
             }
             
         } catch (Exception ex) {
+            /*
             ex.printStackTrace();
             
             int r = 4;
@@ -269,6 +274,7 @@ public class driver{
                 }
             }
             frames.add(points);
+            */
         }
         
         

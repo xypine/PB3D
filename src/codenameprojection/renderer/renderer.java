@@ -331,7 +331,8 @@ public class renderer extends JPanel implements rendererInterface{
                         }
                     }
                 } catch (Exception e) {
-                    throw e;
+                    errors++;
+                    //throw e;
                 }
             }
         }

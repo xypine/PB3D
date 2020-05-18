@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/coding/CodeNameProjection/src/codenameprojection/demos/demoInterface.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/models/ModelUtils.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/config/ConfigReader.java</file>
@@ -14,6 +15,14 @@
             <file>file:/coding/CodeNameProjection/src/codenameprojection/CodeNameProjection.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/modelParser.java</file>
             <file>file:/coding/CodeNameProjection/src/codenameprojection/demos/Record.java</file>
+=======
+            <file>file:/C:/Users/Elias/Documents/NetBeansProjects/CodeNameProjectionv01/src/codenameprojection/config/ConfigReader.java</file>
+            <file>file:/C:/Users/Elias/Documents/NetBeansProjects/CodeNameProjectionv01/src/codenameprojection/demos/Launcher.java</file>
+            <file>file:/C:/Users/Elias/Documents/NetBeansProjects/CodeNameProjectionv01/src/codenameprojection/CodeNameProjection.java</file>
+            <file>file:/C:/Users/Elias/Documents/NetBeansProjects/CodeNameProjectionv01/src/codenameprojection/models/ModelUtils.java</file>
+            <file>file:/C:/Users/Elias/Documents/NetBeansProjects/CodeNameProjectionv01/src/codenameprojection/config/Flags.java</file>
+            <file>file:/C:/Users/Elias/Documents/NetBeansProjects/CodeNameProjectionv01/src/codenameprojection/modelParser.java</file>
+>>>>>>> 920fb5f6d2af78fb2ad00bf0c0a67c1047b89b20
         </group>
     </open-files>
 </project-private>
