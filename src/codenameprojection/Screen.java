@@ -34,7 +34,9 @@ import javax.swing.JFrame;
 public class Screen extends JFrame{
     public renderer r;
     
-    
+    public void setExitOp(int op){
+        this.setDefaultCloseOperation(op);
+    }
     
     public Screen(){
         //Create the renderer
@@ -45,7 +47,7 @@ public class Screen extends JFrame{
         this.setSize(400, 550);
         this.setLocationRelativeTo(null);
         this.setLocation(0, 0);
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         //Init components
         this.add(r);

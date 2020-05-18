@@ -79,7 +79,7 @@ public class FPSTest {
             }
             
         };
-        modelParser.filename = "assets/models/hl/gman_talk";
+        modelParser.filename = "assets/models/hl/gman_talk_final";
         modelParser.size = 100;
         Driver.startWithNoModel = false;
         
