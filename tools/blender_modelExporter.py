@@ -1,7 +1,7 @@
 #Made by Elias Arno "Jonnelafin" Eskelinen
 #Licensed under the MIT Licence
 #Open and run this file inside blender's text editor
-
+import os
 bl_info = {
     "name": "PB3D Exporter",
     "description": "Exports the selected object into an .pb3d",
