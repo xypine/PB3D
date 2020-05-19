@@ -103,23 +103,24 @@ public class Run {
         //    handles.add(handle);
         //}
         double resetScale = first_object.scale + 0;
-        first_object.scale = 100;
+        first_object.scale = 0.2;
+        double gridMul = 5;
         LinkedList<Model> models = new LinkedList<>();
         models.add(first_object);
-        Double[][] heightmapd = heightmap(1, models);
-        LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd);
+        Double[][] heightmapd = heightmap(1, models, 0);
+        LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);
         LinkedList<Integer> gridHandles = new LinkedList<>();
         
         first_object.scale = resetScale;
         
-        for(Model m : grid){
+        /*for(Model m : grid){
             Integer handle = m.hashCode();
             m.hideFaces = true;
             m.hideLines = true;
-            m.hidePoints = false;
+            m.hidePoints = true;
             Driver.models.put(handle, m);
             gridHandles.add(handle);
-        }
+        }*/
         
         Driver.s.r.debug = false;
         
@@ -234,9 +235,9 @@ public class Run {
                 Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
             }
         }*/
-        first_object.hidePoints = false;
+        first_object.hidePoints = true;
         first_object.hideFaces = true;
-        first_object.hideLines = true;
+        first_object.hideLines = false;
         first_object.scale = 0.75;
         first_object.single_frame = true;
         //first_object.minFrame = 59;
@@ -319,11 +320,25 @@ public class Run {
                     sin = 0;
                 }
                 vel.y = -1.8F - jump + sin * 0.12F;
+                for(Point3D p3 : grid.getFirst().getFrame(0).points){
+                    if(p3.intX() == vel.intX() && p3.intZ() == vel.intZ()){
+                        vel.y = p3.y;
+                    }
+                }
+                try {
+                    double gH = heightmapd[(int) (vel.x * gridMul)]
+                            [(int) (vel.z * gridMul)];
+                    if (gH != codenameprojection.models.ModelUtils.minH) {
+                        vel.y = gH;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Driver.screenPosition_org_next = vel.clone();
                 Driver.screenPosition_org_next.identifier = -2;
-                Model cubeM = (Model) Driver.models.values().toArray()[cubeHandle];
-                cubeM.hideLines = true;
-                cubeM.hidePoints = true;
+            //    Model cubeM = (Model) Driver.models.values().toArray()[cubeHandle];
+            //    cubeM.hideLines = true;
+            //    cubeM.hidePoints = true;
                 thrust = thrust * 0.99F;
                 thrust2 = thrust2 * 0.99F;
             }
@@ -686,7 +701,7 @@ public class Run {
         
         return out;
     }
-    static LinkedList<Model> constructGrid(int rx2, int ry2, Double[][] h){
+    static LinkedList<Model> constructGrid(int rx2, int ry2, Double[][] h, double size){
         int ind = 0;
         int rz2 = 1;
         Random rnd = new Random();
@@ -699,9 +714,9 @@ public class Run {
                 LinkedList<Point3D[]> faces = new LinkedList<>();
                 LinkedList<vertexGroup> color = new LinkedList<>();
 
-                double rndX = (x - (rx2 / 2) )*1;
-                double rndY = (y - (ry2 / 2) )*1;
-                double rndZ = h[x][y];
+                double rndX = (x - (rx2 / 2) )*size;
+                double rndY = (y - (ry2 / 2) )*size;
+                double rndZ = h[x][y]*size;
 
 
 

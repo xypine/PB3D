@@ -73,9 +73,11 @@ public class ModelUtils implements demoInterface{
     public ModelUtils() {
     }
     
-    
-    
     public static Double[][] heightmap(double step, LinkedList<Model> models){
+        return heightmap(step, models, 2);
+    }
+    
+    public static Double[][] heightmap(double step, LinkedList<Model> models, int blur){
         LinkedList<Point3D> joined = join(models);
         Point2D mins = min(joined);
         Point2D maxs = max(joined);
@@ -138,44 +140,26 @@ public class ModelUtils implements demoInterface{
                         } catch (Exception e) {
                         }
                     }
-                    for(Point2D d : quickTools.dirs){
-                        try {
-                            double val = out[(int) (x + d.x * 2)][(int) (y + d.y * 2)];
-                            //if (val != minH && sum / 10 < val) {
-                            //    sum = sum + val;
-                            //    done++;
-                            //}
-                            /*
+                    for (int j : new Range(blur)) {
+                        for (Point2D d : quickTools.dirs) {
+                            try {
+                                double val = out[(int) (x + d.x * (2+j))][(int) (y + d.y * (2+j))];
+                                //if (val != minH && sum / 10 < val) {
+                                //    sum = sum + val;
+                                //    done++;
+                                //}
+                                /*
                             if(val > sum / 2 && val > minH){
                                 sum = val;
                                 done++;
                             }*/
-                            if(val > hi){
-                                hi = val;
+                                if (val > hi) {
+                                    hi = val;
+                                }
+                                raw_sum = raw_sum + val;
+                                raw_done++;
+                            } catch (Exception e) {
                             }
-                            raw_sum = raw_sum + val;
-                            raw_done++;
-                        } catch (Exception e) {
-                        }
-                    }
-                    for(Point2D d : quickTools.dirs){
-                        try {
-                            double val = out[(int) (x + d.x * 3)][(int) (y + d.y * 3)];
-                            //if (val != minH && sum / 10 < val) {
-                            //    sum = sum + val;
-                            //    done++;
-                            //}
-                            /*
-                            if(val > sum / 2 && val > minH){
-                                sum = val;
-                                done++;
-                            }*/
-                            if(val > hi){
-                                hi = val;
-                            }
-                            raw_sum = raw_sum + val;
-                            raw_done++;
-                        } catch (Exception e) {
                         }
                     }
                     double raw = raw_sum / raw_done;
@@ -199,7 +183,7 @@ public class ModelUtils implements demoInterface{
     public static LinkedList<Point3D> join(LinkedList<Model> models){
         LinkedList<Point3D> out = new LinkedList<>();
         for (Model model : models) {
-            out.addAll(model.getFrame(0).points);
+            out.addAll(model.getFrame(0, true, true, true).points);
         }
         return out;
     }
