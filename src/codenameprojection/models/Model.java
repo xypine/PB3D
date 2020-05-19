@@ -40,6 +40,11 @@ public class Model {
     public double rotation_Y = 0;
     public double rotation_Z = 0;
     
+    /**
+     *  Makes the model ignore the 0th point when returning faces, can reduce face "flickering"
+     */
+    public boolean ignoreRootNode = false;
+    
     public double scale = 1;
     
     
@@ -175,6 +180,20 @@ public class Model {
             out.points.set(ind, i2);
             ind++;
         }
+        LinkedList<Point3D[]> faces_out = new LinkedList<>();
+        Point3D rootNode = out.points.getFirst();
+        out.faces.forEach(l -> {
+            boolean add = true;
+            for(Point3D i : l){
+                if(i.identifier == rootNode.identifier){
+                    add = false;
+                }
+            }
+            if(add || !ignoreRootNode){
+                faces_out.add(l);
+            }
+        });
+        out.faces = faces_out;
         if(hideLines){
             out.lines = new LinkedList<>();
         }

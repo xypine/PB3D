@@ -80,6 +80,8 @@ public class renderer extends JPanel implements rendererInterface{
     public double cy;
     public double cz;
     
+    
+    
      int resW = -1;
      int resH = -1;
     public double resMultiplier = 1;

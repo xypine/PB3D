@@ -225,9 +225,9 @@ public class Run {
         Driver.shadingMultiplier = 3F;
         Driver.screenPosition_org_next = new Point3D(0, -2.75, 1.4);
         Driver.screenPosition_org_next.identifier = -2;
-        first_object.hideLines = false;
-        first_object.hideFaces = true;
-        first_object.hidePoints = true;
+        //first_object.hideLines = false;
+        //first_object.hideFaces = true;
+        //first_object.hidePoints = true;
 /*        while (Driver.s.r.frame < 170 / speed2){
             try {
                 Thread.sleep(10);
@@ -236,14 +236,14 @@ public class Run {
             }
         }*/
         first_object.hidePoints = true;
-        first_object.hideFaces = true;
-        first_object.hideLines = false;
-        first_object.scale = 0.75;
+        first_object.hideFaces = false;
+        first_object.hideLines = true;
+        //first_object.scale = 0.75;
         first_object.single_frame = true;
         //first_object.minFrame = 59;
-        Driver.shadingAdd = 0;
-        Driver.shadingMin = 20;
-        Driver.shadingMultiplier = 1.4F;
+        Driver.shadingAdd = 1;
+        Driver.shadingMin = 70;
+        Driver.shadingMultiplier = 30;
         FPSMap2 map = new FPSMap2(this);
         Driver.s.r.extraDrawables.add(map);
         Driver.screenPosition_org_next = new Point3D( 0, 0, 7 );
@@ -320,11 +320,11 @@ public class Run {
                     sin = 0;
                 }
                 vel.y = -1.8F - jump + sin * 0.12F;
-                for(Point3D p3 : grid.getFirst().getFrame(0).points){
+                /*for(Point3D p3 : grid.getFirst().getFrame(0).points){
                     if(p3.intX() == vel.intX() && p3.intZ() == vel.intZ()){
                         vel.y = p3.y;
                     }
-                }
+                }*/
                 try {
                     double gH = heightmapd[(int) (vel.x * gridMul)]
                             [(int) (vel.z * gridMul)];
@@ -332,7 +332,7 @@ public class Run {
                         vel.y = gH;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                   // e.printStackTrace();
                 }
                 Driver.screenPosition_org_next = vel.clone();
                 Driver.screenPosition_org_next.identifier = -2;
@@ -348,14 +348,22 @@ public class Run {
                 try {                                               //(deltaTime.getNano() * .0000000003)
                     Driver.angleYM = Driver.angleYM + Driver.inp.cX * 0.0005;
                     //System.out.println(Driver.angleYM);
+                    //System.out.println(Driver.angleYM);
                     Driver.inp.cX = (int) (Driver.inp.cX * 0.1);    //0.0002
                     Driver.angleXM = Driver.angleXM + Driver.inp.cY * 0.0005;
+                    //System.out.println(Driver.angleX);
                     Driver.inp.cY = (int) (Driver.inp.cY * 0.1);
+                    if(Driver.angleX < -1.5){
+                        Driver.angleX = -1.5;
+                    }
+                    if(Driver.angleX > 1.5){
+                        Driver.angleX = 1.5;
+                    }
                 } catch (Exception e) {
                 }
             }
             else{
-                System.setProperty("apple.awt.fullscreenhidecursor","false");
+                //System.setProperty("apple.awt.fullscreenhidecursor","false");
             }
             //System.out.println(Driver.inp.mouseX());
             LinkedList<Integer> torem = new LinkedList<>();
