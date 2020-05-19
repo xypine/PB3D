@@ -159,6 +159,7 @@ public class Model {
         else{
             out = (ModelFrame) frames.get(minFrame).clone();
         }
+        Point3D rootNode = out.points.getFirst();
         int ind = 0;
         for(Point3D i : (LinkedList<Point3D>)(out.points.clone())){
             int oldID = i.identifier;
@@ -180,8 +181,10 @@ public class Model {
             out.points.set(ind, i2);
             ind++;
         }
+        if(ignoreRootNode){
+            out.points.removeFirst();
+        }
         LinkedList<Point3D[]> faces_out = new LinkedList<>();
-        Point3D rootNode = out.points.getFirst();
         out.faces.forEach(l -> {
             boolean add = true;
             for(Point3D i : l){

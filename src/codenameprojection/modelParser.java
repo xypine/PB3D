@@ -46,8 +46,8 @@ import java.util.logging.Logger;
 public class modelParser {
     IDManager ids = new IDManager();
                                     //assets/models/Viper8
-                                    //assets/models/x2/00/room
-    public static String filename = "assets/models/x2/00/room2";
+                                    //assets/models/x2/00/room2
+    public static String filename = "assets/models/dev/gradient";
 
     public modelParser() {
     }

@@ -80,7 +80,7 @@ public class Run {
             
         };
         modelParser.filename = "assets/models/SaphireJump/levels/saphireJump";
-        modelParser.size = 40;
+        modelParser.size = 40 / 2;
         Driver.startWithNoModel = false;
         
         
@@ -107,8 +107,8 @@ public class Run {
         double gridMul = 5;
         LinkedList<Model> models = new LinkedList<>();
         models.add(first_object);
-        Double[][] heightmapd = heightmap(1, models, 0);
-        LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);
+        /*Double[][] heightmapd = heightmap(1, models, 0);
+        LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);*/
         LinkedList<Integer> gridHandles = new LinkedList<>();
         
         first_object.scale = resetScale;
@@ -235,9 +235,9 @@ public class Run {
                 Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
             }
         }*/
-        first_object.hidePoints = true;
-        first_object.hideFaces = false;
-        first_object.hideLines = true;
+        first_object.hidePoints = false;
+        first_object.hideFaces = true;
+        first_object.hideLines = false;
         //first_object.scale = 0.75;
         first_object.single_frame = true;
         //first_object.minFrame = 59;
@@ -298,7 +298,7 @@ public class Run {
                 //System.out.println(volDir);
                 //model_map.rotation_Y = model_map.rotation_Y + 0.00001;
                 if (jump > 0) {
-                    jump = jump - 0.00024F;
+                    jump = jump - 0.00024F*2.7;
                 } else if(Driver.getScreenPosition_org().x < pSize && Driver.getScreenPosition_org().z < pSize && 
                           Driver.getScreenPosition_org().x > -pSize && Driver.getScreenPosition_org().z > -pSize  ){
                     jump = jump *0.9999;
@@ -308,34 +308,34 @@ public class Run {
                 }
                 jump = jump + jump_vel;
                 jump_vel = jump_vel * 0;
-                vel = new Point3D(0, 0, 0);
                 Point3D rotVec = Driver.matmul(Driver.RX((float) Driver.angleX), new Point3F(thrust2, 0, -thrust)).toDVector3();
                 rotVec = Driver.matmul(Driver.RY((float) Driver.angleY), rotVec.toFVector3()).toDVector3();
                 rotVec.y = 0;
                 Point3D screenPos = Driver.getScreenPosition_org().clone();
                 screenPos.y = 0;
-                vel = Point3D.add(screenPos, rotVec);
-                double sin = Math.sin(Math.abs(vel.x/2) + Math.abs(vel.z/2));
+                Point3D vel2 = Point3D.add(screenPos, Point3D.add(vel, rotVec));
+                double sin = Math.sin(Math.abs(vel2.x/2) + Math.abs(vel2.z/2));
                 if (jump > 0) {
                     sin = 0;
                 }
-                vel.y = -1.8F - jump + sin * 0.12F;
+                vel2.y = -18F - jump + sin * 0.12F;
                 /*for(Point3D p3 : grid.getFirst().getFrame(0).points){
                     if(p3.intX() == vel.intX() && p3.intZ() == vel.intZ()){
                         vel.y = p3.y;
                     }
                 }*/
-                try {
-                    double gH = heightmapd[(int) (vel.x * gridMul)]
-                            [(int) (vel.z * gridMul)];
-                    if (gH != codenameprojection.models.ModelUtils.minH) {
-                        vel.y = gH;
-                    }
-                } catch (Exception e) {
+                //try {
+                //    double gH = heightmapd[(int) (vel.x * gridMul)]
+                //            [(int) (vel.z * gridMul)];
+                //    if (gH != codenameprojection.models.ModelUtils.minH) {
+                //        vel.y = gH;
+                //    }
+                //} catch (Exception e) {
                    // e.printStackTrace();
-                }
-                Driver.screenPosition_org_next = vel.clone();
+                //}
+                Driver.screenPosition_org_next = vel2.clone();
                 Driver.screenPosition_org_next.identifier = -2;
+                vel = new Point3D(0, 0, 0);
             //    Model cubeM = (Model) Driver.models.values().toArray()[cubeHandle];
             //    cubeM.hideLines = true;
             //    cubeM.hidePoints = true;
@@ -417,10 +417,10 @@ public class Run {
 
                 //space
                 if (Driver.inp.keys[32] && jetleft > 0) {
-                    jump_vel = jump_vel + 0.0007F * 1.5;
-                    jetleft = jetleft - .5F;
+                    jump_vel = jump_vel + 0.0007F * 1.5 * 4;
+                    jetleft = jetleft - .5F*1.3F;
                 } else if (Driver.inp.keys[32]) {
-                    jetleft = jetleft - .1F;
+                    jetleft = jetleft - .01F;
                 }
                 if (jetleft < 8000) {
                     jetleft = jetleft + 0.1F;
@@ -440,6 +440,7 @@ public class Run {
                     from.z = from.z - .1;
                     Point3D from2 = Driver.matmul(Driver.RX((float) -Driver.angleX), new Point3F(0, 0, 6)).toDVector3();
                     from2 = Driver.matmul(Driver.RY((float) -Driver.angleY), from2.toFVector3()).toDVector3();
+                    vel = Point3D.add(vel, Point3D.multiply(from2, new Point3D(-10, -10, -10)));
                     from2 = Point3D.add(from2, from);
                     
                     points2.add(from);
@@ -518,7 +519,7 @@ public class Run {
             
             //Sleep
             try {
-                Thread.sleep((long) 0.00001);
+                Thread.sleep((long) 0.000001);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
             }

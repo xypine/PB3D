@@ -510,7 +510,7 @@ public class renderer extends JPanel implements rendererInterface{
                                     multiplier = 4-sum;
                                 } catch (Exception e) {
                                 }
-                                TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth()*multiplier, base.getHeight()*multiplier));
+                                //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth()*multiplier, base.getHeight()*multiplier));
 //                                g.setPaint(tex);
 //                                g.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                                 //g.drawImage(base, w/2-(int)wb, h/2-(int)hb, w, h, this);
@@ -643,6 +643,8 @@ public class renderer extends JPanel implements rendererInterface{
                                 c3 = new Color(vg.r, vg.g, vg.b);
                             }
                         }
+                        int xp[] = new int[]{coords[0][0], coords[0][1], coords[0][2]};
+                        int yp[] = new int[]{coords[1][0], coords[1][1], coords[1][2]};
                         int minx = Math.min(coords[0][0], coords[0][1]);
                         int miny = Math.min(coords[1][0], coords[1][1]);
                         int maxx = Math.max(coords[0][0], coords[0][1]);
@@ -653,7 +655,7 @@ public class renderer extends JPanel implements rendererInterface{
                             Color tmp = one.brighter().darker();
                             one = two;
                             two = tmp;
-                        }
+                        }/*
                         int r2 = (one.getRed() * c3.getRed()) / 255;
                         r2 = (r2 * c.getRed()) / 255;
                         int g2 = (one.getGreen() * c3.getGreen()) / 255;
@@ -682,13 +684,36 @@ public class renderer extends JPanel implements rendererInterface{
                         hb = hb / facesToDraw.get(i).ypoints.length;
                         //TexturePaint tex = new TexturePaint(base, new Rectangle2D.Double(wb, hb, base.getWidth(), base.getHeight()));
                         //gb.setPaint(tex);
-                        //gb.fillPolygon(facesToDraw.get(i));
+                        //gb.fillPolygon(facesToDraw.get(i));*/
                         c = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255/2);
+                        Color transparent = new Color(0, 0, 0, 0);
+                        
+                        
+                        
+                        gb.setPaint(null);
                         if(shading){
-                            gb.setPaint(null);
                             gb.setColor(c);
+                            gb.fillPolygon(facesToDraw.get(i));
                         }
-                        gb.fillPolygon(facesToDraw.get(i));
+                        else{
+                            GradientPaint gradient1 = new GradientPaint(
+                                (float) xp[0], (float) yp[0], c1,
+                                (float) xp[1], (float) yp[1], transparent);
+                            GradientPaint gradient2 = new GradientPaint(
+                                (float) xp[1], (float) yp[1], c2,
+                                (float) xp[2], (float) yp[2], transparent);
+                            GradientPaint gradient3 = new GradientPaint(
+                                (float) xp[2], (float) yp[2], c3,
+                                (float) xp[0], (float) yp[0], transparent);
+                            gb.setColor(Color.BLACK);
+                            gb.fill(facesToDraw.get(i));
+                            gb.setPaint(gradient1);
+                            gb.fill(facesToDraw.get(i));
+                            gb.setPaint(gradient2);
+                            gb.fill(facesToDraw.get(i));
+                            gb.setPaint(gradient3);
+                            gb.fill(facesToDraw.get(i));
+                        }
                         gb.setPaint(null);
                     }
                 }
