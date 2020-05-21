@@ -93,7 +93,8 @@ public class CodeNameProjection {
             try {
                 throw new SecurityException("INSECURE MODE ENABLED. Securemode disabled from config");
             } catch (SecurityException securityException) {
-                Logger.getGlobal().log(Level.WARNING, "HASH INVALID, INSECURE MODE ENABLED. ERROR: {0}", securityException);
+                //Logger.getGlobal().log(Level.WARNING, "HASH INVALID, INSECURE MODE ENABLED. ERROR: {0}", securityException);
+                System.out.println(securityException);
             }
         }
     }

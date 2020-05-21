@@ -49,9 +49,9 @@ import javax.swing.JTextArea;
  */
 public class Launcher extends JFrame implements ActionListener{
     
-    static Class[] vanilla = {null, ModelUtils.class, GUI.class};
-    static String[] titles = {"Choose a demo from here","Collision-mesh generator", "Compressor"};
-    static String[] comments = {"Choose a demo from the dropdown", "A tool for generating collision-meshes", "lz4 compression tool and demo"};
+    static Class[] vanilla = {null, ModelUtils.class, GUI.class, saphireJump.Run.class};
+    static String[] titles = {"Choose a demo from here","Collision-mesh generator", "Compressor", "SaphireJump"};
+    static String[] comments = {"Choose a demo from the dropdown", "A tool for generating collision-meshes", "lz4 compression tool and demo", "A simple, hardly even working FPS Demo"};
     
     JComboBox List;
     JTextArea comment = new JTextArea();

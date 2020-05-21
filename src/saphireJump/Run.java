@@ -103,12 +103,12 @@ public class Run {
         //    handles.add(handle);
         //}
         double resetScale = first_object.scale + 0;
-        first_object.scale = 0.2;
-        double gridMul = 5;
+        first_object.scale = 0.1;
+        double gridMul = 3;
         LinkedList<Model> models = new LinkedList<>();
         models.add(first_object);
-        /*Double[][] heightmapd = heightmap(1, models, 0);
-        LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);*/
+        Double[][] heightmapd = heightmap(1, models,2);
+        LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);
         LinkedList<Integer> gridHandles = new LinkedList<>();
         
         first_object.scale = resetScale;
@@ -117,7 +117,7 @@ public class Run {
             Integer handle = m.hashCode();
             m.hideFaces = true;
             m.hideLines = true;
-            m.hidePoints = true;
+            m.hidePoints = false;
             Driver.models.put(handle, m);
             gridHandles.add(handle);
         }*/
@@ -127,7 +127,7 @@ public class Run {
         Driver.an_pause = false;
         //Driver.zero();
         
-        double scale = 1;
+        double scale = 3;
         Driver.s.r.scale = 1 / scale;
         Driver.s.r.scale_restore = 1 * scale;
         
@@ -324,17 +324,24 @@ public class Run {
                         vel.y = p3.y;
                     }
                 }*/
-                //try {
-                //    double gH = heightmapd[(int) (vel.x * gridMul)]
-                //            [(int) (vel.z * gridMul)];
-                //    if (gH != codenameprojection.models.ModelUtils.minH) {
-                //        vel.y = gH;
-                //    }
-                //} catch (Exception e) {
-                   // e.printStackTrace();
-                //}
+                //Point3D vel3 = Point3D.add(vel2, new Point3D(heightmapd.length*5, 0, heightmapd[0].length*5));
+                long x1 = map((long) vel2.x, -500,500,0,100);
+                long z1 = map((long) vel2.z, -500,500,0,100);
+                vel2.y = -18;
+                Point3D about = new Point3D((int) (x1), 0, (int) (z1));
+                //System.out.println(about);
+                try {
+                    double gH = heightmapd[(int) (about.x)]
+                            [(int) (about.z)];
+                    if (gH != codenameprojection.models.ModelUtils.minH) {
+                        vel2.y = -gH*10-18;
+                        System.out.println(gH);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //vel2.y = 0;
                 Driver.screenPosition_org_next = vel2.clone();
-                Driver.screenPosition_org_next.identifier = -2;
                 vel = new Point3D(0, 0, 0);
             //    Model cubeM = (Model) Driver.models.values().toArray()[cubeHandle];
             //    cubeM.hideLines = true;
@@ -417,10 +424,10 @@ public class Run {
 
                 //space
                 if (Driver.inp.keys[32] && jetleft > 0) {
-                    jump_vel = jump_vel + 0.0007F * 1.5 * 4;
-                    jetleft = jetleft - .5F*1.3F;
+                    jump_vel = jump_vel + 0.0007F * 1.5 * 4 * 2;
+                    jetleft = jetleft - .5F*1F-(jetleft/20);
                 } else if (Driver.inp.keys[32]) {
-                    jetleft = jetleft - .01F;
+                    jetleft = jetleft - .065F;
                 }
                 if (jetleft < 8000) {
                     jetleft = jetleft + 0.1F;
@@ -440,7 +447,7 @@ public class Run {
                     from.z = from.z - .1;
                     Point3D from2 = Driver.matmul(Driver.RX((float) -Driver.angleX), new Point3F(0, 0, 6)).toDVector3();
                     from2 = Driver.matmul(Driver.RY((float) -Driver.angleY), from2.toFVector3()).toDVector3();
-                    vel = Point3D.add(vel, Point3D.multiply(from2, new Point3D(-10, -10, -10)));
+                    //vel = Point3D.add(vel, Point3D.multiply(from2, new Point3D(-10, -10, -10)));
                     from2 = Point3D.add(from2, from);
                     
                     points2.add(from);
@@ -456,6 +463,12 @@ public class Run {
                         pew.play(.2, 0);
                     }
                     
+                    //vel = Point3D.add(vel, new Point3D(0, 2, 0));
+                    //jump_vel = jump_vel + 44;
+                    Driver.screenPosition_org_next = Point3D.add(Driver.screenPosition_org_next, new Point3D(20, 1000, 30));
+                    Driver.screenPosition_org_next.identifier=-1;
+                    System.out.println(Driver.screenPosition_org_next);
+                    //System.out.println("LOL");
                     boltHandles.add(cursorHandle);
                     boltCooldown = boltCooldown + 4500;
                 } else if (boltCooldown > -500) {
@@ -516,18 +529,19 @@ public class Run {
             }
 //            last_sp = Driver.screenPosition_org.clone();
             
+            //Apply location
+            Driver.screenPosition_org_next.identifier = -2;
             
+            deltaTime = Duration.between(beginTime, Instant.now());
+            Driver.s.r.customStrings_next.put("lol", "FPSDelta: " + deltaTime.getNano());
+            Driver.s.r.customStrings_next.put("lol2", "Bolts: " + boltHandles.size());
             //Sleep
             try {
                 Thread.sleep((long) 0.000001);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            deltaTime = Duration.between(beginTime, Instant.now());
 //            System.out.println("Fly.java excecution time: " + deltaTime.getNano());
-            Driver.s.r.customStrings_next.put("lol", "FPSDelta: " + deltaTime.getNano());
-            Driver.s.r.customStrings_next.put("lol2", "Bolts: " + boltHandles.size());
         }
     }
     
@@ -779,5 +793,9 @@ public class Run {
         }
         
         return out;
+    }
+    long map(long x, long in_min, long in_max, long out_min, long out_max)
+    {
+      return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 }

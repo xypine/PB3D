@@ -297,7 +297,7 @@ public class driver{
             //Validity checks
             
             
-            if(screenPosition_org_next.identifier != -1){
+            if(screenPosition_org_next.identifier == -2){
                 int oldID = screenPosition_org.identifier;
                 screenPosition_org = screenPosition_org_next;
                 screenPosition_org.identifier = oldID;
