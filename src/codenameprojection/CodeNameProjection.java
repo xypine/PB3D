@@ -24,6 +24,7 @@
 package codenameprojection;
 
 import codenameprojection.config.Flags;
+import codenameprojection.demos.Launcher;
 import codenameprojection.renderer.renderer;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -57,9 +58,10 @@ public class CodeNameProjection {
         } catch (InterruptedException ex) {
         Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        driver driver = new driver();
-        driver.run();
-        }
+        //driver driver = new driver();
+        //driver.run();
+        new Launcher();
+    }
         //supervisor.objectManager.addObject(new gameObject(new Point2D(10, 0), 1, 1, renderType.box, supervisor, supervisor.objectManager.getUsableID()));
         //supervisor.engine_gravity = new Point2D(0, 0.1);*/
         //new driver(null);

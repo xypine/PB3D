@@ -49,9 +49,11 @@ import javax.swing.JTextArea;
  */
 public class Launcher extends JFrame implements ActionListener{
     
-    static Class[] vanilla = {null, ModelUtils.class, GUI.class, saphireJump.Run.class};
-    static String[] titles = {"Choose a demo from here","Collision-mesh generator", "Compressor", "SaphireJump"};
-    static String[] comments = {"Choose a demo from the dropdown", "A tool for generating collision-meshes", "lz4 compression tool and demo", "A simple, hardly even working FPS Demo"};
+    static Class[] vanilla = {null, codenameprojection.driver.class, ModelUtils.class, GUI.class, saphireJump.Run.class};
+    static String[] titles = {"Choose a demo from here", "Modelviewer", "Collision-mesh generator", "Compressor", "SaphireJump"};
+    static String[] comments = {"Choose a demo from the dropdown", "A barebones modelviewer", "A tool for generating collision-meshes", "lz4 compression tool and demo", "A simple, hardly even working FPS Demo"};
+  //false: ignore errors, true: default
+    static Boolean[] mode = {true, false, true, true, false};
     
     JComboBox List;
     JTextArea comment = new JTextArea();
@@ -86,28 +88,41 @@ public class Launcher extends JFrame implements ActionListener{
                     @Override
                     public void run() {
                         SecurityManager original = System.getSecurityManager();
-                        try {
-                            MySecurityManager secManager = new MySecurityManager();
-                            System.setSecurityManager(secManager);
-                            Method methodToFind = null;
-                            super.run(); //To change body of generated methods, choose Tools | Templates.
-                            methodToFind = vanilla[i].getMethod("main", String[].class);
-                            String[] params = null; // init params accordingly
-                            methodToFind.invoke(null, (Object) params);
+                        if (mode[i]) {
+                            try {
+                                MySecurityManager secManager = new MySecurityManager();
+                                System.setSecurityManager(secManager);
+                                Method methodToFind = null;
+                                super.run(); //To change body of generated methods, choose Tools | Templates.
+                                methodToFind = vanilla[i].getMethod("main", String[].class);
+                                String[] params = null; // init params accordingly
+                                methodToFind.invoke(null, (Object) params);
+                                System.setSecurityManager(original);
+                            } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | NullPointerException e) {
+                                JFUtils.quickTools.alert("Invalid demo, as it has no main method!");
+                                e.printStackTrace();
+                                System.setSecurityManager(original);
+                                //e.printStackTrace();
+                            } catch (SecurityException e) {
+                                System.setSecurityManager(original);
+                            } catch (InvocationTargetException ex) {
+                                ex.getCause().printStackTrace();
+                                System.setSecurityManager(original);
+                            }
                             System.setSecurityManager(original);
-                        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | NullPointerException e) {
-                            JFUtils.quickTools.alert("Invalid demo, as it has no main method!");
-                            e.printStackTrace();
-                            System.setSecurityManager(original);
-                            //e.printStackTrace();
                         }
-                        catch (SecurityException e){
-                            System.setSecurityManager(original);
-                        } catch (InvocationTargetException ex) {
-                            ex.getCause().printStackTrace();
-                            System.setSecurityManager(original);
+                        else{
+                            try {
+                                Method methodToFind = null;
+                                super.run(); //To change body of generated methods, choose Tools | Templates.
+                                methodToFind = vanilla[i].getMethod("main", String[].class);
+                                String[] params = null; // init params accordingly
+                                methodToFind.invoke(null, (Object) params);
+                            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException noSuchMethodException) {
+                                System.out.println(noSuchMethodException);
+                                JFUtils.quickTools.alert("Error Loading Demo", "Error Invoking Main Method! (error visible in console)");
+                            }
                         }
-                        System.setSecurityManager(original);
                     }
                 };
                 setVisible(false);

@@ -63,6 +63,22 @@ import kuusisto.tinysound.TinySound;
  */
 public class driver{
     
+    public static void main(String[] args) {
+        Thread a = new Thread(){
+            @Override
+            public void run() {
+                super.run(); //To change body of generated methods, choose Tools | Templates.
+                try {
+                    driver d = new driver();
+                    d.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        a.start();
+    }
+    
     public boolean useSound = true;
     
     private boolean usePB = true;
