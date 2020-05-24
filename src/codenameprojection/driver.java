@@ -177,6 +177,7 @@ public class driver{
     public Screen s;
     public Input inp;
     public driver(){
+        CodeNameProjection.validate();
         screenPosition_org_next.identifier = -1;
         usePB = false;
         //dVector3 point = new dVector3(0, 0, 0);
@@ -239,7 +240,6 @@ public class driver{
     public boolean defaultScrollWheel = true;
     
     public void run(){
-        CodeNameProjection.validate();
         try {
             TinySound.init();
         } catch (Exception e) {

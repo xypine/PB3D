@@ -25,7 +25,9 @@ package compressor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -41,6 +43,12 @@ public class IO {
     static int filesDone = 0;
     
     static LinkedList<String> dependencyRecord = new LinkedList<>();
+    
+    public static void writeString(String text, String path) throws FileNotFoundException{
+        try (PrintWriter out = new PrintWriter(path)) {
+            out.println(text);
+        }
+    }
     
     public static String readAsString(String path) throws IOException{
         return readAsString(path, true, true);

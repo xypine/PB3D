@@ -26,6 +26,8 @@ package codenameprojection;
 import codenameprojection.config.Flags;
 import codenameprojection.demos.Launcher;
 import codenameprojection.renderer.renderer;
+import compressor.IO;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,6 +75,10 @@ public class CodeNameProjection {
             Logger.getGlobal().log(Level.WARNING, "pb3d needs jfutils {0}, current version is {1}", new Object[]{minUtilsVer, JFUtils.versionCheck.version});
         }
         String h = getHash();
+        try {
+            IO.writeString(h, "hash.txt");
+        } catch (FileNotFoundException ex) {
+        }
         System.out.println("Hashcode: " + h);
         codenameprojection.config.Flags.loadAndSet();
         
