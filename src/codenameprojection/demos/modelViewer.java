@@ -63,7 +63,7 @@ public class modelViewer {
     public modelViewer() {
         driver d = new driver();
         this.Driver = d;
-        
+        modelParser.filename = "assets/models/misc/deform";
         JFrame control = new JFrame();
         Thread t = new Thread(){
             @Override
