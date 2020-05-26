@@ -24,7 +24,10 @@
 package codenameprojection;
 
 import codenameprojection.config.Flags;
+import codenameprojection.demos.core.Launcher;
 import codenameprojection.renderer.renderer;
+import compressor.IO;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,9 +60,10 @@ public class CodeNameProjection {
         } catch (InterruptedException ex) {
         Logger.getLogger(CodeNameProjection.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        driver driver = new driver();
-        driver.run();
-        }
+        //driver driver = new driver();
+        //driver.run();
+        new Launcher();
+    }
         //supervisor.objectManager.addObject(new gameObject(new Point2D(10, 0), 1, 1, renderType.box, supervisor, supervisor.objectManager.getUsableID()));
         //supervisor.engine_gravity = new Point2D(0, 0.1);*/
         //new driver(null);
@@ -71,6 +75,10 @@ public class CodeNameProjection {
             Logger.getGlobal().log(Level.WARNING, "pb3d needs jfutils {0}, current version is {1}", new Object[]{minUtilsVer, JFUtils.versionCheck.version});
         }
         String h = getHash();
+        try {
+            IO.writeString(h, "hash.txt");
+        } catch (FileNotFoundException ex) {
+        }
         System.out.println("Hashcode: " + h);
         codenameprojection.config.Flags.loadAndSet();
         
@@ -93,7 +101,8 @@ public class CodeNameProjection {
             try {
                 throw new SecurityException("INSECURE MODE ENABLED. Securemode disabled from config");
             } catch (SecurityException securityException) {
-                Logger.getGlobal().log(Level.WARNING, "HASH INVALID, INSECURE MODE ENABLED. ERROR: {0}", securityException);
+                //Logger.getGlobal().log(Level.WARNING, "HASH INVALID, INSECURE MODE ENABLED. ERROR: {0}", securityException);
+                System.out.println(securityException);
             }
         }
     }

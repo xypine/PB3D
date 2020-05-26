@@ -63,6 +63,22 @@ import kuusisto.tinysound.TinySound;
  */
 public class driver{
     
+    public static void main(String[] args) {
+        Thread a = new Thread(){
+            @Override
+            public void run() {
+                super.run(); //To change body of generated methods, choose Tools | Templates.
+                try {
+                    driver d = new driver();
+                    d.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        a.start();
+    }
+    
     public boolean useSound = true;
     
     private boolean usePB = true;
@@ -161,6 +177,7 @@ public class driver{
     public Screen s;
     public Input inp;
     public driver(){
+        CodeNameProjection.validate();
         screenPosition_org_next.identifier = -1;
         usePB = false;
         //dVector3 point = new dVector3(0, 0, 0);
@@ -175,7 +192,7 @@ public class driver{
         s.r.requestFocusInWindow();
         
     }
-    
+    public int frame;
     public boolean running = false;
     public boolean init = false;
     
@@ -223,7 +240,6 @@ public class driver{
     public boolean defaultScrollWheel = true;
     
     public void run(){
-        CodeNameProjection.validate();
         try {
             TinySound.init();
         } catch (Exception e) {
@@ -285,7 +301,11 @@ public class driver{
         //Graph grapher = new Graph();
         int tickC = 0;
         
-        int frame = 0;
+        
+        frame = 0;
+                
+        
+        
         running = true;
         boolean oldP = !(!s.r.drawPoints);
         while(running){
@@ -297,7 +317,7 @@ public class driver{
             //Validity checks
             
             
-            if(screenPosition_org_next.identifier != -1){
+            if(screenPosition_org_next.identifier == -2){
                 int oldID = screenPosition_org.identifier;
                 screenPosition_org = screenPosition_org_next;
                 screenPosition_org.identifier = oldID;
@@ -305,13 +325,17 @@ public class driver{
             }
             
             if(defaultScrollWheel){
-                if(inp.mouseWheel == 2){
-                    models.get(defaultModelKey).scale++;
-                    inp.mouseWheel = 1;
-                }
-                if(inp.mouseWheel == 0){
-                    models.get(defaultModelKey).scale--;
-                    inp.mouseWheel = 1;
+                try {
+                    if (inp.mouseWheel == 2) {
+                        models.get(defaultModelKey).scale++;
+                        inp.mouseWheel = 1;
+                    }
+                    if (inp.mouseWheel == 0) {
+                        models.get(defaultModelKey).scale--;
+                        inp.mouseWheel = 1;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Failed to access the default model!");
                 }
             }
             
@@ -425,9 +449,9 @@ public class driver{
             if(inp.keys[84] == true && !ingoredInputs.contains(84)){
                 s.r.drawLines = true;
                 s.r.drawFaces = false;
-                //s.r.drawPoints = oldP;
+                s.r.drawPoints = false; //oldP
                 try {
-                    models.get(defaultModelKey).hidePoints = true;
+                //    models.get(defaultModelKey).hidePoints = true;
                 } catch (Exception e) {
                 }
             }
@@ -435,9 +459,9 @@ public class driver{
             if(inp.keys[71] == true && !ingoredInputs.contains(71)){
                 s.r.drawLines = false;
                 s.r.drawFaces = true;
-                //s.r.drawPoints = oldP;
+                s.r.drawPoints = false;
                 try {
-                    models.get(defaultModelKey).hidePoints = true;
+                //    models.get(defaultModelKey).hidePoints = true;
                 } catch (Exception e) {
                 }
             }
@@ -445,9 +469,9 @@ public class driver{
             if(inp.keys[66] == true && !ingoredInputs.contains(66)){
                 s.r.drawLines = false;
                 s.r.drawFaces = false;
-                //s.r.drawPoints = true;
+                s.r.drawPoints = true;
                 try {
-                    models.get(defaultModelKey).hidePoints = false;
+                //    models.get(defaultModelKey).hidePoints = false;
                 } catch (Exception e) {
                 }
             }
