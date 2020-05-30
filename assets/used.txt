@@ -1,6 +1,6 @@
+assets/models/misc/color.pb3d
+assets/models/misc/color_faces.pb3d
+assets/models/misc/color_lines.pb3d
 assets/config/features.txt
-assets/models/SaphireJump/levels/saphireJump.pb3d
-assets/models/SaphireJump/levels/saphireJump_lines.pb3d
-assets/models/SaphireJump/levels/saphireJump_faces.pb3d
-assets/models/SaphireJump/levels/saphireJump_color.pb3d
+assets/models/misc/color_color.pb3d
 

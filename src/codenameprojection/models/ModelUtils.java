@@ -78,9 +78,10 @@ public class ModelUtils implements demoInterface{
     }
     
     public static Double[][] heightmap(double step, LinkedList<Model> models, int blur){
-        LinkedList<Point3D> joined = join(models);
-        Point2D mins = min(joined);
-        Point2D maxs = max(joined);
+        LinkedList<Point3D> joinedPoints = joinPoints(models);
+        LinkedList<Point3D[]> joinedFaces = joinFaces(models);
+        Point2D mins = min(joinedPoints);
+        Point2D maxs = max(joinedPoints);
         System.out.println("Min: " + mins.represent());
         System.out.println("Max: " + maxs.represent());
         int w = (int) Math.ceil(maxs.x - mins.x);
@@ -93,7 +94,7 @@ public class ModelUtils implements demoInterface{
                 out[x][y] = minH;
             }
         }
-        for(Point3D i : joined){
+        for(Point3D i : joinedPoints){
             try {
                 int x = (int) i.x;
                 int y = (int) i.z;
@@ -114,79 +115,52 @@ public class ModelUtils implements demoInterface{
         for(Double[] row : out){
             for(Double i : row){
                 int done = 0;
-                //i != minH
-                if (true) {
-                    double sum = 0;
-                    double raw_done = 0;
-                    double raw_sum = 0;
-                    double hi = minH;
-                    for(Point2D d : quickTools.vectorDirs4){
-                        try {
-                            double val = out[(int) (x + d.x)][(int) (y + d.y)];
-                            //if (val != minH && sum / 10 < val) {
-                            //    sum = sum + val;
-                            //    done++;
-                            //}
-                            /*
-                            if(val > sum / 2 && val > minH){
-                                sum = val;
-                                done++;
-                            }*/
-                            if(val > hi){
-                                hi = val;
-                            }
-                            raw_sum = raw_sum + val;
-                            raw_done++;
-                        } catch (Exception e) {
-                        }
-                    }
-                    for (int j : new Range(blur)) {
-                        for (Point2D d : quickTools.dirs) {
-                            try {
-                                double val = out[(int) (x + d.x * (2+j))][(int) (y + d.y * (2+j))];
-                                //if (val != minH && sum / 10 < val) {
-                                //    sum = sum + val;
-                                //    done++;
-                                //}
-                                /*
-                            if(val > sum / 2 && val > minH){
-                                sum = val;
-                                done++;
-                            }*/
-                                if (val > hi) {
-                                    hi = val;
-                                }
-                                raw_sum = raw_sum + val;
-                                raw_done++;
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-                    double raw = raw_sum / raw_done;
+                out2[x][y] = 0D;
+                for(Point3D[] face : joinedFaces){
+                    Point3D f1 = face[0];
+                    Point3D f2 = face[1];
+                    Point3D f3 = face[2];
                     
-                    out2[x][y] = i;
-                    //raw != minH
-                    //if (raw > -9999D) {
-                    //    out[x][y] = sum / done;
-                    //}
-                    if (i != minH || raw != minH) {
-                        out2[x][y] = hi;
+                    Point2D p1 = new  Point2D(face[0].x, face[0].z);
+                    Point2D p2 = new  Point2D(face[1].x, face[1].z);
+                    Point2D p3 = new  Point2D(face[2].x, face[2].z);
+                    double diff = Math.max(f1.y, f2.y);
+                    diff = Math.max(f3.y, diff);
+                    double diff2 = Math.min(f1.y, f2.y);
+                    diff2 = Math.min(f3.y, diff2);
+                    double diff3 = diff - diff2;
+                    if(PointInTriangle(new Point2D(x, y), p1, p2, p3) && diff3 < 10){
+                        out2[x][y] = - (face[0].y + face[1].y + face[2].y) / 3;
+                    }
+                    else{
+                        //System.out.println(new Point2D(x, y));
                     }
                 }
+                
                 y++;
             }
             x++;
             y = 0;
         }
+        System.out.println("Face list size: " + joinedFaces.size());
         return out2;
     }
-    public static LinkedList<Point3D> join(LinkedList<Model> models){
+    public static LinkedList<Point3D> joinPoints(LinkedList<Model> models){
         LinkedList<Point3D> out = new LinkedList<>();
         for (Model model : models) {
             out.addAll(model.getFrame(0, true, true, true).points);
         }
         return out;
     }
+    public static LinkedList<Point3D[]> joinFaces(LinkedList<Model> models){
+        LinkedList<Point3D[]> out = new LinkedList<>();
+        for (Model model : models) {
+            out.addAll(model.getFrame(0, true, true, true).faces);
+        }
+        return out;
+    }
+    
+    
     public static Point2D min(LinkedList<Point3D> org){
         double x = 0;
         double y = 0;
@@ -287,6 +261,29 @@ public class ModelUtils implements demoInterface{
         
         return out;
     }
+    
+    
+    //From https://stackoverflow.com/questions/2049582/how-to-determine-if-a-point-is-in-a-2d-triangle
+    //------------------------------------------------------------------------------------------------
+    static double sign (Point2D p1, Point2D p2, Point2D p3)
+    {
+        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+    }
+    public static boolean PointInTriangle (Point2D point, Point2D v1, Point2D v2, Point2D v3)
+    {
+        double d1, d2, d3;
+        boolean has_neg, has_pos;
+
+        d1 = sign(point, v1, v2);
+        d2 = sign(point, v2, v3);
+        d3 = sign(point, v3, v1);
+
+        has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+        has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+        return !(has_neg && has_pos);
+    }
+    //------------------------------------------------------------------------------------------------
 }
 class demo{
 
@@ -307,11 +304,13 @@ class demo{
         try {
             modelParser.size = 10;
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
+            LinkedList<Point3D[]> parseF = new modelParser().parseFaces(parse.getFirst());
+            LinkedList<Integer[]> parseL = new modelParser().parseLines(parse.getFirst());
             
             //new modelParser().parseLines(parse.getFirst());
             //new modelParser().parseFaces(parse.getFirst());
             //new modelParser().parseColor(parse.getFirst());
-            ModelFrame first = new ModelFrame(parse.getFirst(), new LinkedList<Integer[]>(), new LinkedList<Point3D[]>(), new LinkedList<vertexGroup>());
+            ModelFrame first = new ModelFrame(parse.getFirst(), parseL, parseF, new LinkedList<vertexGroup>());
             LinkedList<ModelFrame> frames = new LinkedList<>();
             frames.add(first);
             Model m =  new Model(frames, true);
@@ -357,4 +356,111 @@ class demo{
         }
     }
     
+    
 }
+
+/*
+public static Double[][] heightmap(double step, LinkedList<Model> models, int blur){
+        LinkedList<Point3D> joined = joinPoints(models);
+        Point2D mins = min(joined);
+        Point2D maxs = max(joined);
+        System.out.println("Min: " + mins.represent());
+        System.out.println("Max: " + maxs.represent());
+        int w = (int) Math.ceil(maxs.x - mins.x);
+        int h = (int) Math.ceil(maxs.y - mins.y);
+        System.out.println("Width: " + w);
+        System.out.println("Height: " + h);
+        Double[][] out = new Double[w+2][h+2];
+        for(int x : new Range(w+2)){
+            for(int y : new Range(h+2)){
+                out[x][y] = minH;
+            }
+        }
+        for(Point3D i : joined){
+            try {
+                int x = (int) i.x;
+                int y = (int) i.z;
+                x = x + w / 2;
+                y = y + h / 2;
+                double z = i.y;
+                double curr = out[x][y];
+                if (z > curr) {
+                    out[x][y] = z;
+                }
+            } catch (Exception e) {
+                //throw e;
+            }
+        }
+        int x = 0;
+        int y = 0;
+        Double[][] out2 = new Double[out.length][out[0].length];
+        for(Double[] row : out){
+            for(Double i : row){
+                int done = 0;
+                //i != minH
+                if (true) {
+                    double sum = 0;
+                    double raw_done = 0;
+                    double raw_sum = 0;
+                    double hi = minH;
+                    for(Point2D d : quickTools.vectorDirs4){
+                        try {
+                            double val = out[(int) (x + d.x)][(int) (y + d.y)];
+                            //if (val != minH && sum / 10 < val) {
+                            //    sum = sum + val;
+                            //    done++;
+                            //}
+                            /*
+                            if(val > sum / 2 && val > minH){
+                                sum = val;
+                                done++;
+                            }*'/
+                            if(val > hi){
+                                hi = val;
+                            }
+                            raw_sum = raw_sum + val;
+                            raw_done++;
+                        } catch (Exception e) {
+                        }
+                    }
+                    for (int j : new Range(blur)) {
+                        for (Point2D d : quickTools.dirs) {
+                            try {
+                                double val = out[(int) (x + d.x * (2+j))][(int) (y + d.y * (2+j))];
+                                //if (val != minH && sum / 10 < val) {
+                                //    sum = sum + val;
+                                //    done++;
+                                //}
+                                /*
+                            if(val > sum / 2 && val > minH){
+                                sum = val;
+                                done++;
+                            }*'/
+                                if (val > hi) {
+                                    hi = val;
+                                }
+                                raw_sum = raw_sum + val;
+                                raw_done++;
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                    double raw = raw_sum / raw_done;
+                    
+                    out2[x][y] = i;
+                    //raw != minH
+                    //if (raw > -9999D) {
+                    //    out[x][y] = sum / done;
+                    //}
+                    if (i != minH || raw != minH) {
+                        out2[x][y] = hi;
+                    }
+                }
+                y++;
+            }
+            x++;
+            y = 0;
+        }
+        return out2;
+    }
+*/
