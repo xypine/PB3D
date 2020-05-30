@@ -24,7 +24,7 @@
 package codenameprojection;
 
 import codenameprojection.config.Flags;
-import codenameprojection.demos.Launcher;
+import codenameprojection.demos.core.Launcher;
 import codenameprojection.renderer.renderer;
 import compressor.IO;
 import java.io.FileNotFoundException;

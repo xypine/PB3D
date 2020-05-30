@@ -24,8 +24,8 @@
 
 package compressor;
 
-import codenameprojection.demos.Record;
-import codenameprojection.demos.demoInterface;
+import codenameprojection.demos.core.Record;
+import codenameprojection.demos.core.demoInterface;
 import codenameprojection.models.ModelUtils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;

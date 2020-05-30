@@ -21,23 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package codenameprojection.demos;
-
-import java.util.LinkedList;
+package codenameprojection.demos.core;
 
 /**
  *
  * @author Elias Eskelinen (elias.eskelinen@protonmail.com)
  */
-public class Record {
-    public static final LinkedList<demoInterface> getRecorded(){
-        return RECORD;
-    }
-    private static LinkedList<demoInterface> RECORD = new LinkedList<>();
-    
-    
-    
-    public static final void announce(Class toAnnounce) throws InstantiationException, IllegalAccessException{
-        RECORD.add((demoInterface) toAnnounce.newInstance());
-    }
+public interface demoInterface {
+    public final String COMMENT = "No specified comment";
+    public final String NAME = "Unspecified demo";
 }

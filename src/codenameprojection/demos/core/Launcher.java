@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package codenameprojection.demos;
+package codenameprojection.demos.core;
 
 import codenameprojection.models.ModelUtils;
 import compressor.GUI;
@@ -49,7 +49,7 @@ import javax.swing.JTextArea;
  */
 public class Launcher extends JFrame implements ActionListener{
     
-    static Class[] vanilla = {null, codenameprojection.driver.class, ModelUtils.class, GUI.class, saphireJump.Run.class};
+    static Class[] vanilla = {null, codenameprojection.demos.modelViewer.class, ModelUtils.class, GUI.class, saphireJump.Run.class};
     static String[] titles = {"Choose a demo from here", "Modelviewer", "Collision-mesh generator", "Compressor", "SaphireJump"};
     static String[] comments = {"Choose a demo from the dropdown", "A barebones modelviewer", "A tool for generating collision-meshes", "lz4 compression tool and demo", "A simple, hardly even working FPS Demo"};
   //false: ignore errors, true: default

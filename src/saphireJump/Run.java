@@ -468,7 +468,11 @@ public class Run {
                     //emit sound
                     if(Flags.soundEnabled){
                         //System.out.println(new JFUtils.dirs().music + "pew.mp3");
-                        pew.play(.2, 0);
+                        try {
+                            pew.play(.2, 0);
+                        } catch (Exception e) {
+                            System.out.println("Unable to play sound!");
+                        }
                     }
                     
                     //vel = Point3D.add(vel, new Point3D(0, 2, 0));
