@@ -44,6 +44,14 @@ public class IO {
     
     static LinkedList<String> dependencyRecord = new LinkedList<>();
     
+    public static void writeDependencyRecord() throws FileNotFoundException{
+        String w = "";
+        for(String i : dependencyRecord){
+            w = w + i + "\r\n";
+        }
+        writeString(w, "assets/used.txt");
+    }
+    
     public static void writeString(String text, String path) throws FileNotFoundException{
         try (PrintWriter out = new PrintWriter(path)) {
             out.println(text);

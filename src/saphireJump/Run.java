@@ -56,7 +56,15 @@ import kuusisto.tinysound.TinySound;
  */
 public class Run {
     public static void main(String[] args) {
-        new Run();
+        Thread n = new Thread(){
+            @Override
+            public void run() {
+                super.run(); //To change body of generated methods, choose Tools | Templates.
+                new Run();
+            }
+            
+        };
+        n.start();
     }
 
     codenameprojection.driver Driver;
