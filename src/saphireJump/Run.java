@@ -76,6 +76,7 @@ public class Run {
     boolean menu = false;
     boolean pause = false;
     int pSize = 300;
+    double yOff = 200;
     public Run() {
         Driver = new driver();
         Thread t = new Thread(){
@@ -265,6 +266,7 @@ public class Run {
         first_object.hidePoints = false;
         first_object.hideFaces = true;
         first_object.hideLines = false;
+        first_object.setY(yOff);
         //first_object.scale = 0.75;
         first_object.single_frame = true;
         //first_object.minFrame = 59;
@@ -328,16 +330,16 @@ public class Run {
                 //System.out.println(pan);
                 //System.out.println(volDir);
                 //model_map.rotation_Y = model_map.rotation_Y + 0.00001;
-                if (jump > base) {
-                    jump = jump - 0.00024F*2.7;
+                if (jump <  - base) {
+                    jump = jump + 0.00024F*2.7*2;
                 } 
                 else if(Driver.getScreenPosition_org().x < 500 && Driver.getScreenPosition_org().z < 500 && 
                           Driver.getScreenPosition_org().x > -500 && Driver.getScreenPosition_org().z > -500  ){
-                    jump = jump *0.9999;
+                    jump = jump *0.99999;
                 }
                 else{
-                    try {
-                        jump = jump - 0.00024F * 2 * deltaTime.getNano() * 0.0001;
+                    try { //deltaTime.getNano()
+                        jump = jump - 0.00024F * 2;
                     } catch (Exception e) {
                     }
                 }
@@ -350,7 +352,7 @@ public class Run {
                 screenPos.y = 0;
                 Point3D vel2 = Point3D.add(screenPos, Point3D.add(vel, rotVec));
                 double sin = Math.sin(Math.abs(vel2.x/2) + Math.abs(vel2.z/2));
-                if (jump > 0) {
+                if (jump > base) {
                     sin = 0;
                 }
                 vel2.y = -18F - jump + sin * 0.12F;
@@ -370,7 +372,7 @@ public class Run {
                             [(int) (about.z)];
                     if (gH != codenameprojection.models.ModelUtils.minH) {
                         //vel2.y = -gH*5+vel2.y;
-                        base = -gH*5;
+                        base = (-gH)*5-yOff-18;
                         //System.out.println(gH);
                     }
                 } catch (Exception e) {
