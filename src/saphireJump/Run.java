@@ -113,9 +113,27 @@ public class Run {
         double resetScale = first_object.scale + 0;
         first_object.scale = 0.1;
         double gridMul = 3;
+        
         LinkedList<Model> models = new LinkedList<>();
-        models.add(first_object);
-        Double[][] heightmapd = heightmap(1, models,2);
+        try {
+            modelParser.size = 200;
+            modelParser.filename = "assets/models/SaphireJump/levels/saphireJump_phys";
+            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
+            LinkedList<Point3D[]> parseF = new modelParser().parseFaces(parse.getFirst());
+            LinkedList<Integer[]> parseL = new modelParser().parseLines(parse.getFirst());
+
+            //new modelParser().parseLines(parse.getFirst());
+            //new modelParser().parseFaces(parse.getFirst());
+            //new modelParser().parseColor(parse.getFirst());
+            ModelFrame first = new ModelFrame(parse.getFirst(), parseL, parseF, new LinkedList<vertexGroup>());
+            LinkedList<ModelFrame> frames = new LinkedList<>();
+            frames.add(first);
+            Model m = new Model(frames, true);
+            models = new LinkedList<>();
+            models.add(m);
+        } catch (IOException iOException) {
+        }
+        Double[][] heightmapd = heightmap(1, models,3);
         LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);
         LinkedList<Integer> gridHandles = new LinkedList<>();
         
@@ -333,8 +351,8 @@ public class Run {
                     }
                 }*/
                 //Point3D vel3 = Point3D.add(vel2, new Point3D(heightmapd.length*5, 0, heightmapd[0].length*5));
-                long x1 = map((long) vel2.x, -500,500,0,100);
-                long z1 = map((long) vel2.z, -500,500,0,100);
+                long x1 = map((long) -vel2.x, -500,500,0,100);
+                long z1 = map((long)  vel2.z, -500,500,0,100);
                 vel2.y = -18;
                 Point3D about = new Point3D((int) (x1), 0, (int) (z1));
                 //System.out.println(about);
