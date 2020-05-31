@@ -116,7 +116,7 @@ public class Run {
         
         LinkedList<Model> models = new LinkedList<>();
         try {
-            modelParser.size = 200;
+            modelParser.size = 100;
             modelParser.filename = "assets/models/SaphireJump/levels/saphireJump_phys";
             LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
             LinkedList<Point3D[]> parseF = new modelParser().parseFaces(parse.getFirst());
@@ -351,8 +351,8 @@ public class Run {
                     }
                 }*/
                 //Point3D vel3 = Point3D.add(vel2, new Point3D(heightmapd.length*5, 0, heightmapd[0].length*5));
-                long x1 = map((long) -vel2.x, -500,500,0,100);
-                long z1 = map((long)  vel2.z, -500,500,0,100);
+                long x1 = map((long) -vel2.x, -500,500,0,200);
+                long z1 = map((long)  vel2.z, -500,500,0,200);
                 vel2.y = -18;
                 Point3D about = new Point3D((int) (x1), 0, (int) (z1));
                 //System.out.println(about);
@@ -360,8 +360,8 @@ public class Run {
                     double gH = heightmapd[(int) (about.x)]
                             [(int) (about.z)];
                     if (gH != codenameprojection.models.ModelUtils.minH) {
-                        vel2.y = -gH*10-18;
-                        System.out.println(gH);
+                        vel2.y = -gH*5-18;
+                        //System.out.println(gH);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
