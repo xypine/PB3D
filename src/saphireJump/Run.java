@@ -56,7 +56,15 @@ import kuusisto.tinysound.TinySound;
  */
 public class Run {
     public static void main(String[] args) {
-        new Run();
+        Thread n = new Thread(){
+            @Override
+            public void run() {
+                super.run(); //To change body of generated methods, choose Tools | Templates.
+                new Run();
+            }
+            
+        };
+        n.start();
     }
 
     codenameprojection.driver Driver;
@@ -105,9 +113,27 @@ public class Run {
         double resetScale = first_object.scale + 0;
         first_object.scale = 0.1;
         double gridMul = 3;
+        
         LinkedList<Model> models = new LinkedList<>();
-        models.add(first_object);
-        Double[][] heightmapd = heightmap(1, models,2);
+        try {
+            modelParser.size = 100;
+            modelParser.filename = "assets/models/SaphireJump/levels/saphireJump_phys";
+            LinkedList<LinkedList<Point3D>> parse = new modelParser().parse();
+            LinkedList<Point3D[]> parseF = new modelParser().parseFaces(parse.getFirst());
+            LinkedList<Integer[]> parseL = new modelParser().parseLines(parse.getFirst());
+
+            //new modelParser().parseLines(parse.getFirst());
+            //new modelParser().parseFaces(parse.getFirst());
+            //new modelParser().parseColor(parse.getFirst());
+            ModelFrame first = new ModelFrame(parse.getFirst(), parseL, parseF, new LinkedList<vertexGroup>());
+            LinkedList<ModelFrame> frames = new LinkedList<>();
+            frames.add(first);
+            Model m = new Model(frames, true);
+            models = new LinkedList<>();
+            models.add(m);
+        } catch (IOException iOException) {
+        }
+        Double[][] heightmapd = heightmap(1, models,3);
         LinkedList<Model> grid = constructGrid(heightmapd.length, heightmapd[0].length, heightmapd, gridMul);
         LinkedList<Integer> gridHandles = new LinkedList<>();
         
@@ -157,8 +183,9 @@ public class Run {
         float x = 0;
         float y = 0;
         int l_f = 0;
-        Driver.inp.verbodose = true;
+        Driver.inp.verbodose = false;
         Integer[] defaultKeys = new Integer[]{
+            86 //Verbose control
             //74, 
             //76, 
             //73, 
@@ -248,6 +275,10 @@ public class Run {
         Driver.s.r.extraDrawables.add(map);
         Driver.screenPosition_org_next = new Point3D( 0, 0, 7 );
         Driver.screenPosition_org_next.identifier = -2;
+        
+        //Store the ground-level
+        double base = 0;
+        
         while (true) {
             Model model_map = (Model) Driver.models.get(Driver.defaultModelKey);
             //model single = (Model) Driver.models.get(singlePointHandle);
@@ -297,14 +328,18 @@ public class Run {
                 //System.out.println(pan);
                 //System.out.println(volDir);
                 //model_map.rotation_Y = model_map.rotation_Y + 0.00001;
-                if (jump > 0) {
+                if (jump > base) {
                     jump = jump - 0.00024F*2.7;
-                } else if(Driver.getScreenPosition_org().x < pSize && Driver.getScreenPosition_org().z < pSize && 
-                          Driver.getScreenPosition_org().x > -pSize && Driver.getScreenPosition_org().z > -pSize  ){
+                } 
+                else if(Driver.getScreenPosition_org().x < 500 && Driver.getScreenPosition_org().z < 500 && 
+                          Driver.getScreenPosition_org().x > -500 && Driver.getScreenPosition_org().z > -500  ){
                     jump = jump *0.9999;
                 }
                 else{
-                    jump = jump - 0.00024F*2*deltaTime.getNano()*0.0001;
+                    try {
+                        jump = jump - 0.00024F * 2 * deltaTime.getNano() * 0.0001;
+                    } catch (Exception e) {
+                    }
                 }
                 jump = jump + jump_vel;
                 jump_vel = jump_vel * 0;
@@ -325,17 +360,18 @@ public class Run {
                     }
                 }*/
                 //Point3D vel3 = Point3D.add(vel2, new Point3D(heightmapd.length*5, 0, heightmapd[0].length*5));
-                long x1 = map((long) vel2.x, -500,500,0,100);
-                long z1 = map((long) vel2.z, -500,500,0,100);
-                vel2.y = -18;
+                long x1 = map((long) -vel2.x, -500,500,0,200);
+                long z1 = map((long)  vel2.z, -500,500,0,200);
+                //vel2.y = -18;
                 Point3D about = new Point3D((int) (x1), 0, (int) (z1));
                 //System.out.println(about);
                 try {
                     double gH = heightmapd[(int) (about.x)]
                             [(int) (about.z)];
                     if (gH != codenameprojection.models.ModelUtils.minH) {
-                        vel2.y = -gH*10-18;
-                        System.out.println(gH);
+                        //vel2.y = -gH*5+vel2.y;
+                        base = -gH*5;
+                        //System.out.println(gH);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

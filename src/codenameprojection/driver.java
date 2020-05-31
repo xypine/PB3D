@@ -240,6 +240,7 @@ public class driver{
     public boolean defaultScrollWheel = true;
     
     public void run(){
+        addShutdownhook();
         try {
             TinySound.init();
         } catch (Exception e) {
@@ -1025,6 +1026,24 @@ public class driver{
         } catch (IOException ex) {
             Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    void addShutdownhook(){
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                super.run(); //To change body of generated methods, choose Tools | Templates.
+                System.out.println("Trying to write a dependency record...");
+                try {
+                    compressor.IO.writeDependencyRecord();
+                } catch (FileNotFoundException ex) {
+                    System.out.println("Failed to write dependency record: " + ex);
+//                    Logger.getLogger(driver.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("Program Exit.");
+            }
+            
+        };
+        Runtime.getRuntime().addShutdownHook(t);
     }
 }
 /*class driver{
