@@ -126,6 +126,9 @@ public class renderer extends JPanel implements rendererInterface{
     public int received = 0;
     public int errors = 0;
     
+    public int colorLimiter = 2;
+    
+    
     public LinkedList<drawable> extraDrawables = new LinkedList<>();
     
     private GraphicsConfiguration config =
@@ -242,10 +245,10 @@ public class renderer extends JPanel implements rendererInterface{
             gb.setRenderingHint(
                     RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            //gb.setColor(Color.BLACK);
+            //gb.setColor(limitColor(Color.BLACK);
             //gb.fillRect(0, 0, w, h);
             gb.scale(scale, scale);
-            gb.setColor(Color.BLACK);
+            gb.setColor(limitColor(Color.BLACK));
             gb.fillRect(0, 0, w*2, h*2);
         }
         
@@ -313,7 +316,7 @@ public class renderer extends JPanel implements rendererInterface{
                             //
                             if (usePixelRendering) {
                                 //drawLine(new Point2Int(x1, y1), new Point2Int(x2, y2), c);
-                                //gb.setColor(c);
+                                //gb.setColor(limitColor(c);
                                 //gb.drawLine(x1, y1, x2, y2);
                                 linesToDraw.add(new Integer[][]{
                                     {x1, y1}, {x2, y2} 
@@ -376,7 +379,7 @@ public class renderer extends JPanel implements rendererInterface{
                                 Point3D d = new Point3D(pos.intX(), pos.intY(), cS);
                                 d.identifier = pos.identifier;
                                 pointsToDraw.add(d);
-                                //gb.setColor(Color.green);
+                                //gb.setColor(limitColor(Color.green);
                                 //drawPoint(pos, Color.red);
                                 //gb.drawRect(pos.intX() - xOff, pos.intY() - yOff, cS, cS);
                             } else {
@@ -461,7 +464,7 @@ public class renderer extends JPanel implements rendererInterface{
                                     t.identifier,
                                     r.identifier
                                 });
-                                //gb.setColor(c);
+                                //gb.setColor(limitColor(c);
                                 //gb.fillPolygon(new Polygon(xpoints, ypoints, npoints));
                                 ////drawPolygon(new Polygon(xpoints, ypoints, npoints), c);
                             } else {
@@ -550,7 +553,7 @@ public class renderer extends JPanel implements rendererInterface{
                         //System.out.println("Points not found for index " + i);
                     }
                 } catch (Exception e) {
-                    throw e;
+                    //throw e;
                 }
             }
         }
@@ -558,12 +561,12 @@ public class renderer extends JPanel implements rendererInterface{
         
         if (usePixelRendering) {
             if(!Objects.isNull(gb)){
-                gb.setColor(Color.BLACK);
+                gb.setColor(limitColor(Color.BLACK));
                 gb.fillRect(0, 0, w, h);
                 for(int i : new Range(linesToDraw.size())){
                     Integer[][] coords = linesToDraw.get(i);
                     if (shading) {
-                        gb.setColor(lineColorsToDraw.get(i));
+                        gb.setColor(limitColor(lineColorsToDraw.get(i)));
                     }
                     else{
                         int x_id = linesToDraw_id.get(i)[0];
@@ -597,7 +600,7 @@ public class renderer extends JPanel implements rendererInterface{
                         }
                         GradientPaint gp = new GradientPaint(minx,miny,one,maxx,maxy, two); 
                         gb.setPaint(gp);
-                        //gb.setColor(xc);
+                        //gb.setColor(limitColor(xc);
                     }
                     //int x1 = coords[0][0];
                     //int y1 = coords[0][1];
@@ -613,7 +616,7 @@ public class renderer extends JPanel implements rendererInterface{
                             col = new Color(vg.r, vg.g, vg.b);
                         }
                     }
-                    gb.setColor(col);
+                    gb.setColor(limitColor(col));
                     if (fillPoints) {
                         gb.fillRect((int) i.x, (int) i.y, (int) i.z, (int) i.z);
                     } else {
@@ -692,7 +695,7 @@ public class renderer extends JPanel implements rendererInterface{
                         
                         gb.setPaint(null);
                         if(shading){
-                            gb.setColor(c);
+                            gb.setColor(limitColor(c));
                             gb.fillPolygon(facesToDraw.get(i));
                         }
                         else{
@@ -705,7 +708,7 @@ public class renderer extends JPanel implements rendererInterface{
                             GradientPaint gradient3 = new GradientPaint(
                                 (float) xp[2], (float) yp[2], c3,
                                 (float) xp[0], (float) yp[0], transparent);
-                            gb.setColor(Color.BLACK);
+                            gb.setColor(limitColor(Color.BLACK));
                             gb.fill(facesToDraw.get(i));
                             gb.setPaint(gradient1);
                             gb.fill(facesToDraw.get(i));
@@ -747,6 +750,17 @@ public class renderer extends JPanel implements rendererInterface{
         }
         
     }
+    
+    public Color limitColor(Color from){
+        int r = from.getRed();
+        int g = from.getGreen();
+        int b = from.getBlue();
+        r = (int) (r / colorLimiter) * colorLimiter;
+        g = (int) (g / colorLimiter) * colorLimiter;
+        b = (int) (b / colorLimiter) * colorLimiter;
+        return new Color(r, g, b);
+    }
+    
     public driver Logic;
     public boolean debug = true;
     @Override

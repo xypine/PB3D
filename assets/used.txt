@@ -1,9 +1,6 @@
 assets/config/features.txt
-assets/models/SaphireJump/levels/saphireJump.pb3d
-assets/models/SaphireJump/levels/saphireJump_lines.pb3d
-assets/models/SaphireJump/levels/saphireJump_faces.pb3d
-assets/models/SaphireJump/levels/saphireJump_color.pb3d
-assets/models/SaphireJump/levels/saphireJump_phys.pb3d
-assets/models/SaphireJump/levels/saphireJump_phys_faces.pb3d
-assets/models/SaphireJump/levels/saphireJump_phys_lines.pb3d
+assets/models/misc/deform.pb3d
+assets/models/misc/deform_lines.pb3d
+assets/models/misc/deform_faces.pb3d
+assets/models/misc/deform_color.pb3d
 

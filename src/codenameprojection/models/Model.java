@@ -45,6 +45,11 @@ public class Model {
      */
     public boolean ignoreRootNode = false;
     
+    /**
+     * Points with a lower index will be considered rootnodes
+     */
+    public int ignoreRootNodeThreshold = 1;
+    
     public double scale = 1;
     
     
@@ -159,6 +164,9 @@ public class Model {
         else{
             out = (ModelFrame) frames.get(minFrame).clone();
         }
+        
+        
+        LinkedList<Point3D> rootnodes = new LinkedList<>(); //LEFT HERE
         Point3D rootNode = out.points.getFirst();
         int ind = 0;
         for(Point3D i : (LinkedList<Point3D>)(out.points.clone())){

@@ -1031,6 +1031,7 @@ public class driver{
         Thread t = new Thread(){
             @Override
             public void run() {
+                System.out.println("Starting program exit...");
                 super.run(); //To change body of generated methods, choose Tools | Templates.
                 System.out.println("Trying to write a dependency record...");
                 try {
