@@ -46,7 +46,7 @@ public class Model {
     public boolean ignoreRootNode = false;
     
     /**
-     * Points with a lower index will be considered rootnodes
+     * Points with a lower index than this will be considered rootnodes
      */
     public int ignoreRootNodeThreshold = 1;
     
@@ -167,7 +167,26 @@ public class Model {
         
         
         LinkedList<Point3D> rootnodes = new LinkedList<>(); //LEFT HERE
-        Point3D rootNode = out.points.getFirst();
+        Integer[] rootnodeIDs;
+        int ind2 = 0;
+        for(Point3D p : out.points){
+            if (ind2 < ignoreRootNodeThreshold) {
+                rootnodes.add(p);
+            } else {
+                break;
+            }
+            ind2++;
+        }
+        rootnodeIDs = new Integer[rootnodes.size()];
+        LinkedList<Integer> rootnodeIDsList = new LinkedList<>();
+        ind2 = 0;
+        for(Point3D p : rootnodes){
+            rootnodeIDs[ind2] = p.identifier;
+            rootnodeIDsList.add(p.identifier);
+            ind2++;
+        }
+        
+        //Point3D rootNode = out.points.getFirst();
         int ind = 0;
         for(Point3D i : (LinkedList<Point3D>)(out.points.clone())){
             int oldID = i.identifier;
@@ -196,7 +215,7 @@ public class Model {
         out.faces.forEach(l -> {
             boolean add = true;
             for(Point3D i : l){
-                if(i.identifier == rootNode.identifier){
+                if(rootnodeIDsList.contains(i.identifier)){
                     add = false;
                 }
             }

@@ -63,6 +63,8 @@ public class modelViewer {
     JLabel sel_label;
     JLabel an_label;
     JCheckBox ignoreOrigin;
+    JSlider ignoreOriginR;
+    JLabel ignoreOriginRLabel;
     public static void main(String[] args) {
         new modelViewer();
     }
@@ -119,6 +121,12 @@ public class modelViewer {
         c.add(new JLabel("Ignore model origin point when drawing faces: "));
         c.add(ignoreOrigin);
         //////////////
+        ignoreOriginR = new JSlider(1, 100, 1);
+        ignoreOriginR.addChangeListener(new aListener(5, this));
+        ignoreOriginRLabel = new JLabel("Ignore Origin Threshold: ");
+        c.add(ignoreOriginRLabel);
+        c.add(ignoreOriginR);
+        //////////////
         sel_slide = new JSlider(0, 100, 0);
         sel_slide.addChangeListener(new aListener(4, this));
         sel_label = new JLabel("Selected point:");
@@ -137,6 +145,8 @@ public class modelViewer {
     
 }
 class aListener implements ActionListener, ChangeListener, ItemListener{
+    static int ignoreRootR = 1;
+    
     static Color backup;
     static float br;
     static float bg;
@@ -162,7 +172,7 @@ class aListener implements ActionListener, ChangeListener, ItemListener{
     
     
     public void update(){
-        modelParser.filename = this.parent.mName.getText();
+        modelParser.filename = this.parent.mName.getText().replace('\\', '/');
         try {
             modelParser.size = Float.parseFloat(this.parent.mScale.getText());
         } catch (NumberFormatException numberFormatException) {
@@ -197,11 +207,15 @@ class aListener implements ActionListener, ChangeListener, ItemListener{
         
         
         parent.an_slide.setMaximum(maxF);
-        parent.sel_slide.setMaximum(maxP);
+        parent.sel_slide.setMaximum(maxP-1);
         System.out.println("Frame " + parent.an_slide.getValue() + " / " + maxF);
         parent.an_label.setText("Animation Frame (" + parent.Driver.frame + "/" + maxF + ")");
         System.out.println("Point " + selPoint + " / " + maxP);
         parent.sel_label.setText("Selected point (" + selPoint + "/" + maxP + "): ");
+        System.out.println("Ignore Origin Threshold " + ignoreRootR + " / " + maxP);
+        parent.ignoreOriginRLabel.setText("Ignore Origin Threshold (" + ignoreRootR + "/" + maxP + "): ");
+        
+        parent.ignoreOriginR.setMaximum(maxP);
     }
     
     void loadModel(){
@@ -221,6 +235,7 @@ class aListener implements ActionListener, ChangeListener, ItemListener{
                 Model m = new Model(frames, frames.size() < 3);
                 m.hidePoints = false;
                 m.ignoreRootNode = ignoreOriginOnFaces;
+                m.ignoreRootNodeThreshold = ignoreRootR;
                 int hash = m.hashCode();
                 this.parent.Driver.models.put(hash, m);
                 this.parent.Driver.defaultModelKey = hash;
@@ -237,6 +252,15 @@ class aListener implements ActionListener, ChangeListener, ItemListener{
         }
         if(mode == 4){
             //System.out.println(parent.an_slide.getValue());
+            setAnText();
+        }
+        if(mode == 5){
+            ignoreRootR = parent.ignoreOriginR.getValue();
+            try {
+                parent.Driver.models.get(parent.Driver.defaultModelKey).ignoreRootNodeThreshold = parent.ignoreOriginR.getValue();
+            } catch (Exception e) {
+                JFUtils.quickTools.alert("Modelviewer error", "Couldn't change default model: " + e);
+            }
             setAnText();
         }
     }
