@@ -25,7 +25,6 @@
 package codenameprojection.fly;
 
 import JFUtils.Range;
-import JFUtils.point.Point2D;
 import JFUtils.point.Point3D;
 import JFUtils.point.Point3F;
 import codenameprojection.Utils;

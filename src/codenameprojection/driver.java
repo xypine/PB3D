@@ -125,6 +125,11 @@ public class driver{
     
     public ConcurrentHashMap<Integer, Model> models = new ConcurrentHashMap<>();
     public float shadingMultiplier = 1;
+
+    /**
+     * Can help fix some face depth sorting issues, can probably also be used in stylizing.
+     */
+    public float depthSortMultiplier = 1;
     public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
         LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();
         LinkedList<LinkedList<Point3D>> ref = (LinkedList<LinkedList<Point3D>>) frames.clone();
@@ -789,6 +794,7 @@ public class driver{
                 if(!Objects.isNull(point)){
                     boolean change = true;
                   //float distP = (255 - dist.get(point.identifier) * 7);
+                  float sort = dist2 + 0.00001F;
                   dist2 = dist2 * shadingMultiplier;
                   float distP = (255 - dist2 * 25);
                     if(distP == 0.0F){
@@ -796,7 +802,7 @@ public class driver{
                         change = false;
                     }
                     else{
-                        lastZ = distP;
+                        lastZ = sort;
                         //System.out.println("F3");
                     }
                     //face_dists.add((float)distP);
@@ -820,7 +826,7 @@ public class driver{
                         distP = shadingMin;
                     }
                     if(change){
-                        face_dists.set(index, lastZ);
+                        face_dists.set(index, lastZ*depthSortMultiplier);
                         faces_color.set(index, new Color((int)distP, (int)distP,(int) distP));
                     }
                     //faces_color.add(Color.pink);

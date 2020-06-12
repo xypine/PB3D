@@ -113,6 +113,8 @@ public class Run {
         //}
         double resetScale = first_object.scale + 0;
         first_object.scale = 0.1;
+        first_object.ignoreRootNode = true;
+        first_object.ignoreRootNodeThreshold = 3;
         double gridMul = 3;
         
         LinkedList<Model> models = new LinkedList<>();
@@ -158,7 +160,7 @@ public class Run {
         Driver.s.r.scale = 1 / scale;
         Driver.s.r.scale_restore = 1 * scale;
         
-        Driver.s.r.usePixelRendering = true;
+        Driver.s.r.usePixelRendering = false;
         Driver.s.r.drawFaces = true;
         Driver.s.r.drawPoints = true;
         Driver.s.r.drawLines = true;
@@ -263,16 +265,17 @@ public class Run {
                 Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
             }
         }*/
-        first_object.hidePoints = false;
-        first_object.hideFaces = true;
-        first_object.hideLines = false;
+        first_object.hidePoints = true;
+        first_object.hideFaces = false;
+        first_object.hideLines = true;
         first_object.setY(yOff);
         //first_object.scale = 0.75;
         first_object.single_frame = true;
         //first_object.minFrame = 59;
-        Driver.shadingAdd = 1;
-        Driver.shadingMin = 70;
-        Driver.shadingMultiplier = 30;
+        Driver.shadingAdd = -110;
+        Driver.shadingMin = 20;
+        Driver.shadingMultiplier = 0.01F;
+        Driver.depthSortMultiplier = -1;
         FPSMap2 map = new FPSMap2(this);
         Driver.s.r.extraDrawables.add(map);
         Driver.screenPosition_org_next = new Point3D( 0, 0, 7 );
@@ -579,8 +582,8 @@ public class Run {
             Driver.s.r.customStrings_next.put("lol2", "Bolts: " + boltHandles.size());
             //Sleep
             try {
-                Thread.sleep((long) 0.000001);
-            } catch (InterruptedException ex) {
+                //Thread.sleep((long) 0.000001);
+            } catch (Exception ex) {
                 Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
             }
 //            System.out.println("Fly.java excecution time: " + deltaTime.getNano());
