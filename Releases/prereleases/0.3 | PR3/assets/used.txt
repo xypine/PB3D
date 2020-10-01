@@ -1,4 +1,4 @@
-/home/elias/coding/PB3D/assets/config/features.txt
+/home/elias/coding/PB3D/Releases/prereleases/0.3 | PR3/assets/config/features.txt
 assets/models/misc/deform.pb3d
 assets/models/misc/deform_lines.pb3d
 assets/models/misc/deform_faces.pb3d
