@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  * @author Elias Eskelinen
  */
 public class CodeNameProjection {
-    public static final double minUtilsVer = 3.61;
+    public static final double MIN_UTILS_VER = 3.61;
     public static final double APP_VERSION = 0.3;
 
     /**
@@ -71,11 +71,11 @@ public class CodeNameProjection {
         
         
     public static void validate(){
-        if(JFUtils.versionCheck.version != minUtilsVer){
+        if(JFUtils.versionCheck.version != MIN_UTILS_VER){
             //throw new UnsupportedClassVersionError("pb3d needs jfutils " + minUtilsVer + ", current version is " + JFUtils.versionCheck.version);
-            Logger.getGlobal().log(Level.WARNING, "pb3d needs jfutils {0}, current version is {1}", new Object[]{minUtilsVer, JFUtils.versionCheck.version});
+            Logger.getGlobal().log(Level.WARNING, "pb3d needs jfutils {0}, current version is {1}", new Object[]{MIN_UTILS_VER, JFUtils.versionCheck.version});
             try {
-                JFUtils.quickTools.alert("JFUtils version check", String.format("pb3d needs jfutils %s, current version is %s",minUtilsVer, JFUtils.versionCheck.version));
+                JFUtils.quickTools.alert("JFUtils version check", String.format("pb3d needs jfutils %s, current version is %s",MIN_UTILS_VER, JFUtils.versionCheck.version));
             } catch (Exception e) {
                 System.out.println("Failed to show versioncheck warning in ui: " + e);
             }

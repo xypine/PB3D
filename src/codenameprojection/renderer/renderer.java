@@ -91,9 +91,10 @@ public class renderer extends JPanel implements rendererInterface{
         try {
             this.base = ImageIO.read(new File(new dirs().textures + "/walls/walls0.png"));
         } catch (MalformedURLException ex) {
-            Logger.getLogger(renderer.class.getName()).log(Level.SEVERE, null, ex);
+           // Logger.getLogger(renderer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(renderer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error setting up renderdistance: " + ex);
+            //Logger.getLogger(renderer.class.getName()).log(Level.SEVERE, null, ex);
         }
         //output = new BufferedImage(parent.getWidth(), parent.getWidth(), BufferedImage.TYPE_INT_RGB);
         setIgnoreRepaint(true);
