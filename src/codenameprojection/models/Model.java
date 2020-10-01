@@ -43,12 +43,12 @@ public class Model {
     /**
      *  Makes the model ignore the 0th point when returning faces, can reduce face "flickering"
      */
-    public boolean ignoreRootNode = false;
+    public boolean ignoreRootNode = true;
     
     /**
      * Points with a lower index than this will be considered rootnodes
      */
-    public int ignoreRootNodeThreshold = 1;
+    public int ignoreRootNodeThreshold = 2;
     
     public double scale = 1;
     

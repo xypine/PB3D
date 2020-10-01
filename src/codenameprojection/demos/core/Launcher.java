@@ -125,9 +125,9 @@ public class Launcher extends JFrame implements ActionListener{
                         }
                     }
                 };
-                setVisible(false);
+                //setVisible(false);
                 t.run();
-                setVisible(true);
+                //setVisible(true);
         }
     }
     

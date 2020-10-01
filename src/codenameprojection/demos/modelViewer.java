@@ -65,6 +65,8 @@ public class modelViewer {
     JCheckBox ignoreOrigin;
     JSlider ignoreOriginR;
     JLabel ignoreOriginRLabel;
+    JSlider depth_slide;
+    JLabel depth_label;
     public static void main(String[] args) {
         new modelViewer();
     }
@@ -98,7 +100,7 @@ public class modelViewer {
         control.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         //Init center panel
-        JPanel c = new JPanel(new GridLayout(6, 2));
+        JPanel c = new JPanel(new GridLayout(7, 2));
         control.add(c, BorderLayout.CENTER);
         
         //Add other components
@@ -117,11 +119,12 @@ public class modelViewer {
         c.add(an_slide);
         //////////////
         ignoreOrigin = new JCheckBox("");
+        ignoreOrigin.setSelected(true);
         ignoreOrigin.addItemListener(new aListener(3, this));
         c.add(new JLabel("Ignore model origin point when drawing faces: "));
         c.add(ignoreOrigin);
         //////////////
-        ignoreOriginR = new JSlider(1, 100, 1);
+        ignoreOriginR = new JSlider(1, 100, 2);
         ignoreOriginR.addChangeListener(new aListener(5, this));
         ignoreOriginRLabel = new JLabel("Ignore Origin Threshold: ");
         c.add(ignoreOriginRLabel);
@@ -132,6 +135,15 @@ public class modelViewer {
         sel_label = new JLabel("Selected point:");
         c.add(sel_label);
         c.add(sel_slide);
+        //////////////
+        depth_slide = new JSlider(-10, 10, 0);
+        depth_slide.addChangeListener(new aListener(6, this));
+        depth_label = new JLabel("Depthsort multiplier:");
+        c.add(depth_label);
+        c.add(depth_slide);
+            float val = Driver.depthSortMultiplier;
+            depth_slide.setValue((int) val);
+            depth_label.setText("Depthsort mulltiplier (" + val + ")");
         
         JButton reload = new JButton("Apply");
         aListener list = new aListener(1, this);
@@ -145,7 +157,7 @@ public class modelViewer {
     
 }
 class aListener implements ActionListener, ChangeListener, ItemListener{
-    static int ignoreRootR = 1;
+    static int ignoreRootR = 2;
     
     static Color backup;
     static float br;
@@ -156,7 +168,7 @@ class aListener implements ActionListener, ChangeListener, ItemListener{
     static int maxF = 0;
     static int maxP = 0;
     static int selPoint = 0;
-    static boolean ignoreOriginOnFaces = false;
+    static boolean ignoreOriginOnFaces = true;
     static modelViewer parent;
     public aListener(int mode, modelViewer parent) {
         this.mode = mode;
@@ -262,6 +274,11 @@ class aListener implements ActionListener, ChangeListener, ItemListener{
                 JFUtils.quickTools.alert("Modelviewer error", "Couldn't change default model: " + e);
             }
             setAnText();
+        }
+        if(mode == 6){
+            int val = parent.depth_slide.getValue();
+            parent.Driver.depthSortMultiplier = val;
+            parent.depth_label.setText("Depthsort mulltiplier (" + val + ")");
         }
     }
 

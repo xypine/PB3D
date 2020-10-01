@@ -129,7 +129,7 @@ public class driver{
     /**
      * Can help fix some face depth sorting issues, can probably also be used in stylizing.
      */
-    public float depthSortMultiplier = 1;
+    public float depthSortMultiplier = -10;
     public int addCube(dVector3 center, double size, boolean Addlines, boolean addFaces) throws IOException{
         LinkedList<LinkedList<Point3D>> frames2 = new modelParser("Cube").parse();
         LinkedList<LinkedList<Point3D>> ref = (LinkedList<LinkedList<Point3D>>) frames.clone();
